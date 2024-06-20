@@ -1,0 +1,20 @@
+Fichier explicatif sur les différentes tables de la base de données :
+
+-->La table services : table contenant les différent services ainsi q'une description sur 
+ce que fait le services
+
+-->La table documents :  table pour stocker les documents relié à la table type de documents avec 
+un contenu et un titre 
+
+--> La table type de documents : table contenant  les types de documents et lors de son enregistrement
+ les metadata doivent  suivrent aussi 
+
+ --> la table metadata : table contenant les metadata d'un type de documents spécifique 
+
+ -->La table documentMetadata : table pour stocker les valeurs de chaque metadata pour un documents
+ spécifique.
+ exemple : on a un doc 1 avec les metadata autheur et date de parution alors on aura un truc comme
+ çà : INSERT INTO DocumentMetadata (documentId, metadataId, value)
+        VALUES (1, 1, 'John Doe');
+
+--> La table serviceDocument : pour stocker la relation entre un service et un document 
