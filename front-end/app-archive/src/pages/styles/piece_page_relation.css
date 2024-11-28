@@ -1,0 +1,9 @@
+/* Cacher la scrollbar de la page */
+.hide-scrollbar {
+  overflow: hidden;
+}
+
+/* Afficher la scrollbar du tableau */
+.table-container {
+  overflow: auto;
+}
