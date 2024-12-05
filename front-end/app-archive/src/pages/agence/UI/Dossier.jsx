@@ -5,16 +5,18 @@ import "react-toastify/dist/ReactToastify.css";
 import "daisyui/dist/full.css";
 import Sidebar_agence from "../../../Components/Sidebar_agence";
 import TopBar from "../../../Components/Top_bar";
+import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import {
-  ArrowUpToLine,
-  Download,
+  Eye,
   Folder,
-  FolderCheck,
-  RefreshCcw,
+  FolderClosed,
+  Link,
   SquarePen,
   Trash2,
 } from "lucide-react";
-import * as XLSX from "xlsx";
+import PieceUploadModal from "../../../Components/PieceUploadModal";
+import ViewCaisseFile from "../../../Components/ViewCaisseFile";
+import Loader_component from "../../../Components/Loader";
 
 const createAgence = async (agence) => {
   await axios.post("http://localhost:3000/agences", agence);
@@ -22,35 +24,268 @@ const createAgence = async (agence) => {
 
 export default function Dossier() {
   const [openModal, setOpenModal] = useState(false);
-  const [fileModalOpen, setFileModalOpen] = useState(false);
   const [currentAgence, setCurrentAgence] = useState({
     id: "",
     nom_agence: "",
     code_agence: "",
   });
-  const [selectedFile, setSelectedFile] = useState(null);
   const [data, setData] = useState([]);
-  const [filterObservation, setFilterObservation] = useState(null);
-  const [dateModalOpen, setDateModalOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [originalData, setOriginalData] = useState([]);
-  const [importType, setImportType] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [selectedType, setSelectedType] = useState("");
+  const [openUploadModal, setOpenUploadModal] = useState(false);
+  const [documentTypes, setDocumentTypes] = useState([]);
+  const [selectedDocumentTypeId, setSelectedDocumentTypeId] = useState("");
+  const [selectedRowId, setSelectedRowId] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [allData, setAllData] = useState([]);
+  const [isRangeFilter, setIsRangeFilter] = useState(false);
+  const [expandedRowId, setExpandedRowId] = useState(null);
+  const [openDisplayModal, setOpenDisplayModal] = useState(false);
+  const [agencyFilter] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+      let apiUrl;
+      switch (selectedType) {
+        // case "transaction-dossiers":
+        //   apiUrl = "http://localhost:3000/agence/dossiers/transaction-dossiers";
+        //   break;
+        case "journée de caisse":
+          apiUrl = "http://localhost:3000/agence/dossiers/transaction-caisse";
+          break;
+        case "Journée de guichet":
+          apiUrl = "http://localhost:3000/agence/dossiers/transaction-guichet";
+          break;
+        default:
+          apiUrl = "http://localhost:3000/agence/dossiers/transaction-dossiers";
+      }
+
       try {
-        const response = await axios.get(
-          "http://localhost:3000/agence/dossiers/transaction-dossiers"
-        );
+        const response = await axios.get(apiUrl);
         setData(response.data);
-        setOriginalData(response.data);
+        setAllData(response.data);
       } catch (error) {
         toast.error("Erreur lors de la récupération des données.");
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
+  }, [selectedType]);
+
+  useEffect(() => {
+    const fetchDocumentTypes = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/agence/document-type"
+        );
+        setDocumentTypes(response.data);
+        if (response.data.length > 0) {
+          setSelectedDocumentTypeId(response.data[0].id);
+        }
+      } catch (error) {
+        toast.error("Erreur lors de la récupération des types de documents.");
+      }
+    };
+
+    fetchDocumentTypes();
   }, []);
+
+  const handleLinkClick = (rowId) => {
+    console.log("Link button clicked");
+    setOpenUploadModal(true);
+    setSelectedRowId(rowId);
+  };
+
+  const handleRowClick = async (rowId) => {
+    if (expandedRowId === rowId) {
+      setExpandedRowId(null);
+    } else {
+      setExpandedRowId(rowId);
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/agence/dossiers/${rowId}`
+        );
+        console.log(response.data);
+      } catch (error) {
+        toast.error(
+          "Erreur lors de la récupération des données supplémentaires."
+        );
+      }
+    }
+  };
+
+  const handleDisplayClick = (rowId) => {
+    console.log("Display button clicked");
+    setOpenDisplayModal(true);
+    setSelectedRowId(rowId);
+  };
+
+  const getColumns = () => {
+    console.log(selectedType);
+
+    switch (selectedType) {
+      case "transaction-dossiers":
+        return [
+          { field: "nom_agence", headerName: "Agence", width: 150 },
+          { field: "code_caisse_nom", headerName: "Code Caisse", width: 150 },
+          {
+            field: "nom_document_type",
+            headerName: "Type Document",
+            width: 150,
+          },
+          {
+            field: "dates",
+            headerName: "Date",
+            width: 150,
+            renderCell: (params) => params.value,
+          },
+          {
+            field: "nom_prenom_caissier",
+            headerName: "Nom & Prénom",
+            width: 150,
+          },
+          { field: "code_definitif", headerName: "Code definitif", width: 150 },
+          {
+            field: "actions",
+            headerName: "Actions",
+            width: 300,
+            renderCell: (params) => (
+              <div className="flex space-x-2">
+                <button
+                  className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-blue-600 transition duration-300 shadow-md"
+                  onClick={() => handleLinkClick(params.row.id)}
+                >
+                  <Link size={20} />
+                </button>
+
+                <button className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-blue-600 transition duration-300 shadow-md">
+                  <SquarePen size={20} />
+                </button>
+                <button className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-red-400 transition duration-300 shadow-md">
+                  <Trash2 size={20} />
+                </button>
+              </div>
+            ),
+          },
+          {
+            field: "expand",
+            headerName: "Détails",
+            width: 100,
+            renderCell: (params) => (
+              <button onClick={() => handleRowClick(params.row.id)}>
+                {expandedRowId === params.row.id ? "Réduire" : "Étendre"}
+              </button>
+            ),
+          },
+        ];
+      case "journée de caisse":
+        return [
+          {
+            field: "",
+            headerName: "",
+            width: 90,
+            renderCell: () => (
+              <div className="flex space-x-2">
+                <FolderClosed size={40} />
+              </div>
+            ),
+          },
+          { field: "nom_agence", headerName: "Agence", width: 150 },
+          { field: "code_caisse_nom", headerName: "Code Caisse", width: 150 },
+          {
+            field: "dates",
+            headerName: "Date",
+            width: 150,
+            renderCell: (params) => params.value,
+          },
+          {
+            field: "nom_prenom_caissier",
+            headerName: "Nom & Prénom",
+            width: 150,
+          },
+          {
+            field: "actions",
+            headerName: "Actions",
+            width: 270,
+            renderCell: (params) => (
+              <div className="flex space-x-2">
+                <button className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-blue-300 transition duration-300 shadow-md">
+                  <Link
+                    size={20}
+                    onClick={() => handleLinkClick(params.row.id)}
+                  />
+                </button>
+                <button className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-blue-600 transition duration-300 shadow-md">
+                  <SquarePen size={20} />
+                </button>
+
+                <button
+                  className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-orange-400 transition duration-300 shadow-md"
+                  onClick={() => handleDisplayClick(params.row.id)}
+                >
+                  <Eye size={25} />
+                </button>
+                <button className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-red-400 transition duration-300 shadow-md">
+                  <Trash2 size={20} />
+                </button>
+              </div>
+            ),
+          },
+        ];
+      case "Journée de guichet":
+        return [
+          {
+            field: "",
+            headerName: "",
+            width: 90,
+            renderCell: () => (
+              <div className="flex space-x-2">
+                <FolderClosed size={40} />
+              </div>
+            ),
+          },
+          { field: "nom_agence", headerName: "Agence", width: 150 },
+          {
+            field: "nom_prenom_caissier",
+            headerName: "Nom et prenom caissier",
+            width: 250,
+          },
+          {
+            field: "dates",
+            headerName: "Date",
+            width: 150,
+            renderCell: (params) => params.value,
+          },
+          {
+            field: "code_boite",
+            headerName: "Code Boite",
+            width: 150,
+          },
+          {
+            field: "actions",
+            headerName: "Actions",
+            width: 150,
+            renderCell: () => (
+              <div className="flex space-x-2">
+                <button className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-blue-600 transition duration-300 shadow-md">
+                  <SquarePen size={20} />
+                </button>
+                <button className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-red-400 transition duration-300 shadow-md">
+                  <Trash2 size={20} />
+                </button>
+              </div>
+            ),
+          },
+        ];
+      default:
+        return [];
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -59,90 +294,52 @@ export default function Dossier() {
     setOpenModal(false);
   };
 
-  const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0]);
-  };
+  const applyFilter = () => {
+    let filteredData = allData;
 
-  const handleFileUpload = async () => {
-    if (!selectedFile) {
-      toast.error("Veuillez sélectionner un fichier.");
-      return;
+    // Filtrage par terme dans toutes les colonnes
+    if (agencyFilter) {
+      filteredData = filteredData.filter((item) =>
+        Object.values(item).some((value) => {
+          // Convertir la valeur en chaîne et normaliser
+          const stringValue = value ? value.toString().toLowerCase() : "";
+          return stringValue.includes(agencyFilter.toLowerCase());
+        })
+      );
     }
 
-    if (!importType) {
-      toast.error("Veuillez sélectionner un type d'importation.");
-      return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const data = new Uint8Array(e.target.result);
-      const workbook = XLSX.read(data, { type: "array" });
-      const firstSheetName = workbook.SheetNames[0];
-      const worksheet = workbook.Sheets[firstSheetName];
-      const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
-      if (!Array.isArray(jsonData) || jsonData.length === 0) {
-        toast.error("Le fichier ne contient pas de données valides.");
-        return;
-      }
-
-      try {
-        const formattedData = jsonData.map((item) => ({
-          AGENCE: item["AGENCE"],
-          CODE_AGENCE: item["CODE AGENCE"],
-          DATE: item["DATE"],
-          TYPE_DE_JOURNEE: item["TYPE DE JOURNEE"],
-          CODE_CAISSE: item["CODE CAISSE"],
-          NOM_ET_PRENOM_DU_CAISSIER: item["NOM ET PRENOM DU CAISSIER"],
-          CODE_DEFINITIF: item["CODE DEFINITIF"],
-        }));
-
-        await axios.post(
-          "http://localhost:3000/agence/import/import-csv",
-          formattedData
-        );
-        toast.success("Fichiers importés avec succès !");
-      } catch (error) {
-        toast.error("Échec de l'importation du fichier.");
-      }
-
-      setFileModalOpen(false);
-      setSelectedFile(null);
-      setImportType(null);
-    };
-
-    reader.readAsArrayBuffer(selectedFile);
-  };
-
-  const toggleFilter = () => {
-    setFilterObservation((prev) =>
-      prev === "Disponible" ? "Non Disponible" : "Disponible"
-    );
-  };
-
-  const handleDateFilter = () => {
-    if (selectedDate) {
-      const filteredByDate = originalData.filter((item) => {
-        const itemDate = new Date(item.dates).toISOString().split("T")[0];
-        return itemDate === selectedDate;
+    if (isRangeFilter) {
+      // Filtrage par intervalle de dates
+      filteredData = filteredData.filter((item) => {
+        const itemDate = new Date(item.dates);
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        return itemDate >= start && itemDate <= end;
       });
-      setData(filteredByDate);
+    } else {
+      // Filtrage par date unique (date de début)
+      filteredData = filteredData.filter((item) => {
+        const itemDate = new Date(item.dates);
+        const start = new Date(startDate);
+        return itemDate === start;
+      });
     }
-    setDateModalOpen(false);
+
+    // Vérifiez si filteredData est vide
+    if (filteredData.length === 0) {
+      toast.warn("Aucune donnée ne correspond aux critères de filtrage.");
+    }
+
+    setData(filteredData);
+    setIsFilterModalOpen(false);
   };
 
-  const resetFilter = () => {
-    setData(originalData);
-    setSelectedDate(null);
-  };
-
-  const filteredData = filterObservation
-    ? data.filter(
-        (item) =>
-          item.observation.toLowerCase() === filterObservation.toLowerCase()
-      )
-    : data;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader_component className="loader" />
+      </div>
+    );
 
   return (
     <div className="flex min-h-screen mt-8 bg-gray-300 to-gray-900">
@@ -151,140 +348,80 @@ export default function Dossier() {
         <TopBar position="fixed" title="Agences" />
 
         <div className="container w-[90%] mx-auto mt-16 bg-white rounded-xl shadow-2xl flex flex-col h-auto">
-          <div className="bg-white w-full rounded-lg shadow-md p-6 ">
-            <div className="flex justify-between items-center mb-4">
-              <h1 className="text-2xl font-extrabold text-gray-800 flex justify-start w-full">
-                Dossiers
-              </h1>
-            </div>
-
-            <div className="flex flex-row-reverse w-full justify-between rounded-lg border-2 p-4 border-gray-300 space-x-2 mb-4">
-              <div className="flex items-center justify-between w-full gap-4">
-                <button
-                  className="btn btn-primary bg-gray-600 text-white hover:bg-gray-800 transition duration-300 shadow-md"
-                  onClick={() => setFileModalOpen(true)}
-                >
-                  <Download size={20} className="mr-2" />
-                  Importer
-                </button>
-                <button className="btn btn-primary text-white bg-gray-400  hover:bg-gray-700 transition duration-300 shadow-md">
-                  <ArrowUpToLine size={20} className="mr-2" />
-                  Exporter
-                </button>
-              </div>
-            </div>
-            <div className="border-t border-gray-700 my-4"></div>
-
-            <div className="w-full rounded-lg p-2 bg-gray-500">
-              <h1
-                className="flex items-center gap-2 text-2xl text-white"
-                style={{ fontWeight: "bold" }}
+          <div className="w-full">
+            <h1 className="w-full flex items-center p-5 rounded-md justify-start gap-2 text-black font-bold text-lg bg-gray-400 mt-2">
+              <Folder size={35} />
+              Dossiers
+            </h1>
+          </div>
+          <div className="w-full flex items-center justify-between p-4">
+            <h1 className="text-2xl font-extrabold text-gray-800 mb-4">
+              {selectedType === "journée de caisse"
+                ? "Journée de caisse"
+                : selectedType === "Journée de guichet"
+                ? "Journée de guichet"
+                : selectedType === "transaction-dossiers"
+                ? "transaction-dossiers"
+                : "Sélectionnez un type"}
+            </h1>
+            <div className="flex justify-end mb-4 w-1/2">
+              <select
+                value={selectedType || "Sélectionnez un type"}
+                onChange={(e) => {
+                  setSelectedType(e.target.value);
+                  const selectedTypeObj = documentTypes.find(
+                    (type) => type.nom_document_type === e.target.value
+                  );
+                  console.log(selectedTypeObj);
+                  if (selectedTypeObj) {
+                    setSelectedDocumentTypeId(selectedTypeObj.id);
+                  }
+                }}
+                className="select select-bordered bg-gray-300 text-black w-full max-w-xs"
               >
-                <Folder />
-                Liste des dossiers
-              </h1>
-              <div className="flex items-center justify-end">
-                <button
-                  className="btn btn-default border-2 bg-gray-600 border-white text-white hover:bg-gray-700 transition duration-300 shadow-md mt-2"
-                  onClick={toggleFilter}
-                >
-                  Filtrer par observation
-                </button>
-                <button
-                  className="btn btn-default border-2 bg-gray-600 border-white text-white hover:bg-gray-700 transition duration-300 shadow-md mt-2 ml-2"
-                  onClick={() => setDateModalOpen(true)}
-                >
-                  Filtrer par date
-                </button>
-                <button
-                  className="btn btn-default border-2 rounded-full bg-gray-600 border-white text-white hover:bg-gray-700 transition duration-300 shadow-md mt-2 ml-2"
-                  onClick={resetFilter}
-                >
-                  <RefreshCcw size={20} />
-                </button>
-              </div>
+                <option value="Sélectionnez un type">
+                  Sélectionnez un type
+                </option>
+                {documentTypes.map((type) => (
+                  <option key={type.id} value={type.nom_document_type}>
+                    {type.nom_document_type}
+                  </option>
+                ))}
+              </select>
             </div>
-            {/* Table to display data */}
-            <div className="mt-4 overflow-x-auto">
-              <table className="table-auto w-full border-collapse border border-gray-300">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="border border-gray-300 px-4 py-2 text-left font-semibold">
-                      <div className="mr-2 p-3 rounded-full bg-gray-400">
-                        <Folder size={20} color="white" />
-                      </div>
-                    </th>
-                    <th className="border border-gray-300 px-4 py-2 text-left font-semibold">
-                      Agence
-                    </th>
-                    <th className="border border-gray-300 px-4 py-2 text-left font-semibold">
-                      Code Caisse
-                    </th>
-                    <th className="border border-gray-300 px-4 py-2 text-left font-semibold">
-                      Type Document
-                    </th>
+          </div>
 
-                    <th className="border border-gray-300 px-4 py-2 text-left font-semibold">
-                      Date
-                    </th>
-                    <th className="border border-gray-300 px-4 py-2 text-left font-semibold">
-                      Nom & Prénom
-                    </th>
-
-                    <th className="border border-gray-300 px-4 py-2 text-left font-semibold">
-                      Code definitif
-                    </th>
-                    <th className="border border-gray-300 px-4 py-2 text-left font-semibold">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredData.map((item, index) => (
-                    <tr
-                      key={item.id}
-                      className={`${
-                        index % 2 === 0 ? "bg-gray-200" : "bg-white"
-                      } hover:bg-gray-300 transition duration-200`}
-                    >
-                      <td className="border text-center text-black border-gray-300 px-4 py-2">
-                        <div className="mr-2 p-3 rounded-full bg-gray-600">
-                          <FolderCheck size={20} color="white" />
-                        </div>
-                      </td>
-                      <td className="border text-center text-black border-gray-300 px-4 py-2">
-                        {item.nom_agence}
-                      </td>
-                      <td className="border text-black border-gray-300 px-4 py-2">
-                        {item.code_caisse_nom}
-                      </td>
-                      <td className="border text-black border-gray-300 px-4 py-2">
-                        {item.nom_document_type}
-                      </td>
-
-                      <td className="border text-black border-gray-300 px-4 py-2">
-                        {new Date(item.dates).toLocaleDateString()}
-                      </td>
-                      <td className="border text-black border-gray-300 px-4 py-2">
-                        {item.nom_prenom_caissier}
-                      </td>
-
-                      <td className="border text-black border-gray-300 px-4 py-2">
-                        {item.code_definitif}
-                      </td>
-                      <td className="border flex items-center justify-center  text-black border-gray-300 px-4 py-2">
-                        <button className="btn btn-default rounded-lg bg-gray-600  text-white hover:bg-blue-600 transition duration-300 shadow-md mt-2 ml-2">
-                          <SquarePen size={20} />
-                        </button>
-                        <button className="btn btn-default rounded-lg bg-gray-600  text-white hover:bg-red-400 transition duration-300 shadow-md mt-2 ml-2">
-                          <Trash2 size={20} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <div className="bg-white w-full rounded-lg shadow-md p-6">
+            {/* <select
+              value={pageSize}
+              onChange={(e) => setPageSize(Number(e.target.value))}
+              className="mb-4"
+            >
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select> */}
+            <DataGrid
+              rows={data}
+              columns={getColumns()}
+              initialState={{
+                pagination: {
+                  paginationModel: {
+                    pageSize: 5,
+                  },
+                },
+              }}
+              pageSizeOptions={[5, 15, 30, 50, 100]}
+              rowsPerPageOptions={[5, 15, 30, 50, 100]}
+              autoHeight
+              loading={loading}
+              components={{
+                Toolbar: GridToolbar,
+              }}
+              getRowClassName={(params) =>
+                params.id === expandedRowId ? "expanded-row" : ""
+              }
+            />
           </div>
         </div>
       </div>
@@ -367,7 +504,20 @@ export default function Dossier() {
         </div>
       )}
 
-      {fileModalOpen && (
+      {openUploadModal && (
+        <PieceUploadModal
+          onClose={() => {
+            console.log("Modal closed");
+            console.log(selectedRowId);
+
+            setOpenUploadModal(false);
+          }}
+          documentTypeId={String(selectedDocumentTypeId)}
+          rowId={String(selectedRowId)}
+        />
+      )}
+
+      {isFilterModalOpen && (
         <div
           style={{
             position: "fixed",
@@ -377,7 +527,7 @@ export default function Dossier() {
             justifyContent: "center",
             backgroundColor: "rgba(0, 0, 0, 0.5)",
           }}
-          onClick={() => setFileModalOpen(false)}
+          onClick={() => setIsFilterModalOpen(false)}
         >
           <div
             className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg w-full mx-4"
@@ -385,105 +535,56 @@ export default function Dossier() {
           >
             <button
               className="btn btn-sm btn-circle absolute right-2 top-2"
-              onClick={() => setFileModalOpen(false)}
+              onClick={() => setIsFilterModalOpen(false)}
             >
               ✕
             </button>
-            <h3 className="font-bold text-lg">Importer un fichier</h3>
+            <h3 className="font-bold text-lg">Saisir les dates de filtrage</h3>
             <div className="form-control mt-4">
-              <label className="label">Type d&apos;importation</label>
-              <select
-                className="select select-bordered border-2 border-gray-300 bg-white text-black"
-                value={importType}
-                onChange={(e) => setImportType(e.target.value)}
-              >
-                <option value="">Sélectionnez un type</option>
-                <option value="journée de caisse">Journée de Caisse</option>
-                <option value="journée de guichet">Journée de Guichet</option>
-                <option value="dossier">Dossier</option>
-              </select>
-            </div>
-            <div className="form-control mt-4">
+              <label className="label">Date de début</label>
               <input
-                type="file"
-                onChange={handleFileChange}
-                className="input input-bordered border-2 border-gray-300 bg-white text-black"
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="input input-bordered"
               />
             </div>
-            {selectedFile && (
-              <div className="mt-4">
-                <h4 className="font-bold">Prévisualisation du fichier :</h4>
-                <p>{selectedFile.name}</p>
+            {isRangeFilter && (
+              <div className="form-control mt-4">
+                <label className="label">Date de fin</label>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="input input-bordered"
+                />
               </div>
             )}
+            <div className="form-control mt-4">
+              <label className="label">
+                <input
+                  type="checkbox"
+                  checked={isRangeFilter}
+                  onChange={(e) => setIsRangeFilter(e.target.checked)}
+                  className="checkbox"
+                />
+                Filtrer par intervalle de dates
+              </label>
+            </div>
             <div className="modal-action flex justify-center items-center mt-4">
-              <button
-                type="button"
-                className="btn border-t-neutral-700 w-[40%] bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg"
-                onClick={handleFileUpload}
-              >
-                Envoyer
-              </button>
-              <button
-                type="button"
-                className="btn btn-outline btn-error w-[40%] mt-2"
-                onClick={() => setFileModalOpen(false)}
-              >
-                Annuler
+              <button onClick={applyFilter} className="btn btn-primary">
+                Appliquer le filtre
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {dateModalOpen && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          }}
-          onClick={() => setDateModalOpen(false)}
-        >
-          <div
-            className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg w-full mx-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="btn btn-sm btn-circle absolute right-2 top-2"
-              onClick={() => setDateModalOpen(false)}
-            >
-              ✕
-            </button>
-            <h3 className="font-bold text-lg">Filtrer par date</h3>
-            <div className="form-control mt-4">
-              <input
-                type="date"
-                onChange={(e) => setSelectedDate(e.target.value)}
-                className="input input-bordered border-2 border-gray-300 bg-white text-black"
-              />
-            </div>
-            <div className="modal-action flex justify-center items-center mt-4">
-              <button
-                type="button"
-                className="btn border-t-neutral-700 w-[40%] bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg"
-                onClick={handleDateFilter}
-              >
-                Appliquer
-              </button>
-              <button
-                type="button"
-                className="btn btn-outline btn-error w-[40%] mt-2"
-                onClick={() => setDateModalOpen(false)}
-              >
-                Annuler
-              </button>
-            </div>
-          </div>
-        </div>
+      {openDisplayModal && (
+        <ViewCaisseFile
+          onClose={() => setOpenDisplayModal(false)}
+          documentTypeId={String(selectedDocumentTypeId)}
+        />
       )}
 
       <ToastContainer />

@@ -8,6 +8,7 @@ import {
   BookMarked,
   Home,
   Layers3,
+  Settings,
 } from "lucide-react";
 import "daisyui/dist/full.css";
 
@@ -34,7 +35,7 @@ const SideBar_agence = () => {
           </div>
           <div className="divider "></div>
           <div
-            className="fixed top-[23%] left-[16%] cursor-pointer p-2 rounded-full bg-gray-900 hover:bg-gray-600 transition-colors duration-300"
+            className="fixed top-[21%] left-[16%] cursor-pointer p-2 rounded-full bg-gray-900 hover:bg-gray-600 transition-colors duration-300"
             onClick={() => handleNavigate("/agences")}
           >
             <Home size={20} color="white" />

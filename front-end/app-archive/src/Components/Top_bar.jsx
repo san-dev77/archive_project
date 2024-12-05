@@ -20,7 +20,7 @@ const TopBar = () => {
 
   return (
     <div>
-      <div className="fixed left-0 top-0 navbar bg-gradient-to-r from-gray-500 to-gray-900 w-full z-20 shadow-md flex justify-between items-center px-10 py-4">
+      <div className="fixed left-0 top-0 navbar bg-gradient-to-r from-gray-500 to-gray-900 w-full z-10 shadow-md flex justify-between items-center px-10 py-4">
         <Logo />
         <Logo2 />
         <div></div>

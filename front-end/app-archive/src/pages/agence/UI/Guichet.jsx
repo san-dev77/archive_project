@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Select from "react-select";
 import SideBar_agence from "../../../Components/Sidebar_agence";
 import TopBar from "../../../Components/Top_bar";
+import Loader_component from "../../../Components/Loader";
 
 export default function ShowGuichet() {
   const [guichets, setGuichets] = useState([]);
@@ -192,7 +193,7 @@ export default function ShowGuichet() {
   if (loading)
     return (
       <div className="flex justify-center items-center h-screen">
-        <div className="loader"></div>
+        <Loader_component />
       </div>
     );
   if (error) return <div className="text-red-500">{error}</div>;

@@ -7,14 +7,16 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "daisyui/dist/full.css";
 import Loader_component from "../../../Components/Loader";
+import DataUpload from "../../../Components/DataUpload";
+
 import {
   Calendar,
   ClipboardList,
   FileSliders,
   FileSymlink,
   Link2,
-  Plus,
   Save,
+  Upload,
 } from "lucide-react";
 
 export default function ConfigDocType() {
@@ -25,6 +27,8 @@ export default function ConfigDocType() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [metadataName, setMetadataName] = useState("");
   const [metadataType, setMetadataType] = useState("text");
+  const [fileModalOpen, setFileModalOpen] = useState(false);
+
   const [metadataList, setMetadataList] = useState([]);
 
   const navigate = useNavigate();
@@ -206,35 +210,36 @@ export default function ConfigDocType() {
                   )}
                 </div>
                 {selectedRelation && (
-                  <div className="mt-8 flex items-center justify-between">
-                    <h2 className="text-xl font-bold mb-4 flex items-center text-gray-800"></h2>
-
+                  <div className="mt-8 flex w-full items-center justify-between">
                     <div className="flex items-center">
                       <button
-                        className="btn btn-default rounded-lg bg-gray-600  text-white hover:bg-gray-700 transition duration-300 shadow-md mt-2 ml-2"
+                        className="btn  btn-outline  btn-default"
                         onClick={handleFetchRelatedData}
                       >
                         <FileSymlink size={20} />
-                        Attacher pièces jointes
+                        Lier pièces
+                      </button>
+                    </div>
+
+                    <div className="mt-4 flex justify-center">
+                      <button
+                        onClick={() => setFileModalOpen(true)}
+                        className="btn btn-outline btn-default"
+                      >
+                        <Upload />
+                        Importer
                       </button>
                     </div>
                   </div>
                 )}
-                <div className="mt-4 flex justify-center">
-                  <button
-                    onClick={() => setIsModalOpen(true)}
-                    className=" btn btn-outline btn-default text-gray-900"
-                  >
-                    <Plus />
-                    Créer une nouvelle entrée
-                  </button>
-                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
       <ToastContainer />
+
+      {fileModalOpen && <DataUpload onClose={() => setFileModalOpen(false)} />}
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
