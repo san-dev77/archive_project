@@ -20,6 +20,8 @@ import {
 import { Tooltip } from "@mui/material";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import Select from "react-select";
+import { showDeleteConfirmation } from "../utils/alerts";
+import Swal from "sweetalert2";
 
 const fetchDirectories = async () => {
   const response = await axios.get("http://localhost:3000/services/directory");
@@ -82,6 +84,13 @@ export default function ShowDirection() {
       queryClient.invalidateQueries("directories");
       toast.success("Service mis à jour avec succès !");
       setEditModalOpen(false);
+
+      Swal.fire({
+        title: "Mise à jour réussie",
+        text: "La mise à jour prendra effet après la réactualisation de la page.",
+        icon: "info",
+        confirmButtonText: "OK",
+      });
     },
     onError: () => {
       toast.error("Échec lors de la mise à jour du service.");
@@ -120,8 +129,12 @@ export default function ShowDirection() {
     },
   });
 
-  const handleDelete = (id) => {
-    deleteMutation.mutate(id);
+  const handleDelete = async (id) => {
+    const confirmed = await showDeleteConfirmation();
+
+    if (confirmed) {
+      deleteMutation.mutate(id);
+    }
   };
 
   const handleEdit = (service) => {
@@ -188,10 +201,10 @@ export default function ShowDirection() {
     return directoryMatches || serviceMatches;
   });
 
-  const handleDeleteDirectory = (directoryId) => {
-    if (
-      window.confirm("Êtes-vous sûr de vouloir supprimer cette direction ?")
-    ) {
+  const handleDeleteDirectory = async (directoryId) => {
+    const confirmed = await showDeleteConfirmation();
+
+    if (confirmed) {
       deleteDirectoryMutation.mutate(directoryId, {
         onSuccess: () => {
           queryClient.invalidateQueries("directories");
@@ -583,7 +596,7 @@ export default function ShowDirection() {
             </button>
             <h3 className="font-bold text-lg">Modifier le service</h3>
             <form onSubmit={handleUpdate}>
-              <div className="form-control">
+              {/* <div className="form-control">
                 <label className="label">Répertoires</label>
                 <select
                   value={currentService.directory_id}
@@ -607,7 +620,7 @@ export default function ShowDirection() {
                     </option>
                   ))}
                 </select>
-              </div>
+              </div> */}
               <div className="form-control mt-4">
                 <label className="label">Code du service</label>
                 <input

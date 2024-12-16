@@ -14,6 +14,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "daisyui/dist/full.css";
 import { Tooltip } from "@mui/material";
+import { showDeleteConfirmation } from "../utils/alerts"; // Importer la fonction
 
 const toastOptions = {
   style: {
@@ -58,14 +59,20 @@ export default function CreatePiece() {
     setOpenModal(true);
   };
 
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3000/pieces/${id}`);
-      fetchPieces();
-      toast.success("La pièce est supprimée avec succès!", toastOptions);
-    } catch (error) {
-      console.error("Error deleting document type:", error);
-      toast.error("Echec lors de la suppréssion de la pièce", toastOptions);
+  const handleDelete = async (pieceId) => {
+    const confirmed = await showDeleteConfirmation(); // Afficher l'alerte de confirmation
+
+    if (confirmed) {
+      try {
+        await axios.delete(`http://localhost:3000/pieces/${pieceId}`);
+        fetchPieces(); // Rafraîchir la liste des pièces
+        toast.success("Pièce supprimée avec succès !");
+      } catch (error) {
+        console.error("Erreur lors de la suppression de la pièce :", error);
+        toast.error("Échec lors de la suppression de la pièce.");
+      }
+    } else {
+      toast.info("Suppression annulée."); // Optionnel : informer que la suppression a été annulée
     }
   };
 

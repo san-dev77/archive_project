@@ -17,6 +17,9 @@ import "react-toastify/dist/ReactToastify.css";
 import "daisyui/dist/full.css";
 import { Tooltip } from "@mui/material";
 import Select from "react-select";
+import Loader_component from "../Components/Loader";
+import { showDeleteConfirmation } from "../utils/alerts";
+import Swal from "sweetalert2";
 
 export default function ShowDocType() {
   const [directories, setDirectories] = useState([]);
@@ -99,13 +102,19 @@ export default function ShowDocType() {
   };
 
   const handleDelete = async (docTypeId) => {
-    try {
-      await axios.delete(`http://localhost:3000/document-types/${docTypeId}`);
-      fetchDirectories();
-      toast.success("Type de document supprimé avec succès !");
-    } catch (error) {
-      console.error("Error deleting document type:", error);
-      toast.error("Failed to delete document type.");
+    const confirmed = await showDeleteConfirmation();
+
+    if (confirmed) {
+      try {
+        await axios.delete(`http://localhost:3000/document-types/${docTypeId}`);
+        fetchDirectories();
+        toast.success("Type de document supprimé avec succès !");
+      } catch (error) {
+        console.error("Error deleting document type:", error);
+        toast.error("Failed to delete document type.");
+      }
+    } else {
+      toast.info("Suppression annulée.");
     }
   };
 
@@ -144,6 +153,13 @@ export default function ShowDocType() {
       fetchDirectories();
       toast.success("Type de document mis à jour avec succès !");
       setOpenModal(false);
+
+      Swal.fire({
+        title: "Mise à jour réussie",
+        text: "La mise à jour prendra effet après la réactualisation de la page.",
+        icon: "info",
+        confirmButtonText: "OK",
+      });
     } catch (error) {
       console.error("Error updating document type:", error);
       toast.error("Failed to update document type.");
@@ -182,12 +198,7 @@ export default function ShowDocType() {
     directory.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (loading)
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="loader"></div>
-      </div>
-    );
+  if (loading) return <Loader_component />;
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (

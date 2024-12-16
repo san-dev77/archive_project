@@ -93,7 +93,7 @@ export default function Activities() {
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Card
-                  className=" cursor-pointer rounded-lg p-4 shadow-xl transition-shadow duration-300"
+                  className=" cursor-pointer hover:bg-gray-300 hover:scale-105 transition-all duration-500  rounded-lg p-4 shadow-xl"
                   title="Agences"
                   subTitle="152"
                   style={{ textAlign: "center" }}
