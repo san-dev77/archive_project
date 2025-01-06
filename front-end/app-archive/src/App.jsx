@@ -1,5 +1,5 @@
 import "./App.css";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import Activities from "./pages/Activities";
 import Show_service from "./pages/Show_service";
 import Show_doc_type from "./pages/Show_doc_types";
@@ -39,62 +39,201 @@ import DocType from "./pages/agence/UI/DocTypes";
 import ConfigDocType from "./pages/agence/UI/Config_docType";
 import Dossier from "./pages/agence/UI/Dossier";
 import Config_piece from "./pages/agence/UI/Config_piece";
+import { useEffect } from "react";
+import LandingPage from "./pages/Landing";
+
 export default function App() {
+  // const handleKeyDown = (event) => {
+  //   if (event.key === "ArrowLeft") {
+  //     // Navigate to the previous page
+  //     window.history.back();
+  //   } else if (event.key === "ArrowRight") {
+  //     // Navigate to the previous page
+  //     window.history.forward();
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   window.addEventListener("keydown", handleKeyDown);
+  //   return () => {
+  //     window.removeEventListener("keydown", handleKeyDown);
+  //   };
+  // }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const token = sessionStorage.getItem("token");
+      if (token) {
+        clearInterval(interval);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const token = sessionStorage.getItem("token");
+
   return (
     <div className="app">
+      {/* <FloatingGuideButton /> */}
       <Routes>
-        <Route path="/" element={<Login />}></Route>
-        <Route path="/settings" element={<SettingsPage />}></Route>
-        <Route path="/app-archive" element={<Activities />}></Route>
-        <Route path="/services" element={<Show_service />}></Route>
-        <Route path="/agents" element={<Dashboard />}></Route>
-        <Route path="/search" element={<Search />}></Route>
+        <Route path="/" element={<LandingPage />}></Route>
+        <Route
+          path="/settings"
+          element={token ? <SettingsPage /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/app-archive"
+          element={token ? <Activities /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/services"
+          element={token ? <Show_service /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/agents"
+          element={token ? <Dashboard /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/search"
+          element={token ? <Search /> : <Navigate to="/" />}
+        ></Route>
         <Route path="/login" element={<Login />}></Route>
-        <Route path="/tree" element={<TreeViewPage />}></Route>
-        <Route path="/services_UI" element={<Services_UI />}></Route>
-        <Route path="/type_doc_UI" element={<Type_doc_UI />}></Route>
-        <Route path="/pieces" element={<Piece_page />}></Route>
-        <Route path="/settings_UI" element={<SettingsPage_UI />}></Route>
-        <Route path="/pieces_UI" element={<Pieces_UI />}></Route>
-        <Route path="/agences" element={<Main_activities />}></Route>
-        <Route path="/agence_page" element={<ShowAgence />}></Route>
-        <Route path="/caisse" element={<ShowCaisse />}></Route>
-        <Route path="/guichet" element={<ShowGuichet />}></Route>
-        <Route path="/agence/document-type" element={<DocType />}></Route>
-        <Route path="/dossier" element={<Dossier />}></Route>
-        <Route path="/agence/config-piece" element={<Config_piece />}></Route>
+        <Route
+          path="/tree"
+          element={token ? <TreeViewPage /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/services_UI"
+          element={token ? <Services_UI /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/type_doc_UI"
+          element={token ? <Type_doc_UI /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/pieces"
+          element={token ? <Piece_page /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/settings_UI"
+          element={token ? <SettingsPage_UI /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/pieces_UI"
+          element={token ? <Pieces_UI /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/agences"
+          element={token ? <Main_activities /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/agence_page"
+          element={token ? <ShowAgence /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/caisse"
+          element={token ? <ShowCaisse /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/guichet"
+          element={token ? <ShowGuichet /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/agence/document-type"
+          element={token ? <DocType /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/dossier"
+          element={token ? <Dossier /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/agence/config-piece"
+          element={token ? <Config_piece /> : <Navigate to="/" />}
+        ></Route>
         <Route
           path="/agence/config-docType/:id"
-          element={<ConfigDocType />}
+          element={token ? <ConfigDocType /> : <Navigate to="/" />}
         ></Route>
         <Route
           path="/agence_createPiece"
-          element={<Agence_createPiece />}
+          element={token ? <Agence_createPiece /> : <Navigate to="/" />}
         ></Route>
-        <Route path="/users" element={<UsersPage />}></Route>
-        <Route path="/meta_UI" element={<Meta_UI />}></Route>
-        <Route path="/document_UI/:docTypeId" element={<Document_UI />}></Route>
-        <Route path="/doc_n_type/:serviceId" element={<Doc_n_type />}></Route>
-        <Route path="/profil" element={<ProfilPage />}></Route>
-        <Route path="/search-config" element={<SearchConfig />}></Route>
-        <Route path="/rights" element={<UserRights />}></Route>
-        <Route path="/userRoles" element={<UserRoles />}></Route>
-        <Route path="/edit-service/:category/:id" element={<EditService />} />
+        <Route
+          path="/users"
+          element={token ? <UsersPage /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/meta_UI"
+          element={token ? <Meta_UI /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/document_UI/:docTypeId"
+          element={token ? <Document_UI /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/doc_n_type/:serviceId"
+          element={token ? <Doc_n_type /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/profil"
+          element={token ? <ProfilPage /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/search-config"
+          element={token ? <SearchConfig /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/rights"
+          element={token ? <UserRights /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/userRoles"
+          element={token ? <UserRoles /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/edit-service/:category/:id"
+          element={token ? <EditService /> : <Navigate to="/" />}
+        />
         <Route
           path="/edit-document-type/:category/:id"
-          element={<EditDocumentType />}
+          element={token ? <EditDocumentType /> : <Navigate to="/" />}
         />
-        <Route path="/edit-metadata/:id" element={<EditMetadata />} />
-        <Route path="/edit-piece/:category/:id" element={<EditPiece />} />
-        <Route path="/create-piece" element={<CreatePiece />}></Route>
-        <Route path="/documents" element={<DocumentListShow />}></Route>
-        <Route path="/documents/:id" element={<DocumentDetails />}></Route>
-        <Route path="/documents/edit/:id" element={<DocumentDetails />}></Route>
-        <Route path="/metadata" element={<Show_meta />}></Route>
-        <Route path="/document-types" element={<Show_doc_type />}></Route>
+        <Route
+          path="/edit-metadata/:id"
+          element={token ? <EditMetadata /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/edit-piece/:category/:id"
+          element={token ? <EditPiece /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/create-piece"
+          element={token ? <CreatePiece /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/documents"
+          element={token ? <DocumentListShow /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/documents/:id"
+          element={token ? <DocumentDetails /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/documents/edit/:id"
+          element={token ? <DocumentDetails /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/metadata"
+          element={token ? <Show_meta /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/document-types"
+          element={token ? <Show_doc_type /> : <Navigate to="/" />}
+        ></Route>
         <Route
           path="/create-document-type"
-          element={<Create_doc_type />}
+          element={token ? <Create_doc_type /> : <Navigate to="/" />}
         ></Route>
       </Routes>
     </div>

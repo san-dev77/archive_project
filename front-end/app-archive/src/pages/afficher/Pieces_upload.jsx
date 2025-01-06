@@ -7,9 +7,11 @@ import {
   Grid2x2Check,
   SquareCheckBig,
   Settings,
+  Eye,
 } from "lucide-react";
 import { pdfjs } from "react-pdf"; // Importez les composants nécessaires
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2"; // Importer SweetAlert
 
 // Configurez le worker
 pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.5.136/pdf.min.mjs`; // Mettez à jour l'URL
@@ -30,6 +32,8 @@ const PieceSelectionDialog = ({
   const [previewFile, setPreviewFile] = useState(null);
   const [documentIdState, setDocumentIdState] = useState(documentId); // Ajout de l'état pour documentId
   const [selectionMode, setSelectionMode] = useState("pieces"); // Ajout de l'état pour le mode de sélection
+  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState(false); // État pour contrôler l'ouverture de la modale
+  const [currentFiles, setCurrentFiles] = useState([]); // État pour stocker les fichiers à afficher
 
   useEffect(() => {
     const fetchPieces = async () => {
@@ -62,14 +66,14 @@ const PieceSelectionDialog = ({
   };
 
   const handleFileChange = (event, pieceId) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-      setFiles((prev) => ({
-        ...prev,
-        [pieceId]: selectedFile,
-      }));
-      setPreviewFile(URL.createObjectURL(selectedFile));
-    }
+    const selectedFiles = Array.from(event.target.files);
+    setFiles((prev) => ({
+      ...prev,
+      [pieceId]: prev[pieceId]
+        ? [...prev[pieceId], ...selectedFiles]
+        : selectedFiles,
+    }));
+    setPreviewFile(URL.createObjectURL(selectedFiles[0]));
   };
 
   const handleUploadAll = async () => {
@@ -95,22 +99,22 @@ const PieceSelectionDialog = ({
 
     try {
       console.log("FormData entries:", ...formData.entries());
-      const response = await axios.post(
-        `http://localhost:3000/documents/${documentId}/pieces`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-      console.log("Response:", response);
-      if (response.data.message === "Document pieces added successfully") {
-        setSuccessMessage("Fichiers chargés avec succès");
-        onLoadAll();
-      } else {
-        setErrorMessage(
-          "Échec du chargement des fichiers, essayez de nouveau avec un autre fichier mais de type pdf"
-        );
-      }
+      // const response = await axios.post(
+      //   `http://localhost:3000/documents/${documentId}/pieces`,
+      //   formData,
+      //   {
+      //     headers: { "Content-Type": "multipart/form-data" },
+      //   }
+      // );
+      // console.log("Response:", response);
+      // if (response.data.message === "Document pieces added successfully") {
+      //   setSuccessMessage("Fichiers chargés avec succès");
+      //   onLoadAll();
+      // } else {
+      //   setErrorMessage(
+      //     "Échec du chargement des fichiers, essayez de nouveau avec un autre fichier mais de type pdf"
+      //   );
+      // }
     } catch (error) {
       console.error("Erreur:", error);
       setErrorMessage("Échec du chargement des fichiers");
@@ -148,6 +152,12 @@ const PieceSelectionDialog = ({
       if (response.data.message === "Document pieces added successfully") {
         // Correction ici
         setSuccessMessage("Fichiers chargés en lot avec succès");
+        Swal.fire({
+          // Afficher SweetAlert
+          icon: "success",
+          title: "Succès",
+          text: "Fichiers chargés en lot avec succès!",
+        });
         onLoadAll();
       } else {
         setErrorMessage(
@@ -160,9 +170,56 @@ const PieceSelectionDialog = ({
     }
   };
 
+  // Fonction pour ouvrir la modale avec les fichiers
+  const openPreviewModal = (files) => {
+    setCurrentFiles(files);
+    setIsPreviewModalOpen(true);
+  };
+
+  const handleUploadPiece = async (pieceId) => {
+    const formData = new FormData();
+    const filesForPiece = files[pieceId]; // Récupérer tous les fichiers pour cette pièce
+
+    if (filesForPiece) {
+      filesForPiece.forEach((file) => {
+        formData.append("files", file); // Ajouter chaque fichier à FormData
+      });
+    }
+
+    formData.append("document_id", documentId);
+    formData.append("piece_id", pieceId);
+
+    try {
+      const response = await axios.post(
+        `http://localhost:3000/documents/${documentId}/pieces`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
+      if (response.data.message === "Document pieces added successfully") {
+        setSuccessMessage("Fichiers chargés avec succès");
+        Swal.fire({
+          // Afficher SweetAlert
+          icon: "success",
+          title: "Succès",
+          text: "Fichiers chargés avec succès pour cette pièce!",
+        });
+        onLoadAll();
+      } else {
+        setErrorMessage(
+          "Échec du chargement des fichiers, essayez de nouveau avec un autre fichier mais de type pdf"
+        );
+      }
+    } catch (error) {
+      console.error("Erreur:", error);
+      setErrorMessage("Échec du chargement des fichiers");
+    }
+  };
+
   return (
     <div className={`modal ${open ? "modal-open" : ""}`}>
-      <div className="modal-box w-11/12 max-w-5xl bg-gray-300 text-black">
+      <div className="modal-box w-11/12 max-w-5xl z-50 bg-gray-300 text-black">
         <h3 className="font-bold text-lg flex items-center justify-center">
           <Upload className="mr-2" />
           Chargement des fichiers joints
@@ -239,17 +296,18 @@ const PieceSelectionDialog = ({
                           {piece.nom_piece}
                         </span>
                       </label>
-                      <div>
+                      <div className="flex items-center justify-between">
                         <input
                           type="file"
                           id={`file-upload-${piece.id}`}
-                          className="hidden"
+                          className="hidden "
                           onChange={(event) =>
                             handleFileChange(event, piece.id)
                           }
+                          multiple
                           disabled={
                             !selectedPieces.includes(piece.id.toString())
-                          } // Convertir piece.id en chaîne
+                          }
                         />
                         <label htmlFor={`file-upload-${piece.id}`}>
                           <button
@@ -265,14 +323,39 @@ const PieceSelectionDialog = ({
                             }
                             disabled={
                               !selectedPieces.includes(piece.id.toString())
-                            } // Convertir piece.id en chaîne
+                            }
                           >
-                            {files[piece.id] ? "Changer" : "Choisir fichier"}
+                            {files[piece.id]
+                              ? "Ajouter plus"
+                              : "Choisir fichier"}
                           </button>
                         </label>
+                        {files[piece.id] && (
+                          <div className="flex items-center">
+                            <button
+                              onClick={() => openPreviewModal(files[piece.id])} // Ouvrir la modale avec les fichiers
+                              className="btn btn-outline btn-info ml-2"
+                            >
+                              <Eye className="w-4 h-4" />{" "}
+                            </button>
+                            <button
+                              onClick={() => handleUploadPiece(piece.id)} // Envoyer le fichier pour cette pièce
+                              className="btn btn-outline btn-success ml-2"
+                            >
+                              Envoyer
+                            </button>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
+                  <Link
+                    className="btn btn-outline flex gap-2 btn-default border-black text-black mt-10"
+                    to="/pieces"
+                  >
+                    <Settings />
+                    Configurer de nouvelles pièces
+                  </Link>
                 </div>
               )}
             </>
@@ -359,19 +442,49 @@ const PieceSelectionDialog = ({
         )}
 
         <div className="modal-action">
-          <button
-            onClick={
-              selectionMode === "pieces" ? handleUploadAll : handleUploadBatch
-            }
-            className="btn btn-outline btn-info"
-          >
-            Charger tout
-          </button>
+          {selectionMode != "pieces" && (
+            <button
+              onClick={
+                selectionMode === "pieces" ? handleUploadAll : handleUploadBatch
+              }
+              className="btn btn-outline btn-info"
+            >
+              Charger tout
+            </button>
+          )}
           <button onClick={onClose} className="btn btn-outline btn-error">
             Annuler
           </button>
         </div>
       </div>
+
+      {/* Modale pour afficher les fichiers */}
+      {isPreviewModalOpen && (
+        <div className="modal modal-open">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Fichiers sélectionnés</h3>
+            <div className="py-4">
+              {currentFiles.map((file) => (
+                <div key={file.name} className="flex items-center">
+                  <iframe
+                    src={URL.createObjectURL(file)} // Afficher le contenu du fichier dans un iframe
+                    className="w-full h-64" // Ajuster la taille de l'iframe
+                    title={file.name}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="modal-action">
+              <button
+                onClick={() => setIsPreviewModalOpen(false)}
+                className="btn"
+              >
+                Fermer
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

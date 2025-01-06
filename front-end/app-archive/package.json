@@ -46,9 +46,11 @@
     "react-transition-group": "^4.4.5",
     "react-treebeard": "^3.2.4",
     "react-treeview": "^0.4.7",
+    "react-tsparticles": "^2.12.2",
     "recharts": "^2.12.7",
     "slick-carousel": "^1.8.1",
     "styled-components": "^6.1.11",
+    "tsparticles": "^3.7.1",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

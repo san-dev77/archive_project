@@ -9,7 +9,6 @@ import {
   Trash2,
   TicketCheck,
   Landmark,
-  FileSymlink,
 } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -17,6 +16,8 @@ import Select from "react-select";
 import SideBar_agence from "../../../Components/Sidebar_agence";
 import TopBar from "../../../Components/Top_bar";
 import Loader_component from "../../../Components/Loader";
+import { showDeleteConfirmation } from "../../../utils/alerts";
+import Swal from "sweetalert2";
 
 export default function ShowGuichet() {
   const [guichets, setGuichets] = useState([]);
@@ -138,13 +139,21 @@ export default function ShowGuichet() {
   };
 
   const handleDeleteGuichet = async (guichetId) => {
-    try {
-      await axios.delete(`http://localhost:3000/guichet/${guichetId}`);
-      fetchGuichets();
-      toast.success("Guichet supprimé avec succès !");
-    } catch (error) {
-      console.error("Error deleting guichet:", error);
-      toast.error("Failed to delete guichet.");
+    const confirm = showDeleteConfirmation();
+    if (confirm) {
+      try {
+        await axios.delete(`http://localhost:3000/guichet/${guichetId}`);
+        fetchGuichets();
+        toast.success("Guichet supprimé avec succès !");
+        Swal.fire({
+          icon: "success",
+          title: "Succès",
+          text: "guichet supprimée avec succès !",
+        });
+      } catch (error) {
+        console.error("Error deleting guichet:", error);
+        toast.error("Failed to delete guichet.");
+      }
     }
   };
 
@@ -212,7 +221,7 @@ export default function ShowGuichet() {
               </h1>
 
               <button
-                className="btn btn-primary ml-auto mb-4 bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
+                className="btn btn-primary ml-auto mb-4 bg-gray-500 text-white hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
                 onClick={handleOpenModal}
               >
                 <Plus size={20} className="mr-2" />
@@ -233,18 +242,18 @@ export default function ShowGuichet() {
                   className="input w-full input-bordered border-2 border-gray-300 bg-white text-black rounded-lg p-2"
                 />
               </div>
-              <div className="flex items-center">
+              {/* <div className="flex items-center">
                 <button className="btn btn-default rounded-lg bg-gray-600  text-white hover:bg-gray-700 transition duration-300 shadow-md mt-2 ml-2">
                   <FileSymlink size={20} />
                   Attacher pièces jointes
                 </button>
-              </div>
+              </div> */}
             </div>
             <div className="overflow-x-auto">
-              <div className="h-[600px] bg-gray-300 py-2 rounded-lg px-4 overflow-y-auto">
+              <div className="h-[600px] bg-gray-600 py-2 rounded-lg px-4 overflow-y-auto">
                 {Object.keys(groupedGuichets).length === 0 ? (
-                  <div className="text-center text-gray-900 mt-4">
-                    <ServerOff className="text-red-500 mr-2" size={30} />
+                  <div className="text-center text-gray-100 mt-4 flex items-center justify-center">
+                    <ServerOff className="text-white mr-2" size={30} />
                     Aucun guichet disponible.
                   </div>
                 ) : (

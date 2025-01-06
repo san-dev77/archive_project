@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Side_bar from "../Components/Side_bar";
 import TopBar from "../Components/Top_bar";
@@ -8,14 +8,17 @@ import {
   Building2,
   Cable,
   GitBranchPlus,
+  Layers3,
   Link,
   Link2Off,
   ListTodo,
+  PlusCircleIcon,
   ScanEye,
   Ungroup,
 } from "lucide-react";
 import "./styles/piece_page_relation.css"; // Importez le fichier CSS
 import { Tooltip } from "@mui/material";
+import Swal from "sweetalert2";
 
 const LinkPieceToDocumentType = () => {
   const [pieces, setPieces] = useState([]);
@@ -31,40 +34,43 @@ const LinkPieceToDocumentType = () => {
   const [selectedRow, setSelectedRow] = useState(null);
   const [viewDialogOpen, setViewDialogOpen] = useState(false);
   const [servicesData, setServicesData] = useState([]); // Ajoutez cette ligne
+  const [newPieceCode, setNewPieceCode] = useState("");
+  const [newPieceName, setNewPieceName] = useState("");
+  const [createPieceDialogOpen, setCreatePieceDialogOpen] = useState(false);
 
   useEffect(() => {
-    const fetchPieces = async () => {
-      try {
-        const response = await axios.get("http://localhost:3000/pieces");
-        setPieces(response.data);
-      } catch (error) {
-        console.error("Error fetching pieces:", error);
-      }
-    };
-
-    const fetchServices = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/services/directory"
-        );
-        const data = response.data.map((directory) => {
-          const services = directory.services
-            .split("|")
-            .map((service) => JSON.parse(service));
-          return {
-            ...directory,
-            services,
-          };
-        });
-        setServicesData(data);
-      } catch (error) {
-        console.error("Error fetching services:", error);
-      }
-    };
-
     fetchPieces();
     fetchServices();
   }, []);
+
+  const fetchPieces = async () => {
+    try {
+      const response = await axios.get("http://localhost:3000/pieces");
+      setPieces(response.data);
+    } catch (error) {
+      console.error("Error fetching pieces:", error);
+    }
+  };
+
+  const fetchServices = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/services/directory"
+      );
+      const data = response.data.map((directory) => {
+        const services = directory.services
+          .split("|")
+          .map((service) => JSON.parse(service));
+        return {
+          ...directory,
+          services,
+        };
+      });
+      setServicesData(data);
+    } catch (error) {
+      console.error("Error fetching services:", error);
+    }
+  };
 
   useEffect(() => {
     if (selectedService) {
@@ -109,8 +115,6 @@ const LinkPieceToDocumentType = () => {
   const handleLink = async () => {
     if (selectedPieces.length > 0 && selectedDocumentType) {
       try {
-        console.log(selectedDocumentType);
-
         await axios.post("http://localhost:3000/pieces/link", {
           piece_ids: selectedPieces,
           document_type_id: selectedDocumentType,
@@ -119,10 +123,22 @@ const LinkPieceToDocumentType = () => {
           `http://localhost:3000/pieces/relations/${selectedDocumentType}`
         );
         setRelations(response.data);
-        toast.success("Relation créée avec succès!");
+
+        // Show SweetAlert success message
+        Swal.fire({
+          icon: "success",
+          title: "Succès!",
+          text: "Relation créée avec succès!",
+          confirmButtonText: "OK",
+        });
       } catch (error) {
         console.error("Error linking pieces to document type:", error);
-        toast.error("Échec de la création de la relation.");
+        Swal.fire({
+          icon: "error",
+          title: "Erreur!",
+          text: "Échec de la création de la relation.",
+          confirmButtonText: "OK",
+        });
       }
     }
   };
@@ -158,10 +174,22 @@ const LinkPieceToDocumentType = () => {
         `http://localhost:3000/pieces/relations/${selectedDocumentType}`
       );
       setRelations(response.data);
-      toast.success("Relation supprimée avec succès!");
+
+      // Show SweetAlert success message
+      Swal.fire({
+        icon: "success",
+        title: "Succès!",
+        text: "Relation supprimée avec succès!",
+        confirmButtonText: "OK",
+      });
     } catch (error) {
       console.error("Error deleting relation:", error);
-      toast.error("Échec de la suppression de la relation.");
+      Swal.fire({
+        icon: "error",
+        title: "Erreur!",
+        text: "Échec de la suppression de la relation.",
+        confirmButtonText: "OK",
+      });
     }
   };
 
@@ -184,6 +212,35 @@ const LinkPieceToDocumentType = () => {
       relation.code_piece.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleCreatePiece = async () => {
+    try {
+      await axios.post("http://localhost:3000/pieces", {
+        code_piece: newPieceCode,
+        nom_piece: newPieceName,
+      });
+      setCreatePieceDialogOpen(false);
+      setNewPieceCode("");
+      setNewPieceName("");
+      fetchPieces(); // Refresh the list of pieces
+
+      // Show SweetAlert success message
+      Swal.fire({
+        icon: "success",
+        title: "Succès!",
+        text: "Pièce créée avec succès!",
+        confirmButtonText: "OK",
+      });
+    } catch (error) {
+      console.error("Error creating piece:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Erreur!",
+        text: "Échec de la création de la pièce.",
+        confirmButtonText: "OK",
+      });
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-300">
       <Side_bar isVisible={true} />
@@ -191,15 +248,15 @@ const LinkPieceToDocumentType = () => {
         <TopBar />
         <div className="container px-4 mx-auto mt-28 bg-white rounded-xl shadow-2xl flex flex-col h-full max-w-4xl overflow-hidden">
           <h1 className="text-2xl mt-4 ml-2 font-extrabold text-gray-800 flex justify-start w-full">
-            <Cable size="28px" className="mr-3 text-indigo-600" />
+            <Cable size="28px" className="mr-3 " />
             Configuration des pièces
           </h1>
-          <div className="bg-gray-100 h-full rounded-lg shadow-lg w-full p-2 mb-6">
+          <div className="bg-gray-300 h-full rounded-lg shadow-lg w-full p-2 mb-6">
             <div className="form-control w-full mt-4">
               <label className="label">
-                <span className="label-text flex items-center justify-start gap-2">
+                <span className="text-black flex items-center justify-start gap-2">
                   <Building2 />
-                  Service
+                  Choisissez un Service
                 </span>
               </label>
               <select
@@ -226,7 +283,10 @@ const LinkPieceToDocumentType = () => {
             {selectedService && (
               <div className="form-control w-full mt-4">
                 <label className="label">
-                  <span className="label-text">Type de document</span>
+                  <span className="label-text flex items-start justify-start text-black">
+                    <Layers3 className="mr-1" />
+                    Type de document
+                  </span>
                 </label>
                 <select
                   className="select select-bordered w-full bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
@@ -254,11 +314,19 @@ const LinkPieceToDocumentType = () => {
                     onChange={handleRelationSearchChange} // Assurez-vous que cette fonction est appelée
                   />
                   <button
-                    className="btn btn-primary ml-auto bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
+                    className="btn btn-primary ml-auto bg-gray-500 text-white hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
                     onClick={handleDialogOpen}
                   >
                     <GitBranchPlus className="mr-2" />
                     Nouvelle liaison
+                  </button>
+
+                  <button
+                    className="btn btn-primary ml-auto bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
+                    onClick={() => setCreatePieceDialogOpen(true)}
+                  >
+                    <PlusCircleIcon className="mr-1" />
+                    Créer une nouvelle pièce
                   </button>
                 </div>
                 <div className="mt-4 w-full h-96 bg-white rounded-lg shadow-lg overflow-auto">
@@ -268,7 +336,7 @@ const LinkPieceToDocumentType = () => {
                     </div>
                   ) : (
                     <table className="table w-full border-collapse">
-                      <thead className="sticky top-0 rounded-lg bg-gray-300 text-black">
+                      <thead className="sticky top-0 rounded-lg bg-gray-600 text-white">
                         <tr>
                           <th className="text-lg p-4">Code de la pièce</th>
                           <td className="">|</td>
@@ -281,21 +349,27 @@ const LinkPieceToDocumentType = () => {
                         {filteredRelations.map((relation) => (
                           <tr
                             key={relation.id}
-                            className="hover:bg-gray-100 transition duration-200"
+                            className={`hover:bg-gray-100 transition duration-200 
+                              ${
+                                relation.id % 2 != 0
+                                  ? "bg-gray-300"
+                                  : "bg-white"
+                              }
+                              `}
                           >
                             <td className="text-center text-white flex items-center justify-center gap-2 mt-2 rounded-lg p-4 bg-slate-600">
                               <Ungroup color="white" />
                               {relation.code_piece}
                             </td>
                             <td className="text-center text-gray-500">|</td>
-                            <td className="text-center text-gray-500">
+                            <td className="text-center text-gray-900">
                               {relation.nom_piece}
                             </td>
                             <td className="text-center text-gray-500">|</td>
                             <td className="text-right flex  justify-center   gap-2 items-center p-2 text-base text-gray-800">
                               <Tooltip title="Voir">
                                 <button
-                                  className="btn btn-outline btn-primary btn-sm hover:bg-indigo-100 transition duration-300 rounded-md"
+                                  className="btn btn-outline bg-gray-600 btn-md text-white hover:bg-indigo-500 transition duration-300 rounded-md"
                                   onClick={() => handleView(relation)}
                                 >
                                   <ScanEye className="mr-1" />
@@ -303,7 +377,7 @@ const LinkPieceToDocumentType = () => {
                               </Tooltip>
                               <Tooltip title="Détacher">
                                 <button
-                                  className="btn btn-outline btn-error btn-sm hover:bg-red-400 transition duration-300 rounded-md"
+                                  className="btn btn-outline bg-gray-600 btn-md text-white hover:bg-red-400 transition duration-300 rounded-md"
                                   onClick={() => handleDelete(relation.id)}
                                 >
                                   <Link2Off className="mr-1" />
@@ -323,7 +397,7 @@ const LinkPieceToDocumentType = () => {
       </div>
 
       {openDialog && (
-        <div className="fixed inset-0 flex items-center  justify-center bg-black bg-opacity-50">
+        <div className="fixed z-50 inset-0 flex items-center  justify-center bg-black bg-opacity-50">
           <div className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300  flex flex-col justify-center items-center">
             <button
               className="btn btn-sm btn-circle absolute right-2 top-2"
@@ -368,13 +442,16 @@ const LinkPieceToDocumentType = () => {
             </div>
             <div className="modal-action">
               <button
-                className="btn btn-info text-white hover:bg-blue-500 hover:text-white hover:border-white"
+                className="btn btn-info text-white bg-gray-700 hover:bg-blue-500 hover:text-white hover:border-white"
                 onClick={handleLink}
               >
                 <Link className="mr-2" />
                 Lier les pièces
               </button>
-              <button className="btn" onClick={handleDialogClose}>
+              <button
+                className="btn btn-outline btn-error"
+                onClick={handleDialogClose}
+              >
                 Fermer
               </button>
             </div>
@@ -406,6 +483,55 @@ const LinkPieceToDocumentType = () => {
                 </strong>{" "}
               </p>
               {/* Ajoutez d'autres détails de la pièce ici si nécessaire */}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {createPieceDialogOpen && (
+        <div className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 flex flex-col justify-center items-center">
+            <button
+              className="btn btn-sm btn-circle absolute right-2 top-2"
+              onClick={() => setCreatePieceDialogOpen(false)}
+            >
+              ✕
+            </button>
+            <h3 className="font-bold flex justify-center items-center text-lg text-center text-black-500">
+              <PlusCircleIcon className="mr-1" />
+              Créer une nouvelle pièce
+            </h3>
+            <div className="form-control w-full mt-4">
+              <input
+                type="text"
+                placeholder="Code de la pièce"
+                className="input input-bordered w-full bg-gray-300 text-gray-800"
+                value={newPieceCode}
+                onChange={(e) => setNewPieceCode(e.target.value)}
+              />
+            </div>
+            <div className="form-control w-full mt-4">
+              <input
+                type="text"
+                placeholder="Nom de la pièce"
+                className="input input-bordered w-full bg-gray-300 text-gray-800"
+                value={newPieceName}
+                onChange={(e) => setNewPieceName(e.target.value)}
+              />
+            </div>
+            <div className="modal-action">
+              <button
+                className="btn btn-info text-white bg-gray-700 hover:bg-blue-500 hover:text-white hover:border-white"
+                onClick={handleCreatePiece}
+              >
+                Créer la pièce
+              </button>
+              <button
+                className="btn btn-outline btn-error"
+                onClick={() => setCreatePieceDialogOpen(false)}
+              >
+                Fermer
+              </button>
             </div>
           </div>
         </div>

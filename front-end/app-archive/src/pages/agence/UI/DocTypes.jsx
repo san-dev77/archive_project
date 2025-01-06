@@ -20,6 +20,7 @@ import {
 import { Tooltip } from "@mui/material";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 const deleteDocumentType = async (id) => {
   await axios.delete(`http://localhost:3000/agence/document-type/${id}`);
@@ -34,7 +35,6 @@ const updateDocumentType = async (docType) => {
 
 const createDocumentType = async (docType) => {
   console.log(docType);
-
   await axios.post("http://localhost:3000/agence/document-type", docType);
 };
 
@@ -102,8 +102,26 @@ export default function DocType() {
   const handleLinkPage = () => {
     navigate("/agence/show-links");
   };
+
   const handleDelete = (id) => {
-    deleteMutation.mutate(id);
+    Swal.fire({
+      title: "Êtes-vous sûr?",
+      text: "Vous ne pourrez pas revenir en arrière!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Oui, supprimer!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteMutation.mutate(id);
+        Swal.fire(
+          "Supprimé!",
+          "Le type de document a été supprimé.",
+          "success"
+        );
+      }
+    });
   };
 
   const handleEdit = (docType) => {
@@ -115,6 +133,11 @@ export default function DocType() {
     e.preventDefault();
     if (currentDocType.id) {
       updateMutation.mutate(currentDocType);
+      Swal.fire(
+        "Mis à jour!",
+        "Le type de document a été mis à jour.",
+        "success"
+      );
     } else {
       createMutation.mutate(currentDocType);
     }
@@ -150,13 +173,6 @@ export default function DocType() {
               className="btn btn-default relative btn-outline border-t-cyan-800 w-full text-left flex justify-between items-center"
               onClick={() => toggleDocType(docType.id)}
             >
-              {/* 
-              Affiche une petite bulle au dessus de l'element
-              <div className="absolute -top-2 -left-2 bg-gray-900 rounded-full px-2 py-1">
-                <p className="text-[10px] z-[5] text-white">
-                  {docType.nom_document_type}
-                </p>
-              </div> */}
               <div className="flex items-center p-2 rounded-full bg-white">
                 <Network className="mr-2 text-gray-800" />
                 <span
@@ -207,12 +223,12 @@ export default function DocType() {
   };
 
   return (
-    <div className="flex min-h-screen mt-8 bg-gray-300 to-gray-900">
+    <div className="flex min-h-screen  bg-gray-300 to-gray-900">
       <Sidebar_agence isVisible={true} />
       <div className="flex-1 flex flex-col ">
         <TopBar position="fixed" title="Types de documents" />
 
-        <div className="container w-[90%] mx-auto mt-16 bg-white rounded-xl shadow-2xl flex flex-col h-auto">
+        <div className="container w-[90%] mx-auto mt-28 bg-white rounded-xl shadow-2xl flex flex-col h-auto">
           <div className="bg-white w-full rounded-lg shadow-md p-6 ">
             <div className="flex justify-between items-center mb-4">
               <h1 className="text-2xl font-extrabold text-gray-800 flex justify-start w-full">
@@ -227,13 +243,13 @@ export default function DocType() {
                   <Download size={20} className="mr-2" />
                   Importer
                 </button>
-                <button className="btn btn-primary text-white bg-gray-400  hover:bg-gray-700 transition duration-300 shadow-md">
+                <button className="btn btn-primary text-white bg-gray-600  hover:bg-gray-700 transition duration-300 shadow-md">
                   <ArrowUpToLine size={20} className="mr-2" />
                   Exporter
                 </button>
               </div>
               <button
-                className="btn btn-primary bg-gray-400 text-white hover:bg-gray-500 transition duration-300 shadow-md"
+                className="btn btn-primary bg-gray-500 text-white hover:bg-gray-500 transition duration-300 shadow-md"
                 onClick={() => setOpenModal(true)}
               >
                 <Plus size={20} className="mr-2" />
@@ -267,7 +283,7 @@ export default function DocType() {
             </div>
 
             <div className="overflow-x-auto">
-              <div className="h-[600px] py-4 rounded-lg bg-gray-300 px-10 overflow-y-auto">
+              <div className="h-[600px] py-4 rounded-lg bg-gray-700 px-10 overflow-y-auto">
                 {renderDocTypeList()}
               </div>
             </div>

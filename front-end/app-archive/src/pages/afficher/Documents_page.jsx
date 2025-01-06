@@ -26,15 +26,25 @@ import {
 import { toast } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
-import { Avatar, CircularProgress, IconButton, Tooltip } from "@mui/material";
+import {
+  Avatar,
+  CircularProgress,
+  IconButton,
+  Tooltip,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Typography,
+} from "@mui/material";
 import Swal from "sweetalert2"; // Assurez-vous d'importer SweetAlert2
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const MainContainer = ({ children }) => (
   <div className="flex w-full  bg-gray-300">{children}</div>
 );
 
 const ContentContainer = ({ children }) => (
-  <div className=" mt-10 p-4 bg-gray-100 rounded-lg shadow-none flex flex-col h-screen items-stretch max-w-full w-[70%] ml-2">
+  <div className=" mt-10 p-4 bg-gray-100 rounded-lg  shadow-none flex flex-col h-screen items-stretch max-w-full w-[70%] ml-7">
     {children}
   </div>
 );
@@ -164,34 +174,64 @@ const DetailsDialog = ({
               </tr>
               {isPieceMode
                 ? // Rendu pour le mode pièce
-                  Array.from(
-                    new Set(document?.files?.map((file) => file.pieceName))
-                  ).map((pieceName, index) => {
-                    const file = document.files.find(
-                      (f) => f.pieceName === pieceName
-                    );
-                    return (
-                      <tr key={index} className="">
-                        <td className="hover:bg-cyan-600 cursor-pointer w-full text-gray-800 mt-2 rounded-lg bg-cyan-500 flex items-center justify-center">
-                          <FileUp
-                            className="cursor-pointer"
-                            onClick={() => handleFileClick(file.fileUrl)}
-                          />
-                        </td>
-                        <td className="text-gray-800 w-full">
-                          {file.pieceName}
-                        </td>
-                        <td>
-                          <span
-                            className="text-gray-800 cursor-pointer hover:text-blue-500"
-                            onClick={() => handleFileClick(file.fileUrl)}
+                  (() => {
+                    const uniqueFilesByPiece = {};
+
+                    document?.files?.forEach((file) => {
+                      if (!uniqueFilesByPiece[file.pieceName]) {
+                        uniqueFilesByPiece[file.pieceName] = [];
+                      }
+                      // Ajoutez le fichier s'il n'est pas déjà présent
+                      if (
+                        !uniqueFilesByPiece[file.pieceName].some(
+                          (f) => f.filePath === file.filePath
+                        )
+                      ) {
+                        uniqueFilesByPiece[file.pieceName].push(file);
+                      }
+                    });
+
+                    return Object.entries(uniqueFilesByPiece).map(
+                      ([pieceName, files], index) => (
+                        <Accordion
+                          key={index}
+                          sx={{ background: "black", width: "100%" }}
+                          className="w-full "
+                        >
+                          <AccordionSummary
+                            expandIcon={<ExpandMoreIcon />}
+                            aria-controls={`panel${index}-content`}
+                            id={`panel${index}-header`}
                           >
-                            {file.filePath}
-                          </span>
-                        </td>
-                      </tr>
+                            <Typography className="text-gray-800 font-bold">
+                              {pieceName}
+                            </Typography>
+                          </AccordionSummary>
+                          <AccordionDetails className="w-full">
+                            <table className="table w-full">
+                              <tbody>
+                                {files.map((file, fileIndex) => (
+                                  <tr key={fileIndex} className="">
+                                    <td className="hover:bg-cyan-600 cursor-pointer w-full text-gray-800 mt-2 rounded-lg bg-cyan-500 flex items-center justify-center">
+                                      <FileUp
+                                        className="cursor-pointer"
+                                        onClick={() =>
+                                          handleFileClick(file.fileUrl)
+                                        }
+                                      />
+                                    </td>
+                                    <td className="text-gray-800 w-full">
+                                      {file.filePath}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </AccordionDetails>
+                        </Accordion>
+                      )
                     );
-                  }) || (
+                  })() || (
                     <tr>
                       <td colSpan="3" className="text-center">
                         Aucun fichier disponible
@@ -392,6 +432,8 @@ const DocumentListShow = () => {
         `http://localhost:3000/documents/type/lot/${selectedDocType}`
       );
       if (docResponseLot.data) {
+        console.log("lot data", docResponseLot.data);
+
         setDocumentLot(docResponseLot.data);
       }
     } catch (error) {
@@ -416,6 +458,8 @@ const DocumentListShow = () => {
       const docResponse = await axios.get(
         `http://localhost:3000/documents/type/pieces/${selectedDocType}`
       );
+      console.log("pieces datas", docResponse.data);
+
       if (docResponse.data) {
         setDocuments(docResponse.data);
       }
@@ -720,8 +764,8 @@ const DocumentListShow = () => {
         <StyledBox>
           <div className="flex justify-between mb-3 gap-2">
             <div className="form-control w-1/2">
-              <label className="label w-full flex items-center justify-start">
-                <Building2 className="mr-2" />
+              <label className="label w-full flex  text-black items-center justify-start">
+                <Building2 className="mr-2 " />
                 Liste des services
               </label>
               <select
@@ -747,9 +791,9 @@ const DocumentListShow = () => {
             </div>
             {selectedService && (
               <div className="form-control w-1/2">
-                <label className="label w-full flex items-center justify-start">
-                  <Layers3 className="mr-2" />
-                  Le type du document
+                <label className="label w-full flex items-center text-black justify-start">
+                  <Layers3 className="mr-2 " />
+                  Liste type de document
                 </label>
                 <select
                   className="select select-bordered text-black bg-gray-200 border-gray-300"

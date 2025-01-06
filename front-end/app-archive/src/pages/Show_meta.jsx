@@ -6,8 +6,18 @@ import "daisyui/dist/full.css";
 import Side_bar from "../Components/Side_bar";
 import TopBar from "../Components/Top_bar";
 import EditMetadata from "../pages/update/EditMetadata";
-import { DatabaseZap, SquarePen, Trash2, LayoutList, Plus } from "lucide-react";
+import {
+  DatabaseZap,
+  SquarePen,
+  Trash2,
+  LayoutList,
+  Plus,
+  Layers3,
+  Settings,
+} from "lucide-react";
 import { Tooltip } from "@mui/material";
+import Swal from "sweetalert2";
+import { showDeleteConfirmation } from "../utils/alerts";
 
 export default function ShowMeta() {
   const [servicesData, setServicesData] = useState([]); // Add this line
@@ -47,31 +57,24 @@ export default function ShowMeta() {
     setSelectedDocumentTypeName("");
     setDocumentTypes([]);
     setFilteredDocumentTypes([]);
-    localStorage.setItem("selectedService", serviceName);
-    localStorage.setItem("selectedServiceId", serviceId);
   };
 
   const handleDocumentTypeSelect = (docTypeId, docTypeName) => {
     setSelectedDocumentTypeId(docTypeId);
     setSelectedDocumentTypeName(docTypeName);
     setFilteredDocumentTypes(documentTypes);
-    localStorage.setItem("selectedDocumentTypeId", docTypeId);
-    localStorage.setItem("selectedDocumentTypeName", docTypeName);
   };
 
   useEffect(() => {
-    const savedService = localStorage.getItem("selectedService");
-    const savedServiceId = localStorage.getItem("selectedServiceId");
-    const savedDocumentTypeId = localStorage.getItem("selectedDocumentTypeId");
-    const savedDocumentTypeName = localStorage.getItem(
-      "selectedDocumentTypeName"
-    );
-
-    if (savedService) setSelectedService(savedService);
-    if (savedServiceId) setSelectedServiceId(savedServiceId);
-    if (savedDocumentTypeId) setSelectedDocumentTypeId(savedDocumentTypeId);
-    if (savedDocumentTypeName)
-      setSelectedDocumentTypeName(savedDocumentTypeName);
+    // Supprimer l'accès à localStorage
+    // const savedService = localStorage.getItem("selectedService");
+    // const savedServiceId = localStorage.getItem("selectedServiceId");
+    // const savedDocumentTypeId = localStorage.getItem("selectedDocumentTypeId");
+    // const savedDocumentTypeName = localStorage.getItem("selectedDocumentTypeName");
+    // if (savedService) setSelectedService(savedService);
+    // if (savedServiceId) setSelectedServiceId(savedServiceId);
+    // if (savedDocumentTypeId) setSelectedDocumentTypeId(savedDocumentTypeId);
+    // if (savedDocumentTypeName) setSelectedDocumentTypeName(savedDocumentTypeName);
   }, []);
 
   useEffect(() => {
@@ -132,6 +135,10 @@ export default function ShowMeta() {
           const response = await axios.get(
             `http://localhost:3000/metadata/type/${selectedDocumentTypeId}`
           );
+          console.log(selectedDocumentTypeId);
+
+          console.log(response.data);
+
           setMetadata(response.data);
         } catch (error) {
           console.error("Error fetching metadata:", error);
@@ -146,14 +153,29 @@ export default function ShowMeta() {
   }, [selectedDocumentTypeId]);
 
   const handleDelete = async (id) => {
-    try {
-      toast.success("Metadonnée supprimée avec succès !");
-      setMetadata((prevMetadata) =>
-        prevMetadata.filter((meta) => meta.id !== id)
-      );
-    } catch (error) {
-      console.error("Error deleting metadata:", error);
-      toast.error("Erreur lors de la suppression de la metadonnée");
+    const confirmed = await showDeleteConfirmation();
+    if (confirmed) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:3000/metadata/${id}`
+        );
+        if (response.status === 200) {
+          toast.success("Metadonnée supprimée avec succès !");
+          Swal.fire({
+            title: "Succès",
+            text: "Meta-donnée supprimé avec succès !",
+            icon: "success",
+            confirmButtonColor: "#444",
+            confirmButtonText: "OK",
+          });
+          setMetadata((prevMetadata) =>
+            prevMetadata.filter((meta) => meta.id !== id)
+          );
+        }
+      } catch (error) {
+        console.error("Error deleting metadata:", error);
+        toast.error("Erreur lors de la suppression de la metadonnée");
+      }
     }
   };
 
@@ -194,6 +216,13 @@ export default function ShowMeta() {
       setKey("");
       setMetaType("text"); // Réinitialiser le type à 'text' après la création
       toast.success("Métadonnée créée avec succès!");
+      Swal.fire({
+        title: "Element créé !",
+        text: "Meta-donnée créé avec succès !",
+        icon: "success",
+        confirmButtonColor: "#444",
+        confirmButtonText: "OK",
+      });
       await fetchMetadataRefresh();
     } catch (error) {
       console.error("Error creating metadata:", error);
@@ -222,22 +251,23 @@ export default function ShowMeta() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-300 overflow-hidden">
+    <div className="flex h-screen bg-gray-300 overflow-hidden">
       <Side_bar isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar />
-        <div className="container w-[90%] mx-auto mt-28 bg-white rounded-xl shadow-2xl flex flex-col h-full">
+        <div className="container w-[90%] mx-auto mt-28 bg-white rounded-xl shadow-2xl flex flex-col h-full overflow-y-auto">
           <h1 className="text-2xl mt-4 ml-2 font-extrabold text-gray-800 flex justify-start w-full">
-            <LayoutList size="28px" className="mr-3 text-indigo-600" />
+            <LayoutList size="28px" className="mr-3 text-red-500" />
             Liste des Métadonnées
           </h1>
           <div className="border-b-2 border-gray-300 w-full"></div>
-          <div className="bg-gray-100 w-full rounded-lg shadow-md p-6 mb-6 flex-1 overflow-y-auto">
+          <div className="bg-gray-300 w-full rounded-lg shadow-md p-6 mb-6 flex-1 overflow-y-auto">
             <div className="flex gap-4 mb-6">
               <div className="w-full">
                 <div className="form-control">
-                  <label className="label text-black">
-                    Sélectionner un service
+                  <label className="label flex items-start justify-start text-black">
+                    <Settings className="mr-1" />
+                    Choisissez un service
                   </label>
                   <select
                     className="select select-bordered w-full text-black bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
@@ -269,7 +299,8 @@ export default function ShowMeta() {
               </div>
               <div className="w-full">
                 <div className="form-control">
-                  <label className="label text-black">
+                  <label className="label flex items-start justify-start text-black">
+                    <Layers3 className="mr-1" />
                     Choisissez un type de document
                   </label>
                   <select
@@ -319,10 +350,10 @@ export default function ShowMeta() {
               )}
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="">
               <div className="max-h-96 overflow-y-auto">
                 <table className="table w-full border-collapse">
-                  <thead className="sticky top-0 rounded-lg bg-gray-300 text-black">
+                  <thead className="sticky top-0 rounded-lg bg-gray-600 text-white">
                     <tr>
                       <th className="text-lg p-4"></th>
                       <th className="text-lg p-4">|</th>
@@ -337,9 +368,9 @@ export default function ShowMeta() {
                     {metadata.map((meta) => (
                       <tr
                         key={meta.id}
-                        className="hover:bg-gray-100 transition duration-200"
+                        className="hover:bg-gray-300  bg-gray-100 transition duration-200"
                       >
-                        <td className="flex items-center justify-center bg-gray-400 rounded-lg text-white text-base mt-2">
+                        <td className="flex items-center justify-center bg-gray-800 rounded-lg text-white text-base mt-2">
                           <DatabaseZap className="mr-2" />
                         </td>
                         <td className="text-base text-gray-900">|</td>
@@ -352,7 +383,7 @@ export default function ShowMeta() {
                         <td className="text-right text-base text-gray-900">
                           <Tooltip title="Modifier">
                             <button
-                              className="btn btn-outline btn-primary btn-sm mr-2 hover:bg-indigo-100 transition duration-300 rounded-md"
+                              className="btn btn-outline bg-gray-600 btn-md text-white mr-2 hover:bg-indigo-500 transition duration-300 rounded-md"
                               onClick={() => handleEdit(meta)}
                             >
                               <SquarePen className="mr-1" />
@@ -360,7 +391,7 @@ export default function ShowMeta() {
                           </Tooltip>
                           <Tooltip title="Supprimer">
                             <button
-                              className="btn btn-outline btn-error btn-sm hover:bg-red-400 transition duration-300 rounded-md"
+                              className="btn btn-outline text-white bg-gray-600 btn-md  hover:bg-red-500 transition duration-300 rounded-md"
                               onClick={() => handleDelete(meta.id)}
                             >
                               <Trash2 className="mr-1" />
@@ -379,7 +410,7 @@ export default function ShowMeta() {
 
       {modalOpen && !editMode && (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+          className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50"
           onClick={() => setModalOpen(false)}
         >
           <div

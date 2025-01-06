@@ -9,6 +9,7 @@ import {
   Bookmark,
   Ungroup,
   LayoutList,
+  Settings,
 } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -128,7 +129,7 @@ export default function CreatePiece() {
             Liste des Pièces
           </h1>
           <div className="border-b-2 border-gray-300 mb-4 w-full"></div>
-          <div className=" h-full bg-gray-200 w-full rounded-lg shadow-md p-6 mb-6">
+          <div className=" h-full bg-gray-400  text-white w-full rounded-lg shadow-md p-6 mb-6">
             <div className="flex gap-4 mb-6">
               <input
                 type="text"
@@ -138,18 +139,26 @@ export default function CreatePiece() {
                 className="input input-bordered w-full max-w-xs bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
               />
               <button
-                className="btn btn-primary ml-auto bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
+                className="btn btn-primary ml-auto bg-gray-700 text-white hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
                 onClick={() => setOpenModal(true)}
               >
                 <Plus size={20} className="mr-2" />
                 Nouvelle
+              </button>
+              <button
+                onClick={() => {
+                  window.location.href = "/pieces";
+                }}
+                className="btn btn-outline btn-default flex items-center justify-center text-black"
+              >
+                <Settings /> Configurer les pièces
               </button>
             </div>
 
             <div className="overflow-x-auto ">
               <div className=" overflow-y-auto">
                 <table className="table w-full border-collapse">
-                  <thead className="sticky top-0 rounded-lg bg-gray-400 text-black">
+                  <thead className="sticky top-0 rounded-lg bg-gray-700 text-white">
                     <tr>
                       <th className="text-lg p-4">Code de la pièce</th>
                       <td className="">|</td>
@@ -180,7 +189,7 @@ export default function CreatePiece() {
                           <div className="flex flex-col sm:flex-row justify-end items-center space-y-2 sm:space-y-0 sm:space-x-2">
                             <Tooltip title="Modifier">
                               <button
-                                className="btn btn-outline btn-primary btn-sm w-full sm:w-auto hover:bg-indigo-100 transition duration-300 rounded-md"
+                                className="btn btn-outline bg-gray-600 text-white btn-md w-full sm:w-auto hover:bg-indigo-500 transition duration-300 rounded-md"
                                 onClick={() => handleEdit(piece)}
                               >
                                 <SquarePen className="mr-1" />
@@ -188,7 +197,7 @@ export default function CreatePiece() {
                             </Tooltip>
                             <Tooltip title="Supprimer">
                               <button
-                                className="btn btn-outline btn-error btn-sm w-full sm:w-auto hover:bg-red-100 transition duration-300 rounded-md"
+                                className="btn btn-outline bg-gray-600 btn-md text-white  hover:bg-red-500 transition duration-300 rounded-md"
                                 onClick={() => handleDelete(piece.id)}
                               >
                                 <Trash2 className="mr-1" />
@@ -208,7 +217,7 @@ export default function CreatePiece() {
 
       {openModal && (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+          className="fixed inset-0 flex z-50 items-center justify-center bg-black bg-opacity-50"
           onClick={() => setOpenModal(false)}
         >
           <div

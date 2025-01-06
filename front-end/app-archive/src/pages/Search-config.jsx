@@ -278,12 +278,12 @@ export default function SearchConfig() {
   };
 
   return (
-    <div className="flex w-full min-h-screen bg-gray-300">
+    <div className="flex w-full min-h-screen bg-gray-400">
       {isLoading && <div className="loader">Chargement...</div>}
       <SideBar isVisible={true} /> {/* Ajout de la SideBar */}
       <div className="flex-1 ml-2 flex flex-col">
         <TopBar /> {/* Ajout de la TopBar */}
-        <div className="flex-1 mt-24 container mx-auto p-8 bg-white shadow-xl rounded-lg max-w-full overflow-auto">
+        <div className="flex-1 mt-24 container mx-auto p-8 bg-gray-200 shadow-xl rounded-lg max-w-full overflow-auto">
           <h1 className="text-3xl flex justify-center items-center font-extrabold mb-10 text-center text-gray-700">
             <LayoutList className="text-gray-700" size={30} />
             Configuration du moteur de recherche
@@ -427,14 +427,14 @@ export default function SearchConfig() {
           <div className="flex flex-col md:flex-row justify-between gap-16">
             <button
               onClick={handleBack}
-              className="bg-gray-600 flex items-center gap-2 text-white px-8 py-3 rounded-lg hover:bg-gray-700 transition duration-300"
+              className="bg-gray-900 flex items-center gap-2 text-white px-8 py-3 rounded-lg hover:bg-gray-700 transition duration-300"
             >
               <Undo2 className="text-white" size={20} />
               Retour
             </button>
             <button
               onClick={handleSaveConfig}
-              className="bg-indigo-700 flex items-center gap-2 text-white px-8 py-3 rounded-lg hover:bg-indigo-800 transition duration-300"
+              className="bg-gray-600 flex items-center gap-2 text-white px-8 py-3 rounded-lg hover:bg-indigo-800 transition duration-300"
             >
               <Save className="text-white" size={20} />
               Sauvegarder

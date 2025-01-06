@@ -17,6 +17,8 @@ import Select from "react-select";
 import SideBar_agence from "../../../Components/Sidebar_agence";
 import TopBar from "../../../Components/Top_bar";
 import Loader_component from "../../../Components/Loader";
+import Swal from "sweetalert2";
+import { showDeleteConfirmation } from "../../../utils/alerts";
 
 export default function ShowCaisse() {
   const [caisses, setCaisses] = useState([]);
@@ -75,17 +77,40 @@ export default function ShowCaisse() {
 
   const handleCaisseCreated = async (event) => {
     event.preventDefault();
-    try {
-      console.log(newCaisse);
 
-      await axios.post("http://localhost:3000/caisse", newCaisse);
+    // Validate input fields
+    if (!newCaisse.code_caisse || !newCaisse.agence_id) {
+      toast.error("Tous les champs doivent être remplis.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/caisse",
+        newCaisse
+      );
+
+      // Check response data for success/failure message
+      if (response.code === "ERR_BAD_REQUEST") {
+        if (response.data?.message) {
+          toast.error(response.data.message);
+        } else {
+          toast.error("Une erreur est survenue");
+        }
+        return;
+      }
+
+      // Success case
       setNewCaisse({ code_caisse: "", nom_caisse: "", agence_id: "" });
       fetchCaisses();
       toast.success("Nouvelle caisse créée avec succès !");
       setOpenModal(false);
     } catch (error) {
       console.error("Error creating caisse:", error);
-      toast.error("Failed to create caisse.");
+      const errorMessage =
+        error.response?.data?.message ||
+        "Une erreur est survenue lors de la création de la caisse.";
+      toast.error(errorMessage);
     }
   };
 
@@ -156,16 +181,36 @@ export default function ShowCaisse() {
   };
 
   const handleDeleteCaisse = async (caisseId) => {
-    try {
-      await axios.delete(`http://localhost:3000/caisse/${caisseId}`);
-      fetchCaisses();
-      toast.success("Caisse supprimée avec succès !");
-    } catch (error) {
-      console.error("Error deleting caisse:", error);
-      toast.error("Failed to delete caisse.");
+    const confirm = showDeleteConfirmation();
+    if (confirm) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:3000/caisse/${caisseId}`
+        );
+        if (response.status === 200) {
+          fetchCaisses();
+          toast.success("Caisse supprimée avec succès !");
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Erreur",
+            text:
+              response.data.message || "Échec de la suppression de la caisse.",
+          });
+        }
+      } catch (error) {
+        console.error("Error deleting caisse:", error);
+        const errorMessage =
+          error.response?.data?.message ||
+          "Une erreur est survenue lors de la suppression.";
+        Swal.fire({
+          icon: "error",
+          title: "Erreur",
+          text: errorMessage,
+        });
+      }
     }
   };
-
   const handleCaisseUpdated = async (event) => {
     event.preventDefault();
     try {
@@ -177,7 +222,7 @@ export default function ShowCaisse() {
         id: newCaisse.id,
       });
       setNewCaisse({ code_caisse: "", nom_caisse: "", agence_id: "" });
-      fetchCaisses();
+      fetchCaisses(); // Refresh the list of caisses after update
       toast.success("Caisse mise à jour avec succès !");
       setOpenModal(false);
     } catch (error) {
@@ -256,7 +301,7 @@ export default function ShowCaisse() {
               </h1>
 
               <button
-                className="btn btn-primary ml-auto mb-4 bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
+                className="btn btn-primary ml-auto mb-4 bg-gray-600 text-white hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
                 onClick={handleOpenModal}
               >
                 <Plus size={20} className="mr-2" />
@@ -279,7 +324,7 @@ export default function ShowCaisse() {
               </div>
             </div>
             <div className="overflow-x-auto">
-              <div className="h-[600px] bg-gray-300 py-2 rounded-lg px-4 overflow-y-auto">
+              <div className="h-[600px] bg-gray-600 py-2 rounded-lg px-4 overflow-y-auto">
                 {Object.keys(groupedCaisses).length === 0 ? (
                   <div className="text-center text-gray-900 mt-4">
                     <ServerOff className="text-red-500 mr-2" size={30} />
@@ -291,7 +336,7 @@ export default function ShowCaisse() {
                       ([agencyId, agency]) => (
                         <li key={agencyId} className="w-full">
                           <button
-                            className="btn bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg shadow-md w-full text-left flex justify-between items-center"
+                            className="btn bg-gray-600 text-black hover:bg-gray-400 transition duration-300 rounded-lg shadow-md w-full text-left flex justify-between items-center"
                             onClick={() => toggleAgency(agencyId)}
                           >
                             <div className="flex text-black items-center p-2 rounded-full bg-white">
@@ -394,6 +439,7 @@ export default function ShowCaisse() {
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 100,
           }}
           onClick={handleCloseModal}
         >
@@ -417,19 +463,21 @@ export default function ShowCaisse() {
                 newCaisse.id ? handleCaisseUpdated : handleCaisseCreated
               }
             >
-              <div className="form-control">
-                <label className="label">Sélectionner une agence</label>
-                <Select
-                  value={agencyOptions.find(
-                    (option) => option.value === newCaisse.agence_id
-                  )}
-                  onChange={handleAgencyChange}
-                  options={agencyOptions}
-                  className="mb-2"
-                  placeholder="Choisir une agence"
-                  isClearable
-                />
-              </div>
+              {newCaisse.id ? null : (
+                <div className="form-control">
+                  <label className="label">Sélectionner une agence</label>
+                  <Select
+                    value={agencyOptions.find(
+                      (option) => option.value === newCaisse.agence_id
+                    )}
+                    onChange={handleAgencyChange}
+                    options={agencyOptions}
+                    className="mb-2"
+                    placeholder="Choisir une agence"
+                    isClearable
+                  />
+                </div>
+              )}
               <div className="form-control mt-4">
                 <label className="label">Code de la caisse</label>
                 <input
@@ -443,7 +491,7 @@ export default function ShowCaisse() {
                 />
               </div>
               <div className="form-control mt-4">
-                <label className="label">Nom de la caisse</label>
+                <label className="label">Nom de la caisse (facultatif)</label>
                 <input
                   type="text"
                   value={newCaisse.nom_caisse}
@@ -451,7 +499,6 @@ export default function ShowCaisse() {
                     setNewCaisse({ ...newCaisse, nom_caisse: e.target.value })
                   }
                   className="input input-bordered border-2 border-gray-300 bg-white text-black"
-                  required
                 />
               </div>
               <div className="modal-action flex justify-center items-center">

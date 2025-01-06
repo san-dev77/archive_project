@@ -14,6 +14,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "daisyui/dist/full.css";
 import { Tooltip } from "@mui/material";
+import { showDeleteConfirmation } from "../../../utils/alerts";
+import Swal from "sweetalert2";
 
 const toastOptions = {
   style: {
@@ -59,13 +61,41 @@ export default function Agence_createPiece() {
   };
 
   const handleDelete = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3000/agence/piece/${id}`);
-      fetchPieces();
-      toast.success("La pièce est supprimée avec succès!", toastOptions);
-    } catch (error) {
-      console.error("Error deleting document type:", error);
-      toast.error("Echec lors de la suppréssion de la pièce", toastOptions);
+    const confirm = showDeleteConfirmation();
+    if (confirm) {
+      try {
+        await axios.delete(`http://localhost:3000/agence/piece/${id}`);
+        fetchPieces();
+        toast.success("La pièce est supprimée avec succès!", toastOptions);
+        Swal.fire({
+          title: "Confirmation",
+          text: "Êtes-vous sûr de vouloir supprimer cette pièce ?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Oui, supprimer",
+          cancelButtonText: "Annuler",
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            try {
+              await axios.delete(`http://localhost:3000/agence/piece/${id}`);
+              fetchPieces();
+              toast.success(
+                "La pièce est supprimée avec succès!",
+                toastOptions
+              );
+            } catch (error) {
+              console.error("Error deleting document type:", error);
+              toast.error(
+                "Echec lors de la suppréssion de la pièce",
+                toastOptions
+              );
+            }
+          }
+        });
+      } catch (error) {
+        console.error("Error deleting document type:", error);
+        toast.error("Echec lors de la suppréssion de la pièce", toastOptions);
+      }
     }
   };
 
@@ -90,8 +120,6 @@ export default function Agence_createPiece() {
   const handlePieceUpdated = async (event) => {
     event.preventDefault();
     try {
-      console.log(currentPiece);
-
       await axios.put(`http://localhost:3000/agence/piece/${currentPiece.id}`, {
         id: currentPiece.id,
         code_piece: currentPiece.code_piece,
@@ -114,17 +142,17 @@ export default function Agence_createPiece() {
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex h-full bg-gray-300">
       <Side_bar isVisible={true} />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 mt-10 flex flex-col">
         <TopBar position="fixed" title="Pièces" />
-        <div className="container w-[90%] mx-auto mt-24 bg-white rounded-xl shadow-2xl flex flex-col h-screen">
+        <div className="container w-[90%] mx-auto mt-24 bg-white rounded-xl shadow-2xl flex flex-col">
           <h1 className="text-2xl mt-4 font-extrabold text-gray-800 flex justify-start w-full">
             <LayoutList size="28px" className="mr-3 ml-3 text-orange-600" />
             Liste des Pièces
           </h1>
-          <div className="border-b-2 border-gray-300 mb-4 w-full"></div>
-          <div className=" h-full bg-gray-200 w-full rounded-lg shadow-md p-6 mb-6">
+          <div className="border-b-2 border-gray-600 mb-4 w-full"></div>
+          <div className="bg-gray-200 w-full rounded-lg shadow-md p-6 mb-6 overflow-y-auto">
             <div className="flex gap-4 mb-6">
               <input
                 type="text"
@@ -134,7 +162,7 @@ export default function Agence_createPiece() {
                 className="input input-bordered w-full max-w-xs bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
               />
               <button
-                className="btn btn-primary ml-auto bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
+                className="btn btn-primary ml-auto bg-gray-600 text-white hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
                 onClick={() => setOpenModal(true)}
               >
                 <Plus size={20} className="mr-2" />
@@ -142,75 +170,67 @@ export default function Agence_createPiece() {
               </button>
             </div>
 
-            <div className="overflow-x-auto ">
-              <div className=" overflow-y-auto">
-                <table className="table w-full border-collapse">
-                  <thead className="sticky top-0 rounded-lg bg-gray-400 text-black">
+            <div className="overflow-x-auto">
+              <table className="table w-full border-collapse">
+                <thead className="sticky top-0 rounded-lg bg-gray-700 text-white">
+                  <tr>
+                    <th className="text-lg p-4">Code de la pièce</th>
+                    <td className="">|</td>
+                    <th className="text-lg p-4">Nom de la pièce</th>
+                    <td className="">|</td>
+                    <th className="text-lg p-4 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredPieces.length === 0 ? (
                     <tr>
-                      <th className="text-lg p-4">Code de la pièce</th>
-                      <td className="">|</td>
-                      <th className="text-lg p-4">Nom de la pièce</th>
-                      <td className="">|</td>
-                      <th className="text-lg p-4 text-right">Actions</th>
+                      <td colSpan="5" className="text-center p-4 text-gray-600">
+                        Aucune pièce trouvée
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {filteredPieces.length === 0 ? (
-                      <tr>
-                        <td
-                          colSpan="5"
-                          className="text-center p-4 text-gray-500"
-                        >
-                          Aucune pièce trouvée
+                  ) : (
+                    filteredPieces.map((piece, index) => (
+                      <tr
+                        key={piece.id}
+                        className={`hover:bg-gray-400 transition duration-200 ${
+                          index % 2 === 0 ? "bg-gray-300" : "bg-white"
+                        }`}
+                      >
+                        <td className="flex items-center btn btn-outline bg-gray-300 border-t-neutral-700 rounded-lg mt-2 justify-center p-2 text-base text-gray-800">
+                          <Ungroup className="mr-2 text-gray-800" />
+                          {piece.code_piece}
+                        </td>
+                        <td className="">|</td>
+                        <td className="flex items-center p-4 text-base text-gray-800">
+                          <Bookmark size={20} className="text-gray-800 mr-2" />
+                          {piece.nom_piece}
+                        </td>
+                        <td className="">|</td>
+                        <td className="text-right p-4 text-base text-gray-800">
+                          <div className="flex flex-col sm:flex-row justify-end items-center space-y-2 sm:space-y-0 sm:space-x-2">
+                            <Tooltip title="Modifier">
+                              <button
+                                className="btn btn-outline bg-gray-600 btn-md text-white w-full sm:w-auto hover:bg-blue-500 transition duration-300 rounded-md"
+                                onClick={() => handleEdit(piece)}
+                              >
+                                <SquarePen className="mr-1" />
+                              </button>
+                            </Tooltip>
+                            <Tooltip title="Supprimer">
+                              <button
+                                className="btn btn-outline bg-gray-600 btn-md text-white btn-sm w-full sm:w-auto hover:bg-red-500 transition duration-300 rounded-md"
+                                onClick={() => handleDelete(piece.id)}
+                              >
+                                <Trash2 className="mr-1" />
+                              </button>
+                            </Tooltip>
+                          </div>
                         </td>
                       </tr>
-                    ) : (
-                      filteredPieces.map((piece, index) => (
-                        <tr
-                          key={piece.id}
-                          className={`hover:bg-gray-100 transition duration-200 ${
-                            index % 2 === 0 ? "bg-gray-200" : "bg-white"
-                          }`}
-                        >
-                          <td className="flex items-center btn btn-outline bg-gray-300 border-t-neutral-700 rounded-lg mt-2 justify-center p-2 text-base text-gray-800">
-                            <Ungroup className="mr-2 text-gray-800" />
-                            {piece.code_piece}
-                          </td>
-                          <td className="">|</td>
-                          <td className="flex items-center p-4 text-base text-gray-800">
-                            <Bookmark
-                              size={20}
-                              className="text-gray-800 mr-2"
-                            />
-                            {piece.nom_piece}
-                          </td>
-                          <td className="">|</td>
-                          <td className="text-right p-4 text-base text-gray-800">
-                            <div className="flex flex-col sm:flex-row justify-end items-center space-y-2 sm:space-y-0 sm:space-x-2">
-                              <Tooltip title="Modifier">
-                                <button
-                                  className="btn btn-outline bg-gray-600 btn-md text-white w-full sm:w-auto hover:bg-blue-500 transition duration-300 rounded-md"
-                                  onClick={() => handleEdit(piece)}
-                                >
-                                  <SquarePen className="mr-1" />
-                                </button>
-                              </Tooltip>
-                              <Tooltip title="Supprimer">
-                                <button
-                                  className="btn btn-outline bg-gray-600 btn-md text-white btn-sm w-full sm:w-auto hover:bg-red-500 transition duration-300 rounded-md"
-                                  onClick={() => handleDelete(piece.id)}
-                                >
-                                  <Trash2 className="mr-1" />
-                                </button>
-                              </Tooltip>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
-              </div>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

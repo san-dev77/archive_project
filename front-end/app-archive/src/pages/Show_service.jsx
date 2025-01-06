@@ -7,7 +7,6 @@ import Side_bar from "../Components/Side_bar";
 import TopBar from "../Components/Top_bar";
 import {
   LayoutList,
-  MessageCircleCode,
   Plus,
   SquarePen,
   Trash2,
@@ -16,6 +15,7 @@ import {
   Network,
   Download,
   ArrowUpToLine,
+  Cog,
 } from "lucide-react";
 import { Tooltip } from "@mui/material";
 import { useQuery, useMutation, useQueryClient } from "react-query";
@@ -29,7 +29,23 @@ const fetchDirectories = async () => {
 };
 
 const deleteService = async (id) => {
-  await axios.delete(`http://localhost:3000/services/${id}`);
+  const response = await axios.delete(`http://localhost:3000/services/${id}`);
+  if (response.status === 200) {
+    Swal.fire({
+      title: "warning",
+      text: JSON.stringify(response.data.message),
+      icon: "warning",
+      confirmButtonText: "OK",
+    });
+    throw new Error(response.data.reason);
+  } else {
+    Swal.fire({
+      title: "Succès",
+      text: "Service supprimé avec succès !",
+      icon: "success",
+      confirmButtonText: "OK",
+    });
+  }
 };
 
 const updateService = async (service) => {
@@ -48,7 +64,12 @@ const updateDirection = async (direction) => {
 };
 
 const deleteDirectory = async (id) => {
-  await axios.delete(`http://localhost:3000/services/directory/${id}`);
+  const response = await axios.delete(
+    `http://localhost:3000/services/directory/${id}`
+  );
+  if (response.status === 400) {
+    throw new Error(response.data.reason);
+  }
 };
 
 export default function ShowDirection() {
@@ -73,9 +94,6 @@ export default function ShowDirection() {
     onSuccess: () => {
       queryClient.invalidateQueries("directories");
       toast.success("Service supprimé avec succès !");
-    },
-    onError: () => {
-      toast.error("Échec lors de la suppression du service.");
     },
   });
 
@@ -123,9 +141,6 @@ export default function ShowDirection() {
     onSuccess: () => {
       queryClient.invalidateQueries("directories");
       toast.success("Direction supprimée avec succès !");
-    },
-    onError: () => {
-      toast.error("Échec lors de la suppression de la direction.");
     },
   });
 
@@ -201,11 +216,29 @@ export default function ShowDirection() {
     return directoryMatches || serviceMatches;
   });
 
-  const handleDeleteDirectory = async (directoryId) => {
+  const handleDeleteDirectory = async (directory) => {
+    const services = directory.services
+      .split("|")
+      .map((service) => JSON.parse(service));
+    console.log(services);
+
+    if (
+      services.length > 1 ||
+      (services.length === 1 && services[0].id !== null)
+    ) {
+      Swal.fire({
+        title: "Erreur",
+        text: "Impossible de supprimer la direction car elle contient des services.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
+
     const confirmed = await showDeleteConfirmation();
 
     if (confirmed) {
-      deleteDirectoryMutation.mutate(directoryId, {
+      deleteDirectoryMutation.mutate(directory.directory_id, {
         onSuccess: () => {
           queryClient.invalidateQueries("directories");
         },
@@ -258,7 +291,7 @@ export default function ShowDirection() {
                   <>
                     <Tooltip title="Modifier la direction">
                       <button
-                        className="btn btn-outline btn-primary btn-sm"
+                        className="btn btn-md bg-gray-600 text-white hover:bg-indigo-500"
                         onClick={() => handleEditDirectory(directory)}
                       >
                         <SquarePen className="mr-1" />
@@ -266,10 +299,8 @@ export default function ShowDirection() {
                     </Tooltip>
                     <Tooltip title="Supprimer la direction">
                       <button
-                        className="btn btn-outline btn-error btn-sm"
-                        onClick={() =>
-                          handleDeleteDirectory(directory.directory_id)
-                        }
+                        className="btn btn-md bg-gray-600 text-white hover:bg-red-500"
+                        onClick={() => handleDeleteDirectory(directory)}
                       >
                         <Trash2 className="mr-1" />
                       </button>
@@ -295,8 +326,8 @@ export default function ShowDirection() {
       .map((service) => JSON.parse(service));
 
     return (
-      <table className="table w-full mt-2">
-        <thead className="sticky top-0 rounded-lg bg-gray-400 text-black">
+      <table className="table w-full mt-2 ">
+        <thead className="sticky top-0 rounded-lg bg-gray-800  text-white">
           <tr>
             <th className="text-lg p-4">Code service</th>
             <th className="text-lg p-4">Nom service</th>
@@ -304,47 +335,52 @@ export default function ShowDirection() {
           </tr>
         </thead>
         <tbody>
-          {parsedServices.length === 0 ? (
+          {parsedServices.filter(
+            (service) => service.code || service.nom_service
+          ).length === 0 ? (
             <tr>
               <td colSpan="3" className="text-center p-4 text-gray-500">
                 Aucun service disponible pour ce répertoire.
               </td>
             </tr>
           ) : (
-            parsedServices.map((service) => (
-              <tr
-                key={service.id}
-                className="hover:bg-gray-200 rounded-lg bg-gray-100 transition duration-200"
-              >
-                <td className="flex items-center p-4 text-base text-gray-800">
-                  <MessageCircleCode className="mr-2" />
-                  {service.code}
-                </td>
-                <td className="p-4 text-base text-gray-800">
-                  {service.nom_service}
-                </td>
-                <td className="text-right p-4 text-base text-gray-800">
-                  <div className="flex flex-col sm:flex-row justify-end items-center space-y-2 sm:space-y-0 sm:space-x-2">
-                    <Tooltip title="Modifier">
-                      <button
-                        className="btn btn-outline btn-primary btn-sm mr-2 hover:bg-indigo-100 transition duration-300 rounded-md"
-                        onClick={() => handleEdit(service)}
-                      >
-                        <SquarePen className="mr-1" />
-                      </button>
-                    </Tooltip>
-                    <Tooltip title="Supprimer">
-                      <button
-                        className="btn btn-outline btn-error btn-sm hover:bg-red-100 transition duration-300 rounded-md"
-                        onClick={() => handleDelete(service.id)}
-                      >
-                        <Trash2 className="mr-1" />
-                      </button>
-                    </Tooltip>
-                  </div>
-                </td>
-              </tr>
-            ))
+            parsedServices.map(
+              (service) =>
+                (service.code || service.nom_service) && (
+                  <tr
+                    key={service.id}
+                    className="hover:bg-gray-200 rounded-lg bg-gray-100 transition duration-200"
+                  >
+                    <td className="flex items-center p-4 text-base text-gray-800">
+                      <Cog className="mr-2" />
+                      {service.code}
+                    </td>
+                    <td className="p-4 text-base text-gray-800">
+                      {service.nom_service}
+                    </td>
+                    <td className="text-right p-4 text-base text-gray-800">
+                      <div className="flex flex-col sm:flex-row justify-end items-center space-y-2 sm:space-y-0 sm:space-x-2">
+                        <Tooltip title="Modifier">
+                          <button
+                            className="btn  btn-primary btn-md bg-gray-600 text-white mr-2 hover:bg-indigo-400 transition duration-300 rounded-md"
+                            onClick={() => handleEdit(service)}
+                          >
+                            <SquarePen className="mr-1" />
+                          </button>
+                        </Tooltip>
+                        <Tooltip title="Supprimer">
+                          <button
+                            className="btn btn-md bg-gray-600 text-white hover:bg-red-500 transition duration-300 rounded-md"
+                            onClick={() => handleDelete(service.id)}
+                          >
+                            <Trash2 className="mr-1" />
+                          </button>
+                        </Tooltip>
+                      </div>
+                    </td>
+                  </tr>
+                )
+            )
           )}
         </tbody>
       </table>
@@ -357,12 +393,12 @@ export default function ShowDirection() {
   }));
 
   return (
-    <div className="flex min-h-screen mt-8 bg-gray-300 to-gray-900">
+    <div className="flex h-full  bg-gray-300 to-gray-900">
       <Side_bar isVisible={true} />
       <div className="flex-1 flex flex-col ">
         <TopBar position="fixed" title="Services" />
 
-        <div className="container w-[90%] mx-auto mt-16 bg-white rounded-xl shadow-2xl flex flex-col h-auto">
+        <div className="container w-[90%] mx-auto mt-28 bg-white rounded-xl shadow-2xl flex flex-col h-auto">
           <div className="bg-white w-full rounded-lg shadow-md p-6 ">
             <div className="flex justify-between items-center mb-4">
               <h1 className="text-2xl font-extrabold text-gray-800 flex justify-start w-full">
@@ -425,7 +461,7 @@ export default function ShowDirection() {
             </div>
 
             <div className="overflow-x-auto">
-              <div className="h-[600px] py-4 rounded-lg bg-gray-300 px-10 overflow-y-auto">
+              <div className="h-[600px] py-4 rounded-lg bg-gray-500 px-10 overflow-y-auto">
                 {renderDirectoryList()}
               </div>
             </div>
@@ -442,6 +478,7 @@ export default function ShowDirection() {
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 100,
           }}
           onClick={() => setOpenModal(false)}
         >
@@ -581,6 +618,7 @@ export default function ShowDirection() {
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 100,
           }}
           onClick={() => setEditModalOpen(false)}
         >

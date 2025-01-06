@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -6,9 +6,6 @@ import {
   BookMarked,
   Settings,
   ScanSearch,
-  DatabaseZap,
-  UserCheck,
-  UserPlus2,
   Search,
   Building2,
   Layers3,
@@ -17,25 +14,22 @@ import {
   ChevronRight,
   X,
   BadgeInfo,
+  Frown,
 } from "lucide-react";
 import axios from "axios";
 import "daisyui/dist/full.css";
+import logo from "../assets/icones/logo 3.jpg";
 
 const SideBar = () => {
   const navigate = useNavigate();
-  const [showSettings, setShowSettings] = useState(() => {
-    // Initial state from local storage
-    const savedState = localStorage.getItem("showSettings");
-    return savedState === "true";
-  });
   const [directories, setDirectories] = useState([]);
   const [showDirectories, setShowDirectories] = useState(false);
   const [expandedDirectory, setExpandedDirectory] = useState(null);
-  const [showMoreIndicator, setShowMoreIndicator] = useState(false);
-  const settingsListRef = useRef(null);
+  const [, setShowMoreIndicator] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [noResultsMessage, setNoResultsMessage] = useState("");
 
   useEffect(() => {
     const fetchDirectories = async () => {
@@ -43,9 +37,6 @@ const SideBar = () => {
         const response = await axios.get(
           "http://localhost:3000/services/directory"
         );
-        console.log("response", response.data);
-
-        console.log(response.data);
         setDirectories(response.data);
       } catch (error) {
         console.error("Erreur lors de la récupération des directories:", error);
@@ -78,12 +69,6 @@ const SideBar = () => {
     navigate(path);
   };
 
-  const handleSettingsClick = () => {
-    const newShowSettings = !showSettings;
-    setShowSettings(newShowSettings);
-    localStorage.setItem("showSettings", newShowSettings); // Save state to local storage
-  };
-
   const handleDirectoriesClick = () => {
     setShowDirectories(!showDirectories);
   };
@@ -94,11 +79,17 @@ const SideBar = () => {
     );
   };
 
-  const handleSettingsDoubleClick = () => {
-    navigate("/parametres");
+  const handleSettingsClick = () => {
+    navigate("/settings");
   };
 
   const handleSearch = () => {
+    if (searchQuery.trim() === "") {
+      setSearchResults([]);
+      setNoResultsMessage("Veuillez entrer un terme de recherche.");
+      return;
+    }
+
     const results = directories.flatMap((directory) =>
       directory.services
         .split("|")
@@ -111,7 +102,9 @@ const SideBar = () => {
           directory: directory.nom_directory,
         }))
     );
+
     setSearchResults(results);
+    setNoResultsMessage(results.length === 0 ? "Aucun service trouvé." : "");
   };
 
   const handleServiceClick = (serviceId) => {
@@ -123,31 +116,41 @@ const SideBar = () => {
     setShowSearchModal(true);
   };
 
-  useEffect(() => {
-    if (showSettings && settingsListRef.current) {
-      settingsListRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-      });
-    }
-  }, [showSettings]);
-
   return (
     <>
-      <div className="sticky top-28 ml-2 h-[70vh] overflow-y-auto overflow-x-hidden scrollbar-state rounded-lg z-20 bg-gradient-to-b from-gray-500 to-gray-800 shadow-lg flex flex-col justify-between items-center px-2 py-2 w-64">
-        <div className="flex flex-col items-center space-y-4 w-full">
-          <div
-            className="cursor-pointer p-2 rounded-full bg-gray-800 hover:bg-gray-600 transition-colors duration-300"
-            onClick={() => handleNavigate("/app-archive")}
-          >
-            <LayoutDashboard
-              color="white"
-              size="24px"
-              className="transition-transform duration-300 ease-in-out transform hover:scale-110"
-            />
+      <div className="sticky top-0 h-screen z-50 scrollbar-state bg-gray-800 shadow-lg flex flex-col justify-between items-center px-2 py-2 w-64">
+        <div className="flex flex-col items-center space-y-4 w-full overflow-y-auto max-h-[80vh]">
+          {/* Le logo */}
+          <div className="flex p-6 h-[50px] text-left w-full items-start justify-start ">
+            <div className="flex items-center justify-normal w-full gap-2 align-middle h-full">
+              <img
+                src={logo}
+                alt="logo_BMS"
+                className="w-12 h-12 rounded-full bg-white shadow-md"
+              />
+              <h1 className="text-white text-2x font-bold">
+                Digi Doc solution
+              </h1>
+            </div>
           </div>
+          {/* Le logo */}
+
           <div className="divider "></div>
-          <ul className="menu p-0 w-full">
+
+          <ul className="menu p-0 w-full overflow-hidden">
+            <li className="w-full">
+              <div
+                className="cursor-pointer p-2 text-white flex items-start justify-start gap-1 w-full rounded-lg bg-gray-800 hover:bg-gray-600 transition-colors duration-300"
+                onClick={() => handleNavigate("/app-archive")}
+              >
+                <LayoutDashboard
+                  color="white"
+                  size="24px"
+                  className="transition-transform duration-300 ease-in-out transform hover:scale-110"
+                />
+                <span className="text-sm ml-2">Dashboard</span>
+              </div>
+            </li>
             <li className="w-full">
               <div
                 onClick={handleDirectoriesClick}
@@ -174,6 +177,7 @@ const SideBar = () => {
                       color="white"
                       className="transition-transform duration-300 ease-in-out transform hover:scale-110"
                       size="20px"
+                      onClick={handleSettingsClick}
                     />
                   </Link>
                   <div
@@ -284,110 +288,20 @@ const SideBar = () => {
         </div>
         <div className="w-full">
           <div
-            className="flex items-center justify-center p-2  rounded-full cursor-pointer border-2 border-gray-100  transition-transform duration-300 ease-in-out transform hover:bg-gray-500  "
+            className="flex items-center justify-center p-2 rounded-lg cursor-pointer border-2 border-gray-100 transition-transform duration-300 ease-in-out transform hover:bg-gray-500"
             onClick={handleSettingsClick}
-            onDoubleClick={handleSettingsDoubleClick}
           >
             <Settings size={28} color="white" />
             <h1 className="text-white ml-2">Paramètres</h1>
-          </div>
-          <div
-            className={`mt-4 settings-list relative ${
-              showSettings ? "block" : "hidden"
-            }`}
-            ref={settingsListRef}
-          >
-            <ul className="menu p-0 w-full">
-              <li className="w-full">
-                <button
-                  onClick={() => handleNavigate("/profil")}
-                  className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105"
-                >
-                  <span className="text-sm ml-2 flex items-center">
-                    <UserCheck className="mr-2" />
-                    Gestion profil
-                  </span>
-                </button>
-              </li>
-              <li className="w-full">
-                <button
-                  onClick={() => handleNavigate("/users")}
-                  className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105"
-                >
-                  <span className="text-sm ml-2 flex items-center">
-                    <UserPlus2 className="mr-2" />
-                    Création utilisateurs
-                  </span>
-                </button>
-              </li>
-              <li className="w-full">
-                <button
-                  onClick={() => handleNavigate("/metadata")}
-                  className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105"
-                >
-                  <span className="text-sm ml-2 flex items-center">
-                    <DatabaseZap className="mr-2" />
-                    Gestion méta-données
-                  </span>
-                </button>
-              </li>
-              <li className="w-full">
-                <button
-                  onClick={() => handleNavigate("/pieces")}
-                  className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105"
-                >
-                  <span className="text-sm ml-2 flex items-center">
-                    <Grid className="mr-2" />
-                    Configuration des pièces
-                  </span>
-                </button>
-              </li>
-              <li className="w-full">
-                <button
-                  onClick={() => handleNavigate("/userRoles")}
-                  className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105"
-                >
-                  <span className="text-sm ml-2 flex items-center">
-                    <UserCheck className="mr-2" />
-                    Fonctions agent
-                  </span>
-                </button>
-              </li>
-              <li className="w-full">
-                <button
-                  onClick={() => handleNavigate("/tree")}
-                  className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105"
-                >
-                  <span className="text-sm ml-2 flex items-center">
-                    <Grid className="mr-2" />
-                    Structure système
-                  </span>
-                </button>
-              </li>
-              <li className="w-full">
-                <button
-                  onClick={() => handleNavigate("/search-config")}
-                  className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105"
-                >
-                  <span className="text-sm ml-2 flex items-center">
-                    <Search className="mr-2" />
-                    Moteur de recherche
-                  </span>
-                </button>
-              </li>
-            </ul>
-            {showMoreIndicator && (
-              <div className="absolute bottom-0 left-0 right-0 flex justify-center">
-                <span className="text-white">▼</span>
-              </div>
-            )}
           </div>
         </div>
       </div>
       {showSearchModal && (
         <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg w-full max-w-2xl mx-4">
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex text-black justify-between items-center mb-4">
+              <Search className="" size={40} />
+
               <h2 className="text-2xl font-bold">Recherche de services</h2>
               <button
                 onClick={() => setShowSearchModal(false)}
@@ -406,7 +320,7 @@ const SideBar = () => {
               />
               <button
                 onClick={handleSearch}
-                className="bg-blue-400 text-white p-2 rounded-r hover:bg-blue-800 transition-colors duration-300"
+                className="bg-gray-600 text-white p-2 rounded-r hover:bg-gray-800 transition-colors duration-300"
               >
                 Rechercher
               </button>
@@ -427,6 +341,13 @@ const SideBar = () => {
                   </div>
                 </div>
               ))}
+              {noResultsMessage && (
+                <div className="text-red-500 text-center font-bold text-2xl flex flex-col justify-center mt-4">
+                  <Frown className="w-full flex justify-center" size={40} />
+
+                  {noResultsMessage}
+                </div>
+              )}
             </div>
           </div>
         </div>

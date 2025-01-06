@@ -1,6 +1,15 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Settings, UserCheck2, UserRoundCog, DatabaseZap, Cable, Network, BackpackIcon, CircleArrowLeft, Zap, Bolt, TextSearch, TextSearchIcon } from 'lucide-react';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Settings,
+  UserRoundCog,
+  DatabaseZap,
+  Cable,
+  CircleArrowLeft,
+  Zap,
+  Bolt,
+  TextSearchIcon,
+} from "lucide-react";
 
 const SettingsPage = () => {
   const navigate = useNavigate();
@@ -16,43 +25,61 @@ const SettingsPage = () => {
         Paramétrages
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        <div className="card bg-gray-700 text-white shadow-xl hover:scale-105 transform transition-transform duration-300" onClick={() => handleNavigate('/profil')}>
+        <div
+          className="card bg-gray-700 text-white shadow-xl hover:scale-105 transform transition-transform duration-300"
+          onClick={() => handleNavigate("/profil")}
+        >
           <div className="card-body flex flex-col items-center">
             <h2 className="card-title">Gestion profil</h2>
             <Zap size="60px" className="text-blue-400 mt-4" />
           </div>
         </div>
-        <div className="card bg-gray-700 text-white shadow-xl hover:scale-105 transform transition-transform duration-300" onClick={() => handleNavigate('/users')}>
+        <div
+          className="card bg-gray-700 text-white shadow-xl hover:scale-105 transform transition-transform duration-300"
+          onClick={() => handleNavigate("/users")}
+        >
           <div className="card-body flex flex-col items-center">
             <h2 className="card-title">Création utilisateurs</h2>
             <UserRoundCog size="60px" className="text-blue-400 mt-4" />
           </div>
         </div>
-        <div className="card bg-gray-700 text-white shadow-xl hover:scale-105 transform transition-transform duration-300" onClick={() => handleNavigate('/metadata')}>
+        <div
+          className="card bg-gray-700 text-white shadow-xl hover:scale-105 transform transition-transform duration-300"
+          onClick={() => handleNavigate("/metadata")}
+        >
           <div className="card-body flex flex-col items-center">
             <h2 className="card-title">Gestion méta-données</h2>
             <DatabaseZap size="60px" className="text-blue-400 mt-4" />
           </div>
         </div>
-        <div className="card bg-gray-700 text-white shadow-xl hover:scale-105 transform transition-transform duration-300" onClick={() => handleNavigate('/pieces')}>
+        <div
+          className="card bg-gray-700 text-white shadow-xl hover:scale-105 transform transition-transform duration-300"
+          onClick={() => handleNavigate("/pieces")}
+        >
           <div className="card-body flex flex-col items-center">
             <h2 className="card-title">Configuration des pièces</h2>
             <Cable size="60px" className="text-blue-400 mt-4" />
           </div>
         </div>
-        <div className="card bg-gray-700 text-white shadow-xl hover:scale-105 transform transition-transform duration-300" onClick={() => handleNavigate('/userRoles')}>
+        <div
+          className="card bg-gray-700 text-white shadow-xl hover:scale-105 transform transition-transform duration-300"
+          onClick={() => handleNavigate("/userRoles")}
+        >
           <div className="card-body flex flex-col items-center">
             <h2 className="card-title">Fonctions agent</h2>
             <Bolt size="60px" className="text-blue-400 mt-4" />
           </div>
         </div>
-        <div className="card bg-gray-700 text-white shadow-xl hover:scale-105 transform transition-transform duration-300" onClick={() => handleNavigate('/tree')}>
+        {/* <div className="card bg-gray-700 text-white shadow-xl hover:scale-105 transform transition-transform duration-300" onClick={() => handleNavigate('/tree')}>
           <div className="card-body flex flex-col items-center">
             <h2 className="card-title">Structure système</h2>
             <Network size="60px" className="text-blue-400 mt-4" />
           </div>
-        </div>
-        <div className="card bg-gray-700 text-white shadow-xl hover:scale-105 transform transition-transform duration-300" onClick={() => handleNavigate('/search-config')}>
+        </div> */}
+        <div
+          className="card bg-gray-700 text-white shadow-xl hover:scale-105 transform transition-transform duration-300"
+          onClick={() => handleNavigate("/search-config")}
+        >
           <div className="card-body flex flex-col items-center">
             <h2 className="card-title">Moteur de recherche</h2>
             <TextSearchIcon size="60px" className="text-blue-400 mt-4" />

@@ -15,7 +15,7 @@ export default function Main_activities() {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100">
       <SideBar_agence isVisible={true} />
       <div className="flex-1 flex flex-col">
         <Topbar />

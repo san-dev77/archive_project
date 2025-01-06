@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { Tooltip } from "@mui/material";
 import { useQuery, useMutation, useQueryClient } from "react-query";
+import Swal from "sweetalert2";
 
 const fetchAgences = async () => {
   const response = await axios.get("http://localhost:3000/agences");
@@ -61,12 +62,20 @@ export default function ShowAgence() {
   const { data: agences = [] } = useQuery("agences", fetchAgences);
 
   const deleteMutation = useMutation(deleteAgence, {
+    onError: (error) => {
+      console.error("Erreur lors de la suppression de l'agence:", error);
+      const errorMessage =
+        error.response?.data?.message ||
+        "Échec lors de la suppression de l'agence.";
+      Swal.fire({
+        icon: "error",
+        title: "Erreur",
+        text: errorMessage,
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries("agences");
       toast.success("Agence supprimée avec succès !");
-    },
-    onError: () => {
-      toast.error("Échec lors de la suppression de l'agence.");
     },
   });
 
@@ -129,8 +138,8 @@ export default function ShowAgence() {
   const renderDocuments = () => {
     if (documents.length === 0) {
       return (
-        <div className="text-center text-gray-900 mt-2">
-          Aucun document lié.
+        <div className="text-center text-white mt-2">
+          Aucun type de documet lié.
         </div>
       );
     }
@@ -244,12 +253,12 @@ export default function ShowAgence() {
   };
 
   return (
-    <div className="flex min-h-screen mt-8 bg-gray-300 to-gray-900">
+    <div className="flex min-h-screen  bg-gray-300 ">
       <Sidebar_agence isVisible={true} />
       <div className="flex-1 flex flex-col ">
         <TopBar position="fixed" title="Agences" />
 
-        <div className="container w-[90%] mx-auto mt-16 bg-white rounded-xl shadow-2xl flex flex-col h-auto">
+        <div className="container w-[90%] mx-auto mt-28 bg-white rounded-xl shadow-2xl flex flex-col h-auto">
           <div className="bg-white w-full rounded-lg shadow-md p-6 ">
             <div className="flex justify-between items-center mb-4">
               <h1 className="text-2xl font-extrabold text-gray-800 flex justify-start w-full">
@@ -264,13 +273,13 @@ export default function ShowAgence() {
                   <Download size={20} className="mr-2" />
                   Importer
                 </button>
-                <button className="btn btn-primary text-white bg-gray-400  hover:bg-gray-700 transition duration-300 shadow-md">
+                <button className="btn btn-primary text-white bg-gray-600  hover:bg-gray-700 transition duration-300 shadow-md">
                   <ArrowUpToLine size={20} className="mr-2" />
                   Exporter
                 </button>
               </div>
               <button
-                className="btn btn-primary bg-gray-400 text-white hover:bg-gray-500 transition duration-300 shadow-md"
+                className="btn btn-primary bg-gray-500 text-white hover:bg-gray-500 transition duration-300 shadow-md"
                 onClick={() => setOpenModal(true)}
               >
                 <Plus size={20} className="mr-2" />
@@ -299,7 +308,7 @@ export default function ShowAgence() {
             </div>
 
             <div className="overflow-x-auto">
-              <div className="h-[600px] py-4 rounded-lg bg-gray-300 px-10 overflow-y-auto">
+              <div className="h-[600px] py-4 rounded-lg bg-gray-700 px-10 overflow-y-auto">
                 {renderAgenceList()}
               </div>
             </div>

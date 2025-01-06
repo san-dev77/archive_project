@@ -1,32 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import 'daisyui/dist/full.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "daisyui/dist/full.css";
+import { RefreshCcw } from "lucide-react";
+import Swal from "sweetalert2";
 
 const EditMetadata = ({ id, onClose, onUpdate }) => {
-  const [metadata, setMetadata] = useState({ cle: '', metaType: '', documentTypeId: '' });
-  const [documentTypes, setDocumentTypes] = useState([]);
+  const [metadata, setMetadata] = useState({
+    cle: "",
+    metaType: "",
+    documentTypeId: "",
+  });
+  const [, setDocumentTypes] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchMetadata = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/metadata/${id}`);
+        const response = await axios.get(
+          `http://localhost:3000/metadata/${id}`
+        );
         setMetadata(response.data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching metadata:', error);
+        console.error("Error fetching metadata:", error);
         setLoading(false);
       }
     };
 
     const fetchDocumentTypes = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/document-types');
+        const response = await axios.get(
+          "http://localhost:3000/document-types"
+        );
         setDocumentTypes(response.data);
       } catch (error) {
-        console.error('Error fetching document types:', error);
+        console.error("Error fetching document types:", error);
       }
     };
 
@@ -46,12 +56,19 @@ const EditMetadata = ({ id, onClose, onUpdate }) => {
     e.preventDefault();
     try {
       await axios.put(`http://localhost:3000/metadata/${id}`, metadata);
-      toast.success('Métadonnée mise à jour avec succès!');
+      toast.success("Métadonnée mise à jour avec succès!");
       onUpdate();
+      Swal.fire({
+        title: "Mise à jour réussie !",
+        text: "Meta-donnée mise à jour avec succès !",
+        icon: "success",
+        confirmButtonColor: "#444",
+        confirmButtonText: "OK",
+      });
       onClose(); // Fermer la modale après la mise à jour
     } catch (error) {
-      console.error('Error updating metadata:', error);
-      toast.error('Échec de la mise à jour de la métadonnée.');
+      console.error("Error updating metadata:", error);
+      toast.error("Échec de la mise à jour de la métadonnée.");
     }
   };
 
@@ -65,9 +82,20 @@ const EditMetadata = ({ id, onClose, onUpdate }) => {
 
   return (
     <div className="modal modal-open" onClick={onClose}>
-      <div className="modal-box bg-white text-black" onClick={(e) => e.stopPropagation()}>
-        <button className="btn btn-sm btn-circle absolute right-2 top-2" onClick={onClose}>✕</button>
-        <h2 className="text-2xl font-bold mb-4">Modifier MetaDonnée</h2>
+      <div
+        className="modal-box bg-white text-black"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          className="btn btn-sm btn-circle absolute right-2 top-2"
+          onClick={onClose}
+        >
+          ✕
+        </button>
+        <h2 className="text-2xl font-bold mb-4 flex items-start justify-start gap-2">
+          <RefreshCcw className="mr-1" />
+          Modifier MetaDonnée
+        </h2>
         <form onSubmit={handleSubmit}>
           <div className="form-control">
             <label className="label">Nom Metadata</label>
@@ -94,7 +122,7 @@ const EditMetadata = ({ id, onClose, onUpdate }) => {
               <option value="number">Nombre</option>
             </select>
           </div>
-          <div className="form-control">
+          {/* <div className="form-control">
             <label className="label">Type de Document</label>
             <select
               className="select select-bordered w-full mb-4 bg-gray-200 text-black"
@@ -109,10 +137,21 @@ const EditMetadata = ({ id, onClose, onUpdate }) => {
                 </option>
               ))}
             </select>
-          </div>
+          </div> */}
           <div className="modal-action">
-            <button type="submit" className="btn btn-primary w-600 bg-gray-400 hover:bg-gray-600 text-white">Mettre à jour</button>
-            <button type="button" className="btn btn-outline btn-error w-600" onClick={onClose}>Annuler</button>
+            <button
+              type="submit"
+              className="btn btn-primary w-600 bg-gray-400 hover:bg-gray-600 text-white"
+            >
+              Mettre à jour
+            </button>
+            <button
+              type="button"
+              className="btn btn-outline btn-error w-600"
+              onClick={onClose}
+            >
+              Annuler
+            </button>
           </div>
         </form>
       </div>

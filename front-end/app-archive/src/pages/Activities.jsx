@@ -9,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 export default function Activities() {
   const [loading, setLoading] = useState(true);
   const [recentUsers, setRecentUsers] = useState([]);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -79,12 +78,12 @@ export default function Activities() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen ">
       <Side_bar isVisible={true} />{" "}
       {/* Assurez-vous que la Side_bar est visible */}
       <div className="flex-1 flex flex-col">
         <Topbar />
-        <div className="p-4 mt-20">
+        <div className="p-4 mt-24">
           {loading ? (
             <div className="flex justify-center items-center h-screen">
               <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-64 w-64"></div>
@@ -93,57 +92,57 @@ export default function Activities() {
             <div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <Card
-                  className=" cursor-pointer hover:bg-gray-300 hover:scale-105 transition-all duration-500  rounded-lg p-4 shadow-xl"
+                  className=" cursor-pointer rounded-[25px] p-2 bg-gray-700 text-white scale-105 transition-all duration-500  shadow-xl"
                   title="Agences"
                   subTitle="152"
                   style={{ textAlign: "center" }}
                   onClick={() => navigate("/agences")}
                 >
                   <i
-                    className="pi pi-building-columns rounded-full bg-gray-600 p-2 text-white"
-                    style={{ fontSize: "2em" }}
+                    className="pi pi-inbox rounded-full bg-gray-600 p-2 text-white"
+                    style={{ fontSize: "1.2em" }}
                   ></i>
-                  <p className="text-gray-600">
+                  <p className="text-white">
                     200 agences depuis la dernière visite
                   </p>
                 </Card>
                 <Card
-                  className="cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300"
+                  className="cursor-pointer rounded-[25px] p-2 shadow-lg hover:shadow-xl transition-shadow duration-300"
                   title="Historique"
                   subTitle="$2,100"
                   style={{ textAlign: "center" }}
                 >
                   <i
-                    className="pi pi-history rounded-full bg-gray-600 p-2 text-white"
-                    style={{ fontSize: "2em" }}
+                    className="pi pi-calendar-clock rounded-full bg-gray-600 p-2 text-white"
+                    style={{ fontSize: "1.2em" }}
                   ></i>
                   <p className="text-gray-600">
                     520 historiques depuis la dernière visite
                   </p>
                 </Card>
                 <Card
-                  className="cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300"
+                  className="cursor-pointer rounded-[25px] p-2 shadow-lg hover:shadow-xl transition-shadow duration-300"
                   title="Suivis"
                   subTitle="28,441"
                   style={{ textAlign: "center" }}
                 >
                   <i
                     className="pi pi-chart-line rounded-full  bg-gray-600 p-2 text-white"
-                    style={{ fontSize: "2em" }}
+                    style={{ fontSize: "1.2em" }}
                   ></i>
                   <p className="text-gray-600">
                     520 suivis depuis la dernière visite
                   </p>
                 </Card>
                 <Card
-                  className="cursor-pointer shadow-lg hover:shadow-xl transition-shadow duration-300"
+                  className="cursor-pointer rounded-[25px] p-2 shadow-lg hover:shadow-xl transition-shadow duration-300"
                   title="Dossiers partagés"
                   subTitle="20"
                   style={{ textAlign: "center" }}
                 >
                   <i
-                    className="pi pi-share-alt rounded-full bg-gray-600 p-2 text-white"
-                    style={{ fontSize: "2em" }}
+                    className="pi pi-arrow-right-arrow-left rounded-full bg-gray-600 p-2 text-white"
+                    style={{ fontSize: "1.2em" }}
                   ></i>
                   <p className="text-gray-600">0 dossiers récents partagés</p>
                 </Card>
@@ -159,20 +158,20 @@ export default function Activities() {
                   className="cursor-pointer shadow-lg rounded-lg p-4 bg-white"
                   style={{ height: "350px" }}
                 >
-                  <Card title="Utilisateurs récents">
-                    <ul className="list-none mt-4">
+                  <Card className="p-2" title="Utilisateurs récents">
+                    <ul className="list-none mt-4 p-2">
                       {recentUsers.map((user) => (
                         <li
                           key={user.id}
-                          className="flex items-center py-3 border-b border-gray-200"
+                          className="flex w-full text-gray-700 p-2 rounded-lg bg-gray-500 cursor-pointer hover:bg-gray-700 hover:scale-105 hover:text-white transition-all items-center py-3 border-b border-gray-200"
                         >
-                          <div className="avatar bg-gray-500 text-white rounded-full w-10 h-10 flex items-center justify-center">
+                          <div className="avatar border-2 border-white bg-gray-500 text-white rounded-full w-10 h-10 flex items-center justify-center">
                             {user.prenom[0]}
                             {user.nom[0]}
                           </div>
                           <div className="ml-4">
-                            <p className="text-md font-medium text-gray-900">{`${user.prenom} ${user.nom}`}</p>
-                            <p className="text-sm text-gray-600">{`${user.nom_role} - ${user.nom_service}`}</p>
+                            <p className="text-md font-medium ">{`${user.prenom} ${user.nom}`}</p>
+                            <p className="text-sm ">{`${user.nom_role} - ${user.nom_service}`}</p>
                           </div>
                         </li>
                       ))}

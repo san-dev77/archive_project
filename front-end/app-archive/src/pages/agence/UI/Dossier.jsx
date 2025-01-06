@@ -17,6 +17,8 @@ import {
 import PieceUploadModal from "../../../Components/PieceUploadModal";
 import ViewCaisseFile from "../../../Components/ViewCaisseFile";
 import Loader_component from "../../../Components/Loader";
+import { showDeleteConfirmation } from "../../../utils/alerts";
+import Swal from "sweetalert2";
 
 const createAgence = async (agence) => {
   await axios.post("http://localhost:3000/agences", agence);
@@ -125,6 +127,48 @@ export default function Dossier() {
     setSelectedRowId(rowId);
   };
 
+  const handleDelete = async (rowId) => {
+    const confirm = showDeleteConfirmation();
+    if (confirm) {
+      try {
+        await axios.delete(
+          `http://localhost:3000/agence/transaction_caisse/${rowId}`
+        );
+        toast.success("Document supprimé avec succès");
+
+        Swal.fire({
+          title: "Données mises à jour",
+          text: "Les données ont été rafraîchies avec succès.",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+        const updatedData = data.filter((row) => row.id !== rowId);
+        setData(updatedData);
+      } catch (error) {
+        toast.error("Erreur lors de la suppression du document");
+      }
+    }
+  };
+
+  const handleEdit = async (rowId) => {
+    try {
+      const response = await axios.put(
+        `http://localhost:3000/agence/transaction_caisse/${rowId}`
+      );
+      toast.success("Document modifié avec succès");
+      // Update data with edited document
+      const updatedData = data.map((row) => {
+        if (row.id === rowId) {
+          return response.data;
+        }
+        return row;
+      });
+      setData(updatedData);
+    } catch (error) {
+      toast.error("Erreur lors de la modification du document");
+    }
+  };
+
   const getColumns = () => {
     console.log(selectedType);
 
@@ -163,10 +207,16 @@ export default function Dossier() {
                   <Link size={20} />
                 </button>
 
-                <button className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-blue-600 transition duration-300 shadow-md">
+                <button
+                  className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-blue-600 transition duration-300 shadow-md"
+                  onClick={() => handleEdit(params.row.id)}
+                >
                   <SquarePen size={20} />
                 </button>
-                <button className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-red-400 transition duration-300 shadow-md">
+                <button
+                  className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-red-400 transition duration-300 shadow-md"
+                  onClick={() => handleDelete(params.row.id)}
+                >
                   <Trash2 size={20} />
                 </button>
               </div>
@@ -220,7 +270,10 @@ export default function Dossier() {
                     onClick={() => handleLinkClick(params.row.id)}
                   />
                 </button>
-                <button className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-blue-600 transition duration-300 shadow-md">
+                <button
+                  className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-blue-600 transition duration-300 shadow-md"
+                  onClick={() => handleEdit(params.row.id)}
+                >
                   <SquarePen size={20} />
                 </button>
 
@@ -230,7 +283,10 @@ export default function Dossier() {
                 >
                   <Eye size={25} />
                 </button>
-                <button className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-red-400 transition duration-300 shadow-md">
+                <button
+                  className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-red-400 transition duration-300 shadow-md"
+                  onClick={() => handleDelete(params.row.id)}
+                >
                   <Trash2 size={20} />
                 </button>
               </div>
@@ -270,12 +326,18 @@ export default function Dossier() {
             field: "actions",
             headerName: "Actions",
             width: 150,
-            renderCell: () => (
+            renderCell: (params) => (
               <div className="flex space-x-2">
-                <button className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-blue-600 transition duration-300 shadow-md">
+                <button
+                  className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-blue-600 transition duration-300 shadow-md"
+                  onClick={() => handleEdit(params.row.id)}
+                >
                   <SquarePen size={20} />
                 </button>
-                <button className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-red-400 transition duration-300 shadow-md">
+                <button
+                  className="btn btn-default rounded-lg bg-gray-600 text-white hover:bg-red-400 transition duration-300 shadow-md"
+                  onClick={() => handleDelete(params.row.id)}
+                >
                   <Trash2 size={20} />
                 </button>
               </div>
