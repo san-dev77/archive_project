@@ -1,67 +1,335 @@
-const Document = require("../models/documents");
+const {
+  createDocumentInDB,
+  addDocumentMetadata,
+  addDocumentPieces,
+  addDocumentLot,
+  getAllDocumentsFromDB,
+  getAllDocumentsFromDB2,
+  getDocumentByIdFromDB,
+  getAllDocumentsFromDB4,
+  updateDocumentInDB,
+  updateDocumentMetadata,
+  updateDocumentPieces,
+  deleteDocumentFromDB,
+  getAllDocumentsFromDB3,
+  getDocumentsByTypeFromDBWithLot,
+  getDocumentsByTypeFromDBWithPieces,
+  updateDocumentInfo,
+  deleteOrReplaceDocumentFiles,
+} = require("../models/documents");
 
-const getAllDocuments = async (req, res) => {
+const axios = require("axios");
+
+const createDocumentController = async (req, res) => {
+  console.log(req.body);
+  const { documentTypeId, serviceName, docTypeName, ...metadata } = req.body;
+  if (!documentTypeId) {
+    return res.status(400).send("documentTypeId is required");
+  }
+
+  // Vérifiez le contenu de metadata
+  console.log("Metadata before parsing:", metadata);
+
+  // Transformez les métadonnées en un format clé/valeur
+  const parsedMetadata = {};
+
+  // Supposons que vous ayez une manière de récupérer les IDs des métadonnées
+  const metadataKeys = await getMetadataKeysByDocumentType(documentTypeId); // Récupérez les IDs des métadonnées
+
+  // Parcourez les clés de metadata pour les ajouter à parsedMetadata
+  for (const key in metadata) {
+    const trimmedKey = key.trim();
+    const normalizedKey = trimmedKey.replace(/\s+/g, " ");
+
+    const metadataKey = metadataKeys.find((m) => m.cle === normalizedKey);
+    // Trouvez l'ID correspondant
+
+    if (metadataKey) {
+      parsedMetadata[metadataKey.id] = metadata[key]; // Utilisez l'ID pour l'insertion
+    } else {
+      console.warn(`No metadata ID found for key: ${normalizedKey}`);
+    }
+  }
+
   try {
-    const documents = await Document.getAllDocuments();
+    // Créez le document dans la base de données
+
+    // const documentDir = path.join(
+    //   baseDirectory,
+    //   serviceName,
+    //   docTypeName,
+    //   `${documentName}-${date}`
+    // );
+
+    // createDirectoryIfNotExists(documentDir);
+
+    const documentId = await createDocumentInDB({
+      documentTypeId,
+      createdAt: new Date(),
+    });
+
+    // Ajoutez les métadonnées au document si elles existent
+    if (Object.keys(parsedMetadata).length > 0) {
+      console.log(parsedMetadata);
+
+      await addDocumentMetadata(documentId, parsedMetadata);
+    }
+
+    res
+      .status(201)
+      .json({ message: "Document created successfully", documentId });
+  } catch (error) {
+    console.error("Error creating document:", error);
+    res.status(500).send("Error creating document");
+  }
+};
+
+const addDocumentLotController = async (req, res) => {
+  try {
+    console.log(req);
+    const document_id = req.body.document_id; // Récupérer l'ID du document depuis les paramètres de la requête
+    const file_names = JSON.parse(req.body.file_names); // Parser les pièces envoyées en JSON
+
+    // Logique pour ajouter les pièces au document
+    const result = await addDocumentLot({ document_id, file_names });
+
+    res
+      .status(201)
+      .json({ message: "Document pieces added successfully", result });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+const addDocumentPiecesController = async (req, res) => {
+  console.log("mon controller", req.body);
+
+  try {
+    const document_id = req.params.id; // Récupérer l'ID du document depuis les paramètres de la requête
+    const fileNames = req.body.fileNames; // Récupérer les noms de fichiers depuis le corps de la requête
+    const piece_id = req.body.piece_id; // Récupérer les pièces directement depuis le corps de la requête
+
+    // Logique pour ajouter les pièces au document
+    const result = await addDocumentPieces({
+      document_id,
+      piece_id,
+      fileNames,
+    });
+
+    res
+      .status(201)
+      .json({ message: "Document pieces added successfully", result });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const getDocumentsByTypeWithLotController = async (req, res) => {
+  const documentTypeId = req.params.id;
+
+  try {
+    const documents = await getDocumentsByTypeFromDBWithLot(documentTypeId);
+    res.json(documents);
+  } catch (error) {
+    console.error("Error fetching documents by type:", error);
+    res.status(500).json({ message: "Failed to fetch documents by type" });
+  }
+};
+const getDocumentsByTypeWithPiecesController = async (req, res) => {
+  const documentTypeId = req.params.id;
+
+  try {
+    const documents = await getDocumentsByTypeFromDBWithPieces(documentTypeId);
+    res.json(documents);
+  } catch (error) {
+    console.error("Error fetching documents by type:", error);
+    res.status(500).json({ message: "Failed to fetch documents by type" });
+  }
+};
+
+//-------------------------------------------------
+
+const getMetadataKeysByDocumentType = async (documentTypeId) => {
+  try {
+    const response = await axios.get(
+      `http://localhost:3000/metadata/type/${documentTypeId}`
+    );
+    console.log(response.data);
+
+    return response.data; // Supposons que cela retourne un tableau d'objets avec { id, cle }
+  } catch (error) {
+    console.error("Error fetching metadata keys:", error);
+    throw new Error("Could not fetch metadata keys");
+  }
+};
+
+//--------------------------------------------------
+const getAllDocumentsController = async (_req, res) => {
+  try {
+    const documents = await getAllDocumentsFromDB();
+    res.json(documents);
+  } catch (error) {
+    console.error("Error fetching documents:", error);
+    res.status(500).send("Error fetching documents");
+  }
+};
+
+const getAllDocumentsController2 = async (_req, res) => {
+  try {
+    const documents = await getAllDocumentsFromDB2();
     res.status(200).json(documents);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error fetching documents:", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des documents." });
   }
 };
-
-const getDocumentById = async (req, res) => {
+const getAllDocumentsController3 = async (_req, res) => {
   try {
-    const document = await Document.getDocumentById(req.params.id);
-    if (!document)
-      return res.status(404).json({ message: "Document not found" });
-    res.status(200).json(document);
+    const documents = await getAllDocumentsFromDB3();
+    res.status(200).json(documents);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Error fetching documents:", error);
+    res
+      .status(500)
+      .json({ message: "Erreur lors de la récupération des documents." });
   }
 };
 
-const createDocument = async (req, res) => {
+const getDocumentByIdController = async (req, res) => {
+  const documentId = req.params.id;
+
   try {
-    const { title, content, documentTypeId } = req.body;
-    const newDocument = await Document.createDocument(
-      title,
-      content,
-      documentTypeId
+    const document = await getDocumentByIdFromDB(documentId);
+    res.json(document);
+  } catch (error) {
+    console.error("Error fetching document:", error);
+    res.status(500).send("Error fetching document");
+  }
+};
+
+const updateDocumentController = async (req, res) => {
+  const documentId = req.params.id;
+  const { documentTypeId, metadata } = req.body;
+
+  try {
+    await updateDocumentInDB(documentId, { documentTypeId });
+
+    if (metadata) {
+      await updateDocumentMetadata(documentId, metadata);
+    }
+
+    if (req.files) {
+      await updateDocumentPieces(
+        documentId,
+        req.files.map((file) => ({
+          filePath: file.filename,
+          description: "", // Optionally add a description
+        }))
+      );
+    }
+
+    res.send("Document updated successfully");
+  } catch (error) {
+    console.error("Error updating document:", error);
+    res.status(500).send("Error updating document");
+  }
+};
+
+const deleteDocumentController = async (req, res) => {
+  const documentId = req.params.id;
+
+  try {
+    await deleteDocumentFromDB(documentId);
+    res.send("Document deleted successfully");
+  } catch (error) {
+    console.error("Error deleting document:", error);
+    res.status(500).send("Error deleting document");
+  }
+};
+
+const updateDocumentInfoController = async (req, res) => {
+  const documentId = req.params.id;
+  const updatedInfo = req.body;
+
+  try {
+    const result = await updateDocumentInfo(documentId, updatedInfo);
+    res.json(result);
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du document:", error);
+    res
+      .status(500)
+      .json({ error: "Erreur lors de la mise à jour du document" });
+  }
+};
+
+const deleteOrReplaceDocumentFilesController = async (req, res) => {
+  console.log(req.body);
+  const documentId = req.params.id;
+  const filesToDelete = req.body.filePath ? req.body.filePath : [];
+  const filesToReplace = req.files
+    ? req.files.map((file) => ({
+        filePath: file.path,
+        originalName: file.originalname,
+        type: req.body.type,
+      }))
+    : [];
+  const type = req.body.type;
+  const piece = req.body.piece;
+
+  try {
+    const result = await deleteOrReplaceDocumentFiles(
+      documentId,
+      filesToDelete,
+      filesToReplace,
+      type,
+      piece
     );
-    res.status(201).json(newDocument);
+    res.json(result);
   } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
-const updateDocument = async (req, res) => {
-  try {
-    const { title, content, documentTypeId } = req.body;
-    const updatedDocument = await Document.updateDocument(
-      req.params.id,
-      title,
-      content,
-      documentTypeId
+    console.error(
+      "Erreur lors de la suppression ou du remplacement des fichiers:",
+      error
     );
-    res.status(200).json(updatedDocument);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      error: "Erreur lors de la mise à jour des fichiers du document",
+    });
   }
 };
 
-const deleteDocument = async (req, res) => {
+const getAllDocuments4Controller = async (req, res) => {
+  const documentTypeId = req.params.id;
+
+  if (!documentTypeId) {
+    return res
+      .status(400)
+      .json({ error: "Le paramètre documentTypeId est requis" });
+  }
+
   try {
-    await Document.deleteDocument(req.params.id);
-    res.status(204).send();
+    const documents = await getAllDocumentsFromDB4(documentTypeId);
+    res.json(documents);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error("Erreur lors de la récupération des documents:", error);
+    res
+      .status(500)
+      .json({ error: "Erreur lors de la récupération des documents" });
   }
 };
 
 module.exports = {
-  getAllDocuments,
-  getDocumentById,
-  createDocument,
-  updateDocument,
-  deleteDocument,
+  createDocument: createDocumentController,
+  getAllDocuments: getAllDocumentsController,
+  addDocumentPieces: addDocumentPiecesController,
+  addDocumentLot: addDocumentLotController,
+  getAllDocuments2: getAllDocumentsController2,
+  getAllDocuments3: getAllDocumentsController3,
+  getDocumentById: getDocumentByIdController,
+  getDocumentByTypeIdWithLot: getDocumentsByTypeWithLotController,
+  getDocumentByTypeIdWithPieces: getDocumentsByTypeWithPiecesController,
+  updateDocument: updateDocumentController,
+  deleteDocument: deleteDocumentController,
+  updateDocumentInfo: updateDocumentInfoController,
+  deleteOrReplaceDocumentFiles: deleteOrReplaceDocumentFilesController,
+  getAllDocuments4: getAllDocuments4Controller,
 };

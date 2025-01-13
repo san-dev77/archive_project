@@ -9,14 +9,5 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0,
 });
-// const pool2 = mysql2.createPool({
-//   host: "localhost",
-//   user: "root",
-//   password: "",
-//   database: "archive",
-//   waitForConnections: true,
-//   connectionLimit: 10,
-//   queueLimit: 0,
-// });
 
 module.exports = pool;

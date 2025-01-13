@@ -1,14 +1,21 @@
+// routes/metadataRoutes.js
 const express = require("express");
-const router = express.Router();
-const metadataController = require("../controllers/metadataController");
+const {
+  createMetadataForDocumentType,
+  getMetadataByTypeId,
+  getAllMetadataWithDocumentTypeController,
+  getMetadataById,
+  updateMetadataById,
+  deleteMetadataById,
+} = require("../controllers/metadataController");
 
-router.get("/", metadataController.getAllMetadata);
-router.get(
-  "/document-type/:documentTypeId",
-  metadataController.getMetadataByDocumentTypeId
-);
-router.post("/", metadataController.createMetadata);
-router.put("/:id", metadataController.updateMetadata);
-router.delete("/:id", metadataController.deleteMetadata);
+const router = express.Router();
+
+router.post("/", createMetadataForDocumentType);
+router.get("/type/:id", getMetadataByTypeId);
+router.get("/", getAllMetadataWithDocumentTypeController);
+router.get("/:id", getMetadataById);
+router.put("/:id", updateMetadataById);
+router.delete("/:id", deleteMetadataById);
 
 module.exports = router;
