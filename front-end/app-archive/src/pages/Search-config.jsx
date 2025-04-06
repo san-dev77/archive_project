@@ -6,7 +6,9 @@ import {
   Save,
   Undo2,
 } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import Select from "react-select";
+
+import { useState, useEffect } from "react";
 import { useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import TopBar from "../Components/Top_bar"; // Importation de la TopBar
@@ -23,7 +25,6 @@ export default function SearchConfig() {
   const [metadataDisplayState, setMetadataDisplayState] = useState({});
   const [localServicesData, setServicesData] = useState([]); // Renommage de l'état local
   const navigate = useNavigate(); // Utilisation de useNavigate pour la navigation
-  const [isModalOpen, setIsModalOpen] = useState(false); // État pour la modale
   const [, setExistingConfig] = useState(null); // État pour stocker la configuration existante
   const [isLoading, setIsLoading] = useState(false); // État pour le loader
 
@@ -235,6 +236,7 @@ export default function SearchConfig() {
       text: "Des configurations existent pour ce type de document. Voulez-vous les écraser ?",
       icon: "warning",
       showCancelButton: true,
+      confirmButtonColor: "#1f2937",
       confirmButtonText: "Effacer les configurations",
       cancelButtonText: "Annuler",
     }).then((result) => {
@@ -291,7 +293,7 @@ export default function SearchConfig() {
 
           <div className="flex w-full flex-col md:flex-row gap-8 mb-10">
             <div className="w-full md:w-1/2">
-              <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              <h2 className="text-2xl flex items-start justify-start gap-1 font-semibold mb-4 text-gray-800">
                 <Building2 className="text-gray-800" size={20} />
                 Sélection du service
               </h2>
@@ -300,64 +302,83 @@ export default function SearchConfig() {
               ) : servicesError ? (
                 <p className="text-red-600">Erreur: {servicesError.message}</p>
               ) : (
-                <select
-                  className="w-full p-3 border border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200 bg-white"
-                  onChange={(e) => {
+                <Select
+                  className="w-full border-2 border-black rounded-lg "
+                  classNamePrefix="select"
+                  placeholder="Sélection du service"
+                  onChange={(selectedOption) => {
                     const service = localServicesData
                       .flatMap((directory) => directory.services)
-                      .find(
-                        (service) => service.id === parseInt(e.target.value)
-                      );
+                      .find((service) => service.id === selectedOption.value);
                     setSelectedService(service);
                   }}
-                >
-                  <option value="">Sélection du service</option>
-                  {localServicesData.map((directory) => (
-                    <optgroup
-                      key={directory.directory_id}
-                      label={directory.nom_directory}
-                    >
-                      {directory.services.map((service) => (
-                        <option key={service.id} value={service.id}>
-                          {service.nom_service}
-                        </option>
-                      ))}
-                    </optgroup>
-                  ))}
-                </select>
+                  options={localServicesData.map((directory) => ({
+                    label: directory.nom_directory,
+                    options: directory.services.map((service) => ({
+                      value: service.id,
+                      label: service.nom_service,
+                    })),
+                  }))}
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      borderColor: "#e5e7eb",
+                      "&:hover": {
+                        borderColor: "#d1d5db",
+                      },
+                    }),
+                    option: (base, state) => ({
+                      ...base,
+                      backgroundColor: state.isFocused ? "#e5e7eb" : "white",
+                      color: "#1f2937",
+                    }),
+                  }}
+                />
               )}
             </div>
 
             {selectedService && (
               <div className="w-full md:w-1/2">
-                <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+                <h2 className="text-2xl flex items-start justify-start gap-1 font-semibold mb-4 text-gray-800">
                   <Layers2 className="text-gray-800" size={20} />
                   Sélection type document
                 </h2>
-                <select
-                  className="w-full p-3 border border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200 bg-white"
-                  onChange={(e) =>
-                    setSelectedDocumentType(
-                      documentTypes.find(
-                        (dt) => dt.id === parseInt(e.target.value)
-                      )
-                    )
-                  }
-                >
-                  <option value="">Sélectionnez un type de document</option>
-                  {documentTypes.map((docType) => (
-                    <option key={docType.id} value={docType.id}>
-                      {docType.name}
-                    </option>
-                  ))}
-                </select>
+                <Select
+                  className="w-full border-2 border-black rounded-lg "
+                  classNamePrefix="select"
+                  placeholder="Sélectionnez un type de document"
+                  onChange={(selectedOption) => {
+                    const selectedDocType = documentTypes.find(
+                      (dt) => dt.id === selectedOption.value
+                    );
+                    setSelectedDocumentType(selectedDocType);
+                  }}
+                  options={documentTypes.map((docType) => ({
+                    value: docType.id,
+                    label: docType.name,
+                  }))}
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      borderColor: "#e5e7eb",
+                      "&:hover": {
+                        borderColor: "#d1d5db",
+                      },
+                    }),
+                    option: (base, state) => ({
+                      ...base,
+                      backgroundColor: state.isFocused ? "#e5e7eb" : "white",
+                      color: "#1f2937",
+                    }),
+                  }}
+                />
               </div>
             )}
           </div>
 
           {selectedDocumentType && (
             <div className="mb-10 w-full">
-              <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+              <h2 className="text-2xl flex items-start justify-start gap-1 font-semibold mb-4 text-gray-800">
                 <DatabaseZap className="text-gray-800" size={20} />
                 Sélection des métadonnées
               </h2>
@@ -367,16 +388,19 @@ export default function SearchConfig() {
                     {metadata.map((meta) => (
                       <li
                         key={meta.id}
-                        className="flex w-full bg-gray-200 p-2 rounded-lg items-center mb-2"
+                        className="flex w-full cursor-pointer bg-gray-200 p-2 rounded-lg items-center mb-2"
                       >
                         <input
                           type="checkbox"
                           id={`meta-${meta.id}`}
                           checked={selectedMetadata.includes(meta.id)}
                           onChange={() => handleMetadataSelection(meta.id)}
-                          className="mr-2"
+                          className="mr-2 checkbox checkbox-info"
                         />
-                        <label htmlFor={`meta-${meta.id}`} className="flex-1">
+                        <label
+                          htmlFor={`meta-${meta.id}`}
+                          className="flex-1 cursor-pointer text-black font-bold"
+                        >
                           {meta.cle}
                         </label>
                         <label className="switch ml-2">
@@ -424,7 +448,7 @@ export default function SearchConfig() {
             </div>
           )}
 
-          <div className="flex flex-col md:flex-row justify-between gap-16">
+          <div className="flex w-full flex-col md:flex-row justify-between gap-16">
             <button
               onClick={handleBack}
               className="bg-gray-900 flex items-center gap-2 text-white px-8 py-3 rounded-lg hover:bg-gray-700 transition duration-300"

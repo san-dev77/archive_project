@@ -26,8 +26,12 @@ const LinkPieceToDocumentType = () => {
   const [documentTypes, setDocumentTypes] = useState([]);
   const [relations, setRelations] = useState([]);
   const [selectedPieces, setSelectedPieces] = useState([]);
-  const [selectedService, setSelectedService] = useState("");
-  const [selectedDocumentType, setSelectedDocumentType] = useState("");
+  const [selectedService, setSelectedService] = useState(() => {
+    return sessionStorage.getItem("selectedService") || "";
+  });
+  const [selectedDocumentType, setSelectedDocumentType] = useState(() => {
+    return sessionStorage.getItem("selectedDocType") || "";
+  });
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -241,164 +245,175 @@ const LinkPieceToDocumentType = () => {
     }
   };
 
+  const handleServiceChange = (e) => {
+    const newService = e.target.value;
+    setSelectedService(newService);
+    localStorage.setItem("selectedService", newService);
+    // Réinitialiser le type de document quand le service change
+    setSelectedDocumentType("");
+    localStorage.removeItem("selectedDocumentType");
+  };
+
+  const handleDocumentTypeChange = (e) => {
+    const newDocType = e.target.value;
+    setSelectedDocumentType(newDocType);
+    localStorage.setItem("selectedDocumentType", newDocType);
+  };
+
   return (
     <div className="flex min-h-screen bg-gray-300">
       <Side_bar isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar />
-        <div className="container px-4 mx-auto mt-28 bg-white rounded-xl shadow-2xl flex flex-col h-full max-w-4xl overflow-hidden">
-          <h1 className="text-2xl mt-4 ml-2 font-extrabold text-gray-800 flex justify-start w-full">
-            <Cable size="28px" className="mr-3 " />
-            Configuration des pièces
-          </h1>
-          <div className="bg-gray-300 h-full rounded-lg shadow-lg w-full p-2 mb-6">
-            <div className="form-control w-full mt-4">
-              <label className="label">
-                <span className="text-black flex items-center justify-start gap-2">
-                  <Building2 />
-                  Choisissez un Service
-                </span>
-              </label>
-              <select
-                className="select select-bordered w-full bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-                value={selectedService}
-                onChange={(e) => setSelectedService(e.target.value)}
-              >
-                <option value="">Sélectionner un service</option>
-                {servicesData.map((directory) => (
-                  <optgroup
-                    key={directory.directory_id}
-                    label={directory.nom_directory}
-                  >
-                    {directory.services.map((service) => (
-                      <option key={service.id} value={service.id}>
-                        {service.nom_service}
-                      </option>
-                    ))}
-                  </optgroup>
-                ))}
-              </select>
+        <div className="container w-full mx-auto px-4 py-8 mt-20">
+          <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-white flex items-center">
+                <Cable className="h-8 w-8 text-orange-500 mr-2" />
+                Configuration des Relations
+              </h1>
             </div>
 
-            {selectedService && (
-              <div className="form-control w-full mt-4">
-                <label className="label">
-                  <span className="label-text flex items-start justify-start text-black">
-                    <Layers3 className="mr-1" />
-                    Type de document
-                  </span>
-                </label>
-                <select
-                  className="select select-bordered w-full bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-                  value={selectedDocumentType}
-                  onChange={(e) => setSelectedDocumentType(e.target.value)}
-                >
-                  <option value="">Sélectionner un type de document</option>
-                  {documentTypes.map((docType) => (
-                    <option key={docType.id} value={docType.id}>
-                      {docType.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-            {selectedDocumentType && (
-              <>
-                <div className="flex w-full items-center justify-between mt-4">
-                  <input
-                    type="text"
-                    placeholder="Recherche dans les relations"
-                    className="input input-bordered w-96 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-                    value={searchTerm}
-                    onChange={handleRelationSearchChange} // Assurez-vous que cette fonction est appelée
-                  />
-                  <button
-                    className="btn btn-primary ml-auto bg-gray-500 text-white hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
-                    onClick={handleDialogOpen}
+            <div className="bg-[#3a3a3a] rounded-lg p-6">
+              {/* Service Selection */}
+              <div className="grid grid-cols-2 gap-6 mb-8">
+                <div className="form-control">
+                  <label className="block text-sm font-medium text-white mb-2">
+                    <span className="flex items-center gap-2">
+                      <Building2 className="text-orange-500" />
+                      Service
+                    </span>
+                  </label>
+                  <select
+                    className="w-full px-4 py-2 bg-[#2a2a2a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-orange-500"
+                    value={selectedService}
+                    onChange={handleServiceChange}
                   >
-                    <GitBranchPlus className="mr-2" />
-                    Nouvelle liaison
-                  </button>
-
-                  <button
-                    className="btn btn-primary ml-auto bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
-                    onClick={() => setCreatePieceDialogOpen(true)}
-                  >
-                    <PlusCircleIcon className="mr-1" />
-                    Créer une nouvelle pièce
-                  </button>
+                    <option value="">Sélectionner un service</option>
+                    {servicesData.map((directory) => (
+                      <optgroup
+                        key={directory.directory_id}
+                        label={directory.nom_directory}
+                      >
+                        {directory.services.map((service) => (
+                          <option key={service.id} value={service.id}>
+                            {service.nom_service}
+                          </option>
+                        ))}
+                      </optgroup>
+                    ))}
+                  </select>
                 </div>
-                <div className="mt-4 w-full h-96 bg-white rounded-lg shadow-lg overflow-auto">
-                  {loading ? (
-                    <div className="flex justify-center items-center h-full">
-                      <div className="loader"></div>
+
+                {selectedService && (
+                  <div className="form-control">
+                    <label className="block text-sm font-medium text-white mb-2">
+                      <span className="flex items-center gap-2">
+                        <Layers3 className="text-orange-500" />
+                        Type de document
+                      </span>
+                    </label>
+                    <select
+                      className="w-full px-4 py-2 bg-[#2a2a2a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-orange-500"
+                      value={selectedDocumentType}
+                      onChange={handleDocumentTypeChange}
+                    >
+                      <option value="">Sélectionner un type</option>
+                      {documentTypes.map((docType) => (
+                        <option key={docType.id} value={docType.id}>
+                          {docType.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
+
+              {selectedDocumentType && (
+                <>
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        placeholder="Rechercher une relation..."
+                        className="w-full px-4 py-2 bg-[#2a2a2a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-orange-500"
+                        value={searchTerm}
+                        onChange={handleRelationSearchChange}
+                      />
                     </div>
-                  ) : (
-                    <table className="table w-full border-collapse">
-                      <thead className="sticky top-0 rounded-lg bg-gray-600 text-white">
+                    <button
+                      className="px-4 py-2 bg-white hover:bg-gray-700 text-black hover:text-white rounded-lg flex items-center gap-2 transition-colors duration-200"
+                      onClick={handleDialogOpen}
+                    >
+                      <GitBranchPlus size={20} />
+                      Nouvelle liaison
+                    </button>
+                    <button
+                      className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg flex items-center gap-2 transition-colors duration-200"
+                      onClick={() => setCreatePieceDialogOpen(true)}
+                    >
+                      <PlusCircleIcon size={20} />
+                      Nouvelle pièce
+                    </button>
+                  </div>
+
+                  <div className="bg-[#2a2a2a] rounded-lg overflow-hidden">
+                    <table className="w-full">
+                      <thead className="bg-black/30 text-white">
                         <tr>
-                          <th className="text-lg p-4">Code de la pièce</th>
-                          <td className="">|</td>
-                          <th className="text-lg p-4">Nom de la pièce</th>
-                          <td className="">|</td>
-                          <th className="text-lg p-4 text-right">Actions</th>
+                          <th className="px-6 py-4 text-left font-semibold">Code</th>
+                          <th className="px-6 py-4 text-left font-semibold">Nom</th>
+                          <th className="px-6 py-4 text-right font-semibold">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {filteredRelations.map((relation) => (
+                        {filteredRelations.map((relation, index) => (
                           <tr
                             key={relation.id}
-                            className={`hover:bg-gray-100 transition duration-200 
-                              ${
-                                relation.id % 2 != 0
-                                  ? "bg-gray-300"
-                                  : "bg-white"
-                              }
-                              `}
+                            className={`border-t border-[#4a4a4a] hover:bg-[#3a3a3a] transition-colors duration-200`}
                           >
-                            <td className="text-center text-white flex items-center justify-center gap-2 mt-2 rounded-lg p-4 bg-slate-600">
-                              <Ungroup color="white" />
-                              {relation.code_piece}
+                            <td className="px-6 py-4">
+                              <span className="flex items-center gap-2">
+                                <Ungroup className="text-orange-500" />
+                                {relation.code_piece}
+                              </span>
                             </td>
-                            <td className="text-center text-gray-500">|</td>
-                            <td className="text-center text-gray-900">
-                              {relation.nom_piece}
-                            </td>
-                            <td className="text-center text-gray-500">|</td>
-                            <td className="text-right flex  justify-center   gap-2 items-center p-2 text-base text-gray-800">
-                              <Tooltip title="Voir">
-                                <button
-                                  className="btn btn-outline bg-gray-600 btn-md text-white hover:bg-indigo-500 transition duration-300 rounded-md"
-                                  onClick={() => handleView(relation)}
-                                >
-                                  <ScanEye className="mr-1" />
-                                </button>
-                              </Tooltip>
-                              <Tooltip title="Détacher">
-                                <button
-                                  className="btn btn-outline bg-gray-600 btn-md text-white hover:bg-red-400 transition duration-300 rounded-md"
-                                  onClick={() => handleDelete(relation.id)}
-                                >
-                                  <Link2Off className="mr-1" />
-                                </button>
-                              </Tooltip>
+                            <td className="px-6 py-4 text-gray-300">{relation.nom_piece}</td>
+                            <td className="px-6 py-4">
+                              <div className="flex justify-end gap-3">
+                                <Tooltip title="Voir">
+                                  <button
+                                    className="p-2 text-blue-500 hover:bg-[#4a4a4a] rounded-lg transition-colors duration-200"
+                                    onClick={() => handleView(relation)}
+                                  >
+                                    <ScanEye size={20} />
+                                  </button>
+                                </Tooltip>
+                                <Tooltip title="Détacher">
+                                  <button
+                                    className="p-2 text-red-500 hover:bg-[#4a4a4a] rounded-lg transition-colors duration-200"
+                                    onClick={() => handleDelete(relation.id)}
+                                  >
+                                    <Link2Off size={20} />
+                                  </button>
+                                </Tooltip>
+                              </div>
                             </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
-                  )}
-                </div>
-              </>
-            )}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       {openDialog && (
-        <div className="fixed z-50 inset-0 flex items-center  justify-center bg-black bg-opacity-50">
-          <div className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300  flex flex-col justify-center items-center">
+        <div className="fixed inset-0 flex z-50 items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="modal-box bg-white text-gray-800 rounded-2xl shadow-2xl transform transition-all duration-300 max-w-2xl w-full p-8">
             <button
               className="btn btn-sm btn-circle absolute right-2 top-2"
               onClick={handleDialogClose}

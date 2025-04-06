@@ -1,7 +1,9 @@
 import { Settings, Zap } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-const UserBadge = () => {
+const UserBadge = ({ path }) => {
+  const navigate = useNavigate();
   const role = localStorage.getItem("role");
   const [isHovered, setIsHovered] = useState(false);
 
@@ -10,6 +12,9 @@ const UserBadge = () => {
       className="flex bg-gray-700 items-center space-x-2 p-2 transition-all hover:bg-slate-700 cursor-pointer hover:scale-110 shadow-md rounded-lg relative"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      onClick={() => {
+        navigate(path);
+      }}
     >
       <div className="flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-lg">
         <span className="text-gray-700 font-bold text-lg">

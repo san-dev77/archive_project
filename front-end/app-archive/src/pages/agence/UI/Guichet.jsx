@@ -7,8 +7,7 @@ import {
   ChevronDown,
   SquarePen,
   Trash2,
-  TicketCheck,
-  Landmark,
+  PackageCheck,
 } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -32,12 +31,10 @@ export default function ShowGuichet() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedAgency, setExpandedAgency] = useState(null);
-  const [documents, setDocuments] = useState([]);
 
   useEffect(() => {
     fetchGuichets();
     fetchAgencies();
-    fetchDocuments();
   }, []);
 
   const fetchGuichets = async () => {
@@ -76,17 +73,37 @@ export default function ShowGuichet() {
 
   const handleGuichetCreated = async (event) => {
     event.preventDefault();
-    try {
-      console.log(newGuichet);
 
-      await axios.post("http://localhost:3000/guichet", newGuichet);
+    if (!newGuichet.code_guichet || !newGuichet.agence_id) {
+      toast.error("Tous les champs doivent être remplis.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/guichet",
+        newGuichet
+      );
+
+      if (response.code === "ERR_BAD_REQUEST") {
+        if (response.data?.message) {
+          toast.error(response.data.message);
+        } else {
+          toast.error("Une erreur est survenue");
+        }
+        return;
+      }
+
       setNewGuichet({ code_guichet: "", nom_guichet: "", agence_id: "" });
       fetchGuichets();
       toast.success("Nouveau guichet créé avec succès !");
       setOpenModal(false);
     } catch (error) {
       console.error("Error creating guichet:", error);
-      toast.error("Failed to create guichet.");
+      const errorMessage =
+        error.response?.data?.message ||
+        "Une erreur est survenue lors de la création du guichet.";
+      toast.error(errorMessage);
     }
   };
 
@@ -128,7 +145,7 @@ export default function ShowGuichet() {
     setExpandedAgency(expandedAgency === agencyId ? null : agencyId);
   };
 
-  const handleEditGuichet = (guichet) => {
+  const handleEditGuichet = async (guichet) => {
     setNewGuichet({
       id: guichet.id,
       code_guichet: guichet.code_guichet,
@@ -136,23 +153,54 @@ export default function ShowGuichet() {
       agence_id: guichet.agence_id,
     });
     setOpenModal(true);
+
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/relations/guichet`
+      );
+      if (response.data && Array.isArray(response.data)) {
+        console.log();
+      } else {
+        console.error(
+          "Invalid data format for related documents:",
+          response.data
+        );
+        setError("Invalid data format for related documents");
+      }
+    } catch (error) {
+      console.error("Error fetching related documents:", error);
+      setError("Failed to fetch related documents");
+    }
   };
 
   const handleDeleteGuichet = async (guichetId) => {
-    const confirm = showDeleteConfirmation();
+    const confirm = await showDeleteConfirmation();
     if (confirm) {
       try {
-        await axios.delete(`http://localhost:3000/guichet/${guichetId}`);
-        fetchGuichets();
-        toast.success("Guichet supprimé avec succès !");
-        Swal.fire({
-          icon: "success",
-          title: "Succès",
-          text: "guichet supprimée avec succès !",
-        });
+        const response = await axios.delete(
+          `http://localhost:3000/guichet/${guichetId}`
+        );
+        if (response.status === 200) {
+          fetchGuichets();
+          toast.success("Guichet supprimé avec succès !");
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Erreur",
+            text:
+              response.data.message || "Échec de la suppression du guichet.",
+          });
+        }
       } catch (error) {
         console.error("Error deleting guichet:", error);
-        toast.error("Failed to delete guichet.");
+        const errorMessage =
+          error.response?.data?.message ||
+          "Une erreur est survenue lors de la suppression.";
+        Swal.fire({
+          icon: "error",
+          title: "Erreur",
+          text: errorMessage,
+        });
       }
     }
   };
@@ -169,7 +217,7 @@ export default function ShowGuichet() {
       });
       setNewGuichet({ code_guichet: "", nom_guichet: "", agence_id: "" });
       fetchGuichets();
-      toast.success("Guichet mise à jour avec succès !");
+      toast.success("Guichet mis à jour avec succès !");
       setOpenModal(false);
     } catch (error) {
       console.error("Error updating guichet:", error);
@@ -177,32 +225,31 @@ export default function ShowGuichet() {
     }
   };
 
-  const fetchDocuments = async () => {
-    try {
-      const response = await axios.get(
-        `http://localhost:3000/relations/guichet`
-      );
-      if (response.data && Array.isArray(response.data)) {
-        setDocuments(response.data);
-      } else {
-        console.error("Invalid data format for documents:", response.data);
-        setError("Invalid data format for documents");
-      }
-    } catch (error) {
-      console.error("Error fetching documents:", error);
-      setError("Failed to fetch documents");
-    }
-  };
-
-  const handleGuichetClick = () => {
-    // Pas besoin de rappeler fetchDocuments ici
-    // Vous pouvez simplement afficher les documents déjà chargés
-  };
+  // const handleFetchRelatedDocuments = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `http://localhost:3000/relations/guichet`
+  //     );
+  //     if (response.data && Array.isArray(response.data)) {
+  //       setRelatedDocuments(response.data);
+  //       setShowRelatedDocuments(!showRelatedDocuments);
+  //     } else {
+  //       console.error(
+  //         "Invalid data format for related documents:",
+  //         response.data
+  //       );
+  //       setError("Invalid data format for related documents");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching related documents:", error);
+  //     setError("Failed to fetch related documents");
+  //   }
+  // };
 
   if (loading)
     return (
       <div className="flex justify-center items-center h-screen">
-        <Loader_component />
+        <Loader_component className="loader" />
       </div>
     );
   if (error) return <div className="text-red-500">{error}</div>;
@@ -212,182 +259,149 @@ export default function ShowGuichet() {
       <SideBar_agence isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar position="fixed" title="Guichets" />
-        <div className="container w-[90%] mx-auto mt-28 bg-white rounded-xl shadow-2xl flex flex-col min-h-screen">
-          <div className="bg-white w-full rounded-lg shadow-md p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h1 className="text-2xl font-extrabold text-gray-800 flex justify-start w-full">
-                <TicketCheck size="28px" className="mr-3 ml-2 text-red-600" />
-                Guichets
+        <div className="container w-full mx-auto px-4 py-8 mt-20">
+          <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-white flex items-center">
+                <PackageCheck className="h-8 w-8 text-[#00B7FF] mr-2" />
+                Gestion des Guichets
               </h1>
-
               <button
-                className="btn btn-primary ml-auto mb-4 bg-gray-500 text-white hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
                 onClick={handleOpenModal}
+                className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
               >
-                <Plus size={20} className="mr-2" />
-                Nouveau
+                <Plus className="h-5 w-5 mr-2" />
+                Nouveau Guichet
               </button>
             </div>
 
-            <div className="flex flex-col md:flex-row justify-between items-start mb-4 w-full">
-              <div className="flex items-start  flex-col w-1/2">
-                <h2 className="text-lg font-bold text-gray-800 mr-4 w-full">
-                  Rechercher :
-                </h2>
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  placeholder="Rechercher..."
-                  className="input w-full input-bordered border-2 border-gray-300 bg-white text-black rounded-lg p-2"
-                />
+            <div className="mb-6">
+              <div className="flex items-center space-x-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-white mb-1">
+                    Rechercher un guichet
+                  </label>
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    placeholder="Rechercher par code ou nom..."
+                    className="w-full px-4 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                  />
+                </div>
               </div>
-              {/* <div className="flex items-center">
-                <button className="btn btn-default rounded-lg bg-gray-600  text-white hover:bg-gray-700 transition duration-300 shadow-md mt-2 ml-2">
-                  <FileSymlink size={20} />
-                  Attacher pièces jointes
-                </button>
-              </div> */}
             </div>
-            <div className="overflow-x-auto">
-              <div className="h-[600px] bg-gray-600 py-2 rounded-lg px-4 overflow-y-auto">
-                {Object.keys(groupedGuichets).length === 0 ? (
-                  <div className="text-center text-gray-100 mt-4 flex items-center justify-center">
-                    <ServerOff className="text-white mr-2" size={30} />
-                    Aucun guichet disponible.
-                  </div>
-                ) : (
-                  <ul className="list-none w-full">
-                    {Object.entries(groupedGuichets).map(
-                      ([agencyId, agency]) => (
-                        <li key={agencyId} className="w-full">
-                          <button
-                            className="btn bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg shadow-md w-full text-left flex justify-between items-center"
-                            onClick={() => toggleAgency(agencyId)}
-                          >
-                            <div className="flex text-black  items-center p-2 rounded-full bg-white">
-                              <Landmark className="mr-2" />
-                              {agency.nom_agence}
-                            </div>
-                            {expandedAgency === agencyId ? (
-                              <ChevronUp />
-                            ) : (
-                              <ChevronDown />
-                            )}
-                          </button>
-                          {expandedAgency === agencyId && (
-                            <ul className="list-none w-full mt-2 ml-1 border-l-2 border-gray-300 pl-4">
-                              {agency.guichets.map((guichet) => (
-                                <li
-                                  key={guichet.id}
-                                  className="w-full flex justify-between items-center cursor-pointer"
-                                  onClick={() => handleGuichetClick(guichet.id)}
-                                >
-                                  <div className="flex text-black w-full items-center justify-between p-2 rounded-lg shadow-md bg-white">
-                                    <span className="flex items-center">
-                                      <TicketCheck className="mr-2" />
-                                      {guichet.nom_guichet}
-                                    </span>
-                                    <span className="text-sm text-gray-500 ml-2">
-                                      (Cliquez pour voir les documents)
-                                    </span>
 
-                                    <div className="flex">
-                                      <button
-                                        className="btn btn-outline bg-gray-600 text-white hover:bg-blue-600 transition duration-300 rounded-md"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleEditGuichet(guichet);
-                                        }}
-                                      >
-                                        <SquarePen className="mr-1" />
-                                      </button>
-                                      <button
-                                        className="btn btn-outline bg-gray-600 text-white hover:bg-red-600 transition duration-300 rounded-md"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleDeleteGuichet(guichet.id);
-                                        }}
-                                      >
-                                        <Trash2 className="mr-1" />
-                                      </button>
-                                    </div>
-                                  </div>
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                        </li>
-                      )
-                    )}
-                  </ul>
-                )}
-              </div>
-            </div>
-            {documents.length > 0 && (
-              <div className="mt-4">
-                <h3 className="text-lg font-bold">Documents liés :</h3>
-                <ul>
-                  {documents.map((doc) => (
-                    <li key={doc.id}>
-                      {console.log(doc.nom_document_type)},
-                      {doc.nom_document_type}
-                    </li>
+            <div className="bg-[#3a3a3a] rounded-lg p-4">
+              {Object.keys(groupedGuichets).length === 0 ? (
+                <div className="text-center py-8">
+                  <ServerOff className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-300">Aucun guichet disponible</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {Object.entries(groupedGuichets).map(([agencyId, agency]) => (
+                    <div key={agencyId} className="bg-[#4a4a4a] rounded-lg p-4">
+                      <button
+                        onClick={() => toggleAgency(agencyId)}
+                        className="w-full flex justify-between items-center text-white hover:text-[#00B7FF] transition-colors duration-200"
+                      >
+                        <span className="font-medium">{agency.nom_agence}</span>
+                        {expandedAgency === agencyId ? (
+                          <ChevronUp className="h-5 w-5" />
+                        ) : (
+                          <ChevronDown className="h-5 w-5" />
+                        )}
+                      </button>
+
+                      {expandedAgency === agencyId && (
+                        <div className="mt-4 space-y-3">
+                          {agency.guichets.map((guichet) => (
+                            <div
+                              key={guichet.id}
+                              className="bg-[#5a5a5a] rounded-lg p-4 flex justify-between items-center"
+                            >
+                              <div className="text-white">
+                                <p className="font-medium">
+                                  {guichet.nom_guichet}
+                                </p>
+                                <p className="text-sm text-gray-300">
+                                  Code: {guichet.code_guichet}
+                                </p>
+                              </div>
+                              <div className="flex space-x-2">
+                                <button
+                                  onClick={() => handleEditGuichet(guichet)}
+                                  className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
+                                >
+                                  <SquarePen className="h-5 w-5" />
+                                </button>
+                                <button
+                                  onClick={() =>
+                                    handleDeleteGuichet(guichet.id)
+                                  }
+                                  className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200"
+                                >
+                                  <Trash2 className="h-5 w-5" />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   ))}
-                </ul>
-              </div>
-            )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       {openModal && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          }}
-          onClick={handleCloseModal}
-        >
-          <div
-            className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg w-full mx-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="btn btn-sm btn-circle absolute right-2 top-2"
-              onClick={handleCloseModal}
-            >
-              ✕
-            </button>
-            <h3 className="font-bold text-lg">
-              {newGuichet.id
-                ? "Modifier le guichet"
-                : "Ajouter un nouveau guichet"}
-            </h3>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold">
+                {newGuichet.id ? "Modifier le guichet" : "Nouveau guichet"}
+              </h3>
+              <button
+                onClick={handleCloseModal}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+
             <form
               onSubmit={
                 newGuichet.id ? handleGuichetUpdated : handleGuichetCreated
               }
+              className="space-y-4"
             >
-              <div className="form-control">
-                <label className="label">Sélectionner une agence</label>
-                <Select
-                  value={agencyOptions.find(
-                    (option) => option.value === newGuichet.agence_id
-                  )}
-                  onChange={handleAgencyChange}
-                  options={agencyOptions}
-                  className="mb-2"
-                  placeholder="Choisir une agence"
-                  isClearable
-                />
-              </div>
-              <div className="form-control mt-4">
-                <label className="label">Code du guichet</label>
+              {!newGuichet.id && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Agence
+                  </label>
+                  <Select
+                    value={agencyOptions.find(
+                      (option) => option.value === newGuichet.agence_id
+                    )}
+                    onChange={handleAgencyChange}
+                    options={agencyOptions}
+                    className="basic-single"
+                    classNamePrefix="select"
+                    placeholder="Sélectionner une agence"
+                    isClearable
+                  />
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Code du guichet
+                </label>
                 <input
                   type="text"
                   value={newGuichet.code_guichet}
@@ -397,12 +411,15 @@ export default function ShowGuichet() {
                       code_guichet: e.target.value,
                     })
                   }
-                  className="input input-bordered border-2 border-gray-300 bg-white text-black"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00B7FF]"
                   required
                 />
               </div>
-              <div className="form-control mt-4">
-                <label className="label">Nom du guichet</label>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Nom du guichet
+                </label>
                 <input
                   type="text"
                   value={newGuichet.nom_guichet}
@@ -412,23 +429,24 @@ export default function ShowGuichet() {
                       nom_guichet: e.target.value,
                     })
                   }
-                  className="input input-bordered border-2 border-gray-300 bg-white text-black"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00B7FF]"
                   required
                 />
               </div>
-              <div className="modal-action flex justify-center items-center">
-                <button
-                  type="submit"
-                  className="btn border-t-neutral-700 w-[40%] bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg"
-                >
-                  {newGuichet.id ? "Mettre à jour" : "Ajouter"}
-                </button>
+
+              <div className="flex justify-end space-x-3 mt-6">
                 <button
                   type="button"
-                  className="btn btn-outline btn-error w-[40%] mt-2"
                   onClick={handleCloseModal}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
                 >
                   Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-sm font-medium text-white bg-[#00B7FF] rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  {newGuichet.id ? "Mettre à jour" : "Créer"}
                 </button>
               </div>
             </form>

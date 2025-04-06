@@ -1,20 +1,18 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   Grid,
   BookMarked,
-  Settings,
   ScanSearch,
   Search,
-  Building2,
   Layers3,
   Network,
-  ChevronDown,
-  ChevronRight,
   X,
   BadgeInfo,
   Frown,
+  UsersRound,
+  ChartNoAxesCombined,
 } from "lucide-react";
 import axios from "axios";
 import "daisyui/dist/full.css";
@@ -23,8 +21,7 @@ import logo from "../assets/icones/logo 3.jpg";
 const SideBar = () => {
   const navigate = useNavigate();
   const [directories, setDirectories] = useState([]);
-  const [showDirectories, setShowDirectories] = useState(false);
-  const [expandedDirectory, setExpandedDirectory] = useState(null);
+
   const [, setShowMoreIndicator] = useState(false);
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -69,20 +66,6 @@ const SideBar = () => {
     navigate(path);
   };
 
-  const handleDirectoriesClick = () => {
-    setShowDirectories(!showDirectories);
-  };
-
-  const handleDirectoryClick = (directoryId) => {
-    setExpandedDirectory(
-      expandedDirectory === directoryId ? null : directoryId
-    );
-  };
-
-  const handleSettingsClick = () => {
-    navigate("/settings");
-  };
-
   const handleSearch = () => {
     if (searchQuery.trim() === "") {
       setSearchResults([]);
@@ -112,188 +95,106 @@ const SideBar = () => {
     setShowSearchModal(false);
   };
 
-  const handleSearchClick = () => {
-    setShowSearchModal(true);
-  };
-
   return (
     <>
-      <div className="sticky top-0 h-screen z-50 scrollbar-state bg-gray-800 shadow-lg flex flex-col justify-between items-center px-2 py-2 w-64">
-        <div className="flex flex-col items-center space-y-4 w-full overflow-y-auto max-h-[80vh]">
+      <div className="sticky top-0 h-screen overflow-x-hidden scrollbar-state z-20 bg-gray-900 shadow-lg flex flex-col justify-between items-center px-2 py-2 w-64">
+        <div className="flex flex-col items-center space-y-4 w-full max-h-[80vh]">
           {/* Le logo */}
-          <div className="flex p-6 h-[50px] text-left w-full items-start justify-start ">
+          <div className="flex p-6 h-[50px] text-left w-full items-start justify-start">
             <div className="flex items-center justify-normal w-full gap-2 align-middle h-full">
               <img
                 src={logo}
                 alt="logo_BMS"
                 className="w-12 h-12 rounded-full bg-white shadow-md"
               />
-              <h1 className="text-white text-2x font-bold">
-                Digi Doc solution
-              </h1>
+              <h1 className="text-white text-2x font-bold">Digi Doc</h1>
             </div>
           </div>
           {/* Le logo */}
 
-          <div className="divider "></div>
+          <div className="divider"></div>
 
-          <ul className="menu p-0 w-full overflow-hidden">
+          <ul className="menu p-0 w-full">
+            <div
+              className="cursor-pointer flex items-start justify-start text-white gap-1 w-full rounded-lg p-2 bg-gray-800 hover:bg-gray-600 transition-colors duration-300"
+              onClick={() => handleNavigate("/app-archive")}
+            >
+              <LayoutDashboard
+                color="white"
+                size="24px"
+                className="transition-transform duration-300 ease-in-out transform hover:scale-110"
+              />
+              <span className="text-sm ml-2">Dashboard</span>
+            </div>
             <li className="w-full">
               <div
-                className="cursor-pointer p-2 text-white flex items-start justify-start gap-1 w-full rounded-lg bg-gray-800 hover:bg-gray-600 transition-colors duration-300"
-                onClick={() => handleNavigate("/app-archive")}
-              >
-                <LayoutDashboard
-                  color="white"
-                  size="24px"
-                  className="transition-transform duration-300 ease-in-out transform hover:scale-110"
-                />
-                <span className="text-sm ml-2">Dashboard</span>
-              </div>
-            </li>
-            <li className="w-full">
-              <div
-                onClick={handleDirectoriesClick}
+                onClick={() => handleNavigate("/services")}
                 className="flex w-full items-center justify-between text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
               >
                 <div className="flex items-center">
                   <Network color="white" size="24px" />
                   <span className="text-sm ml-2">Directions</span>
                 </div>
-                <div className="flex items-center ">
-                  {showDirectories ? (
-                    <ChevronDown
-                      size={16}
-                      className="transition-transform duration-300 ease-in-out transform hover:scale-110"
-                    />
-                  ) : (
-                    <ChevronRight
-                      size={16}
-                      className="transition-transform duration-300 ease-in-out transform hover:scale-110"
-                    />
-                  )}
-                  <Link to="/services" className="flex items-center ml-2">
-                    <Settings
-                      color="white"
-                      className="transition-transform duration-300 ease-in-out transform hover:scale-110"
-                      size="20px"
-                      onClick={handleSettingsClick}
-                    />
-                  </Link>
-                  <div
-                    onClick={handleSearchClick}
-                    className="ml-2 cursor-pointer"
-                  >
-                    <Search
-                      color="white"
-                      className="transition-transform duration-300 ease-in-out transform hover:scale-110"
-                      size="20px"
-                    />
-                  </div>
+              </div>
+            </li>
+            <li className="w-full">
+              <div
+                onClick={() => handleNavigate("/document-types")}
+                className="flex w-full items-center justify-between text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
+              >
+                <div className="flex items-center">
+                  <Layers3 color="white" size="24px" />
+                  <span className="text-sm ml-2">Types de documents</span>
                 </div>
               </div>
-              {showDirectories && (
-                <ul className="pl-4 w-full">
-                  {directories.map((directory) => (
-                    <li
-                      key={directory.directory_id}
-                      className="text-white w-full"
-                    >
-                      <div
-                        onClick={() =>
-                          handleDirectoryClick(directory.directory_id)
-                        }
-                        className="flex items-center cursor-pointer hover:text-yellow-300"
-                      >
-                        {expandedDirectory === directory.directory_id ? (
-                          <ChevronDown size={16} />
-                        ) : (
-                          <ChevronRight size={16} />
-                        )}
-                        <Building2 className="ml-2 mr-2" size="20px" />
-                        {directory.nom_directory}
-                      </div>
-                      {expandedDirectory === directory.directory_id && (
-                        <ul className="pl-6">
-                          {directory.services &&
-                            directory.services
-                              .split("|")
-                              .map((serviceString) => {
-                                const service = JSON.parse(serviceString);
-                                return (
-                                  <li
-                                    key={service.id}
-                                    className="text-white hover:text-yellow-300 pl-4 border-l-2 border-gray-500"
-                                  >
-                                    <Link
-                                      to={`/doc_n_type/${service.id}`}
-                                      className="flex items-center"
-                                    >
-                                      <BadgeInfo className="mr-2" size="16px" />
-                                      <span
-                                        className="max-w-xs overflow-hidden whitespace-nowrap overflow-ellipsis"
-                                        title={service.nom_service}
-                                      >
-                                        {service.nom_service}
-                                      </span>
-                                    </Link>
-                                  </li>
-                                );
-                              })}
-                        </ul>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              )}
             </li>
             <li className="w-full">
-              <Link
-                to="/document-types"
-                className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105"
-              >
-                <Layers3 color="white" size="24px" />
-                <span className="text-sm ml-2">Types de documents</span>
-              </Link>
-            </li>
-            <li className="w-full">
-              <Link
-                to="/create-piece"
-                className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105"
+              <div
+                onClick={() => handleNavigate("/create-piece")}
+                className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
               >
                 <Grid color="white" size="24px" />
                 <span className="text-sm ml-2">Pièces</span>
-              </Link>
+              </div>
             </li>
             <li className="w-full">
-              <Link
-                to="/documents"
-                className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105"
+              <div
+                onClick={() => handleNavigate("/documents")}
+                className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
               >
                 <BookMarked color="white" size="24px" />
                 <span className="text-sm ml-2">Dossier</span>
-              </Link>
+              </div>
             </li>
             <li className="w-full">
-              <Link
-                to="/search"
-                className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105"
+              <div
+                onClick={() => handleNavigate("/search")}
+                className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
               >
                 <ScanSearch color="white" size="24px" />
                 <span className="text-sm ml-2">Rechercher</span>
-              </Link>
+              </div>
+            </li>
+            <li className="w-full">
+              <div
+                onClick={() => handleNavigate("/users")}
+                className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
+              >
+                <UsersRound color="white" size="24px" />
+                <span className="text-sm ml-2">Utilisateurs</span>
+              </div>
+            </li>
+            <li className="w-full">
+              <div
+                onClick={() => handleNavigate("/suivi")}
+                className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
+              >
+                <ChartNoAxesCombined color="white" size="24px" />
+                <span className="text-sm ml-2">Suivi</span>
+              </div>
             </li>
           </ul>
           <div className="divider"></div>
-        </div>
-        <div className="w-full">
-          <div
-            className="flex items-center justify-center p-2 rounded-lg cursor-pointer border-2 border-gray-100 transition-transform duration-300 ease-in-out transform hover:bg-gray-500"
-            onClick={handleSettingsClick}
-          >
-            <Settings size={28} color="white" />
-            <h1 className="text-white ml-2">Paramètres</h1>
-          </div>
         </div>
       </div>
       {showSearchModal && (

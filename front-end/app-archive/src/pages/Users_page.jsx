@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import user_icone from "../assets/icones/user_icone.png";
 import {
   CirclePlus,
   LayoutList,
   Plus,
   PlusCircle,
+  Settings,
+  Settings2Icon,
+  ShieldCheck,
   SquarePenIcon,
   Trash2Icon,
 } from "lucide-react";
@@ -16,16 +19,14 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { Tooltip } from "@mui/material";
 import axios from "axios";
 import Swal from "sweetalert2"; // Import SweetAlert2
+import { showDeleteConfirmation } from "../utils/alerts";
 
 const AgentsPage = () => {
   const [agents, setAgents] = useState([]);
-  const [services, setServices] = useState([]);
   const [roles, setRoles] = useState([]);
-  const [profiles, setProfiles] = useState([]);
   const [newRole, setNewRole] = useState("");
   const [showRoleModal, setShowRoleModal] = useState(false);
-  const [selectedAgent, setSelectedAgent] = useState(null);
-  const [selectedProfile, setSelectedProfile] = useState(null);
+  const [AgentNoProfil, SetAgentNoProfil] = useState(0);
   const [newAgent, setNewAgent] = useState({
     lastName: "",
     phone: "",
@@ -36,17 +37,12 @@ const AgentsPage = () => {
     fonction_id: "",
     firstName: "",
   });
-  const [showPassword, setShowPassword] = useState(false);
   const [passwordVisibility, setPasswordVisibility] = useState({});
   const [openModal, setOpenModal] = useState(false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [filteredAgents, setFilteredAgents] = useState([]);
-  const [notification, setNotification] = useState({
-    open: false,
-    message: "",
-    severity: "",
-  });
+
   const [editingAgent, setEditingAgent] = useState(null);
   const [servicesData, setServicesData] = useState([]);
   const [showRoleOptionsModal, setShowRoleOptionsModal] = useState(false);
@@ -61,6 +57,16 @@ const AgentsPage = () => {
       setFilteredAgents(data);
     };
     fetchAgents();
+    const fetchAgentNoProfilCount = async () => {
+      const response = await fetch(
+        "http://localhost:3000/agents/agentNoProfil"
+      );
+      const data = await response.json();
+      console.log(data);
+
+      SetAgentNoProfil(data);
+    };
+    fetchAgentNoProfilCount();
 
     const fetchServices = async () => {
       try {
@@ -107,8 +113,6 @@ const AgentsPage = () => {
       const response = await fetch("http://localhost:3000/profil");
       const data = await response.json();
       console.log(data);
-
-      setProfiles(data);
     };
     fetchProfiles();
   }, []);
@@ -216,29 +220,32 @@ const AgentsPage = () => {
   };
 
   const handleDelete = async (agentId) => {
-    try {
-      const response = await fetch(
-        `http://localhost:3000/agents/remove-agent/${agentId}`,
-        {
-          method: "DELETE",
-        }
-      );
-      if (response.ok) {
-        setAgents(agents.filter((agent) => agent.id !== agentId));
-        setFilteredAgents(
-          filteredAgents.filter((agent) => agent.id !== agentId)
+    const confirm = await showDeleteConfirmation();
+    if (confirm) {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/agents/remove-agent/${agentId}`,
+          {
+            method: "DELETE",
+          }
         );
-        Swal.fire("Succès!", "Agent supprimé avec succès!", "success"); // SweetAlert for success
-      } else {
-        const errorText = await response.text();
-        throw new Error(`Erreur lors de la requête: ${errorText}`);
+        if (response.ok) {
+          setAgents(agents.filter((agent) => agent.id !== agentId));
+          setFilteredAgents(
+            filteredAgents.filter((agent) => agent.id !== agentId)
+          );
+          Swal.fire("Succès!", "Agent supprimé avec succès!", "success"); // SweetAlert for success
+        } else {
+          const errorText = await response.text();
+          throw new Error(`Erreur lors de la requête: ${errorText}`);
+        }
+      } catch (error) {
+        Swal.fire(
+          "Erreur!",
+          "Erreur lors de la suppression de l'agent: " + error.message,
+          "error"
+        ); // SweetAlert for error
       }
-    } catch (error) {
-      Swal.fire(
-        "Erreur!",
-        "Erreur lors de la suppression de l'agent: " + error.message,
-        "error"
-      ); // SweetAlert for error
     }
   };
 
@@ -304,34 +311,91 @@ const AgentsPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-300">
+    <div className="flex min-h-screen bg-gradient-to-br from-gray-200 to-gray-300">
       <SideBar isVisible={true} className="w-64" />
-      <div className="flex-1 w-[70%] flex mt-20 flex-col">
+      <div className="flex-1 w-[70%] flex flex-col">
         <TopBar position="fixed" title="Agents" />
-        <div className="container h-full w-[90%] mx-auto mt-10 bg-white rounded-xl shadow-2xl flex flex-col ">
-          <h4 className="text-2xl font-extrabold mt-2 text-gray-800 mb-4 flex items-center">
-            <LayoutList size="32px" className="mr-2" />
+
+        {/* Nouvelle carte d'information */}
+
+        <div className="container h-full w-full mx-auto  bg-white/90 backdrop-blur-sm rounded-xl shadow-2xl flex flex-col">
+          <div className="mx-auto w-[95%] mt-24 mb-6">
+            <div className="bg-gradient-to-r from-gray-800 to-gray-900 rounded-2xl shadow-2xl p-6 border border-gray-700 relative ">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+                    <Settings2Icon className="text-green-500" />
+                    Attribution des Actions
+                  </h2>
+                  <p className="text-gray-300 mb-4">
+                    Pour permettre aux agents d&apos;interagir avec le système,
+                    vous devez leur attribuer des actions spécifiques. Chaque
+                    agent peut avoir différents niveaux d&apos;accès et de
+                    permissions selon son rôle.
+                  </p>
+                  <div className="flex gap-4 items-center">
+                    <div className="flex items-center gap-2 bg-gray-700/50 px-4 py-2 rounded-lg">
+                      <span className="text-yellow-500">⚠️</span>
+                      <span className="text-gray-300 text-sm">
+                        <span className="text-blue-800 p-1 rounded-full bg-white font-bold text-2x1">
+                          {" "}
+                          {AgentNoProfil.count}
+                        </span>{" "}
+                        agents nécessitent un profil avec au moins une
+                        d&apos;action
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => (window.location.href = "/profil")}
+                      className="btn bg-gradient-to-r from-blue-500 to-blue-800 hover:from-blue-500 hover:to-blue-700 text-gray-100 font-semibold px-6 py-2 rounded-lg transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg flex items-center gap-2"
+                    >
+                      <ShieldCheck className="w-5 h-5" />
+                      Configurer les profils
+                    </button>
+                  </div>
+                </div>
+                <div className="hidden lg:block">
+                  <div className="w-48 h-48 relative">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-blue-600/20 rounded-full animate-pulse"></div>
+                    <div className="absolute inset-4 bg-gradient-to-tr from-blue-500/40 to-blue-600/40 rounded-full animate-pulse delay-75"></div>
+                    <div className="absolute inset-8 bg-gradient-to-tr from-blue-500/60 to-blue-600/60 rounded-full animate-pulse delay-150"></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Settings2Icon className="w-16 h-16 text-blue-100" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h4 className="text-2xl w-full font-extrabold mt-2 text-gray-800 mb-4 flex items-center p-6 border-b border-gray-400">
+            <LayoutList size="32px" className="mr-2 text-indigo-600" />
             Gestion des Agents
           </h4>
 
-          <div className="bg-white h-full w-full rounded-lg shadow-md p-6 mb-6">
+          <div className="bg-white/50 h-full w-full rounded-lg shadow-md p-6 mb-6">
             <div className="flex gap-4 mb-6">
-              <input
-                type="text"
-                placeholder="Rechercher un agent"
-                value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
-                className="input input-bordered w-full max-w-xs bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500"
-              />
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  placeholder="Rechercher un agent..."
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  className="input input-bordered w-full pl-10 bg-white/80 text-gray-800 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-300"
+                />
+                <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                  🔍
+                </span>
+              </div>
               <button
-                className="btn btn-primary ml-auto bg-gray-600 text-white hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
+                className="btn btn-primary bg-blue-700 hover:bg-white hover:text-black text-white transition duration-300 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 onClick={handleOpenModal}
               >
                 <Plus size={20} className="mr-2" />
                 Nouveau
               </button>
               <button
-                className="btn btn-secondary ml-2 bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
+                className="btn btn-secondary bg-blue-400 hover:bg-gray-800 text-white transition duration-300 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 onClick={handleOpenRoleOptionsModal}
               >
                 <Plus size={20} className="mr-2" />
@@ -339,87 +403,36 @@ const AgentsPage = () => {
               </button>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="table rounded-lg">
-                {/* head */}
-                <thead className="bg-gray-700  rounded-lg text-white text-[18px]">
-                  <tr>
-                    <th>
-                      <label>
-                        <input type="checkbox" className="checkbox" />
-                      </label>
-                    </th>
-                    <th>Nom et Prénom</th>
-                    <th>Portable</th>
-                    <th>Email</th>
-                    <th>Fonction</th>
-                    <th>Login</th>
-                    <th>Mot de passe</th>
-                    <th>Service</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="text-gray-800">
-                  {filteredAgents.map((agent, index) => (
-                    <tr
-                      key={agent.id}
-                      className={`hover:bg-gray-100 transition duration-200 ${
-                        index % 2 === 0 ? "bg-gray-200" : "bg-white"
-                      }`}
-                    >
-                      <th>
-                        <label className="">
-                          <input
-                            type="checkbox"
-                            className="checkbox border-black"
+            <div className="grid   grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {filteredAgents.map((agent, index) => (
+                <div
+                  key={agent.id}
+                  className="bg-gradient-to-br from-gray-800 to-gray-900 border-2 border-gray-700 text-white rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 p-6 w-full min-w-[320px]"
+                >
+                  <div className="flex items-center gap-5 justify-between mb-4">
+                    <div className="flex items-center gap-4">
+                      <div className="avatar bg-gradient-to-r from-blue-500 to-blue-800 p-2 rounded-xl">
+                        <div className="mask mask-squircle h-16 w-16">
+                          <img
+                            src={user_icone}
+                            alt="Avatar"
+                            className="object-cover"
                           />
-                        </label>
-                      </th>
-                      <td>
-                        <div className="flex items-center gap-3">
-                          <div className="avatar">
-                            <div className="mask mask-squircle h-12 w-12">
-                              <img src={user_icone} alt="Avatar" />
-                            </div>
-                          </div>
-                          <div>
-                            <div className="font-bold">{agent.prenom}</div>
-                            <div className="text-sm opacity-50">
-                              {agent.nom}
-                            </div>
-                          </div>
                         </div>
-                      </td>
-                      <td>{agent.tel_number}</td>
-                      <td>{agent.mail}</td>
-                      <td>{agent.nom_role}</td>
-                      <td>{agent.login}</td>
-                      <td>
-                        <div>
-                          <span>
-                            {passwordVisibility[agent.id]
-                              ? agent.password
-                              : "••••••••"}
-                          </span>
-                          <button
-                            onClick={() => togglePasswordVisibility(agent.id)}
-                            className="btn btn-ghost btn-xs"
-                          >
-                            {passwordVisibility[agent.id] ? (
-                              <VisibilityOff />
-                            ) : (
-                              <Visibility />
-                            )}
-                          </button>
-                        </div>
-                      </td>
-                      <td>{agent.nom_service}</td>
-
-                      <td className="text-right flex flex-col justify-center gap-2 items-center p-2 text-base text-gray-800">
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-[16px] ">
+                          {agent.prenom}
+                        </h3>
+                        <p className="text-gray-300">{agent.nom}</p>
+                      </div>
+                    </div>
+                    {index !== 0 && (
+                      <div className="flex flex-col gap-2">
                         <Tooltip title="Modifier">
                           <button
                             onClick={() => handleEdit(agent)}
-                            className="btn btn-outline bg-gray-600 btn-md  mr-2 hover:bg-indigo-500 transition duration-300 rounded-md"
+                            className="btn btn-circle bg-blue-600 hover:bg-indigo-700 transition duration-300 shadow-lg"
                           >
                             <SquarePenIcon className="text-white" />
                           </button>
@@ -427,375 +440,543 @@ const AgentsPage = () => {
                         <Tooltip title="Supprimer">
                           <button
                             onClick={() => handleDelete(agent.id)}
-                            className="btn btn-outline bg-gray-600 btn-md  hover:bg-red-500 transition duration-300 rounded-md"
+                            className="btn btn-circle bg-red-600 hover:bg-red-700 transition duration-300 shadow-lg"
                           >
                             <Trash2Icon className="text-white" />
                           </button>
                         </Tooltip>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-gray-400">
+                        Fonction:
+                      </span>
+                      <span className="bg-blue-700 px-3 py-1 rounded-full text-sm">
+                        {agent.nom_role}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-gray-400">
+                        Profil:
+                      </span>
+                      <span className="bg-blue-700 px-3 py-1 rounded-full text-sm">
+                        {agent.nom_profil}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-gray-400">
+                        Service:
+                      </span>
+                      <span className="bg-blue-700 px-3 py-1 rounded-full text-[10px]">
+                        {agent.nom_service}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-gray-400">
+                        Téléphone:
+                      </span>
+                      <span>{agent.tel_number}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-gray-400">
+                        Email:
+                      </span>
+                      <span className="text-blue-400">{agent.mail}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-gray-400">
+                        Identifiant:
+                      </span>
+                      <span className="bg-blue-700 px-2 py-1 rounded-lg">
+                        {agent.login}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-gray-400">
+                        Mot de passe:
+                      </span>
+                      <div className="flex items-center gap-1">
+                        <span className="font-mono">
+                          {passwordVisibility[agent.id]
+                            ? agent.password
+                            : "••••••••"}
+                        </span>
+                        <button
+                          onClick={() => togglePasswordVisibility(agent.id)}
+                          className="btn btn-ghost btn-xs hover:bg-gray-700"
+                        >
+                          {passwordVisibility[agent.id] ? (
+                            <VisibilityOff className="text-gray-300" />
+                          ) : (
+                            <Visibility className="text-gray-300" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
           {/* Modal for creating agents */}
-          <div className={`modal ${openModal ? "modal-open" : ""}`}>
-            <div className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg flex flex-col justify-center items-center">
-              <h2 className="text-2xl font-bold mb-4">Créer un nouvel agent</h2>
-              <form className="overflow-y-auto" onSubmit={handleAddAgent}>
-                <div className="form-control w-full">
-                  <label className="label">Prénom</label>
-                  <input
-                    type="text"
-                    placeholder="Prénom"
-                    name="firstName"
-                    value={newAgent.firstName}
-                    onChange={handleInputChange}
-                    className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                    required
-                  />
-                </div>
-                <div className="form-control w-full">
-                  <label className="label">Nom</label>
-                  <input
-                    type="text"
-                    placeholder="Nom"
-                    name="lastName"
-                    value={newAgent.lastName}
-                    onChange={handleInputChange}
-                    className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                    required
-                  />
-                </div>
-                <div className="form-control w-full">
-                  <label className="label">Numéro de téléphone</label>
-                  <input
-                    type="text"
-                    placeholder="Numéro de téléphone"
-                    name="phone"
-                    value={newAgent.phone}
-                    onChange={handleInputChange}
-                    className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                    required
-                  />
-                </div>
-                <div className="form-control w-full">
-                  <label className="label">Email</label>
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    name="email"
-                    value={newAgent.email}
-                    onChange={handleInputChange}
-                    className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                    required
-                  />
-                </div>
-                <div className="form-control w-full">
-                  <label className="label">Login</label>
-                  <input
-                    type="text"
-                    placeholder="Login"
-                    name="login"
-                    value={newAgent.login}
-                    onChange={handleInputChange}
-                    className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                    required
-                  />
-                </div>
-                <div className="form-control w-full">
-                  <label className="label">Mot de passe</label>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Mot de passe"
-                    name="password"
-                    value={newAgent.password}
-                    onChange={handleInputChange}
-                    className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                    required
-                  />
-                </div>
-                <div className="form-control w-full">
-                  <label className="label">Service</label>
-                  <select
-                    name="service"
-                    value={newAgent.service}
-                    onChange={(e) => {
-                      setNewAgent({
-                        ...newAgent,
-                        service: e.target.value,
-                      });
-                    }}
-                    className="select select-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                    required
+          <div
+            className={`fixed inset-0 mt-20 z-[99999] overflow-y-auto ${
+              openModal ? "visible" : "invisible"
+            }`}
+          >
+            <div
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={handleCloseModal}
+            ></div>
+            <div className="relative min-h-screen flex items-center justify-center p-4">
+              <div className="relative z-50 w-full max-w-2xl bg-white rounded-xl shadow-2xl">
+                <div className="p-6 max-h-[90vh] overflow-y-auto text-black">
+                  <button
+                    onClick={handleCloseModal}
+                    className="absolute p-2 rounded-full bg-gray-900 text-white  right-4 top-4  hover:bg-gray-100 hover:text-black  transition-colors"
                   >
-                    {servicesData.map((directory) => (
-                      <optgroup
-                        key={directory.directory_id}
-                        label={directory.nom_directory}
+                    ✕
+                  </button>
+                  <h2 className="text-2xl text-black font-bold mb-6">
+                    Créer un nouvel agent
+                  </h2>
+                  <form className="overflow-y-auto" onSubmit={handleAddAgent}>
+                    <div className="form-control w-full">
+                      <label className="label">Prénom</label>
+                      <input
+                        type="text"
+                        placeholder="Prénom"
+                        name="firstName"
+                        value={newAgent.firstName}
+                        onChange={handleInputChange}
+                        className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                        required
+                      />
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">Nom</label>
+                      <input
+                        type="text"
+                        placeholder="Nom"
+                        name="lastName"
+                        value={newAgent.lastName}
+                        onChange={handleInputChange}
+                        className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                        required
+                      />
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">Numéro de téléphone</label>
+                      <input
+                        type="text"
+                        placeholder="Numéro de téléphone"
+                        name="phone"
+                        value={newAgent.phone}
+                        onChange={handleInputChange}
+                        className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                        required
+                      />
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">Email</label>
+                      <input
+                        type="email"
+                        placeholder="Email"
+                        name="email"
+                        value={newAgent.email}
+                        onChange={handleInputChange}
+                        className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                        required
+                      />
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">Login</label>
+                      <input
+                        type="text"
+                        placeholder="Login"
+                        name="login"
+                        value={newAgent.login}
+                        onChange={handleInputChange}
+                        className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                        required
+                      />
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">Mot de passe</label>
+                      <input
+                        placeholder="Mot de passe"
+                        name="password"
+                        value={newAgent.password}
+                        onChange={handleInputChange}
+                        className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                        required
+                      />
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">Service</label>
+                      <select
+                        name="service"
+                        value={newAgent.service}
+                        onChange={(e) => {
+                          setNewAgent({
+                            ...newAgent,
+                            service: e.target.value,
+                          });
+                        }}
+                        className="select select-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                        required
                       >
-                        {directory.services.map((service) => (
-                          <option key={service.id} value={service.id}>
-                            {service.nom_service}
+                        {servicesData.map((directory) => (
+                          <optgroup
+                            key={directory.directory_id}
+                            label={directory.nom_directory}
+                          >
+                            {directory.services.map((service) => (
+                              <option key={service.id} value={service.id}>
+                                {service.nom_service}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">Fonction</label>
+                      <select
+                        name="fonction_id"
+                        value={newAgent.fonction_id}
+                        onChange={handleInputChange}
+                        className="select select-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                        required
+                      >
+                        {roles.map((role) => (
+                          <option key={role.id} value={role.id}>
+                            {role.nom_role}
                           </option>
                         ))}
-                      </optgroup>
-                    ))}
-                  </select>
+                      </select>
+                    </div>
+                    <div className="modal-action flex justify-center items-center">
+                      <button
+                        type="submit"
+                        className="btn flex justify-center items-center btn-primary w-[50%] bg-gray-600 text-white hover:bg-gray-100 hover:text-black transition duration-300 rounded-lg"
+                      >
+                        <PlusCircle className="mr-2" />
+                        Créer
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-error w-[40%] mt-2"
+                        onClick={handleCloseModal}
+                      >
+                        Annuler
+                      </button>
+                    </div>
+                  </form>
                 </div>
-                <div className="form-control w-full">
-                  <label className="label">Fonction</label>
-                  <select
-                    name="fonction_id"
-                    value={newAgent.fonction_id}
-                    onChange={handleInputChange}
-                    className="select select-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                    required
-                  >
-                    {roles.map((role) => (
-                      <option key={role.id} value={role.id}>
-                        {role.nom_role}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="modal-action flex justify-center items-center">
-                  <button
-                    type="submit"
-                    className="btn flex justify-center items-center btn-primary w-[50%] bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg"
-                  >
-                    <PlusCircle className="mr-2" />
-                    Créer
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-outline btn-error w-[40%] mt-2"
-                    onClick={handleCloseModal}
-                  >
-                    Annuler
-                  </button>
-                </div>
-              </form>
+              </div>
             </div>
           </div>
 
-          {/* Modale pour les options de rôle */}
-          <div className={`modal ${showRoleOptionsModal ? "modal-open" : ""}`}>
-            <div className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg flex flex-col justify-center items-center">
-              <h2 className="text-2xl font-bold mb-4">Options de Rôle</h2>
-              <div className="flex items-center justify-center gap-5 w-full">
-                <button
+          {/* Modal for role options */}
+          <div
+            className={`fixed inset-0 z-50 w-full h-screen flex items-center justify-center ${
+              showRoleOptionsModal ? "visible" : "invisible"
+            }`}
+          >
+            <div
+              className="fixed w-full h-screen inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={() => setShowRoleOptionsModal(false)}
+            ></div>
+            <div className="relative z-[9999] w-full max-w-2xl mx-auto bg-white rounded-xl shadow-2xl p-6">
+              <button
+                onClick={() => setShowRoleOptionsModal(false)}
+                className="absolute right-4 top-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                ✕
+              </button>
+              <h2 className="text-3xl text-black flex items-center justify-center gap-2 font-bold mb-6">
+                <Settings size={30} />
+                Options de Rôle
+              </h2>
+              <div className="grid grid-cols-2 gap-6 mt-4">
+                <div
                   onClick={handleOpenRoleModal}
-                  className="btn btn-outline btn-default mb-2 flex items-center justify-center text-black"
+                  className="cursor-pointer bg-gradient-to-br from-gray-500 to-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                 >
-                  <CirclePlus /> Créer un nouveau rôle
-                </button>
-                <button
+                  <div className="flex flex-col items-center text-center">
+                    <div className="bg-indigo-100 p-3 rounded-full mb-4">
+                      <CirclePlus size={24} className="text-indigo-600" />
+                    </div>
+                    <h3 className="font-semibold text-white text-lg mb-2">
+                      Créer un nouveau rôle
+                    </h3>
+                    <p className="text-white text-sm">
+                      Ajouter un nouveau rôle au système
+                    </p>
+                  </div>
+                </div>
+
+                <div
                   onClick={() => {
                     window.location.href = "/UserRoles";
                   }}
-                  className="btn btn-outline btn-default flex items-center justify-center text-black"
+                  className="cursor-pointer bg-gradient-to-br from-gray-500 to-gray-800 p-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                 >
-                  <LayoutList /> Voir la liste des rôles
-                </button>
+                  <div className="flex flex-col items-center text-center">
+                    <div className="bg-emerald-100 p-3 rounded-full mb-4">
+                      <LayoutList size={24} className="text-emerald-600" />
+                    </div>
+                    <h3 className="font-semibold text-white text-lg mb-2">
+                      Liste des rôles
+                    </h3>
+                    <p className="text-white text-sm">
+                      Voir et gérer les rôles existants
+                    </p>
+                  </div>
+                </div>
               </div>
-              <button
-                type="button"
-                className="btn btn-outline btn-error w-full mt-4"
-                onClick={() => setShowRoleOptionsModal(false)}
-              >
-                Annuler
-              </button>
             </div>
           </div>
 
           {/* Modal for creating roles */}
-          <div className={`modal ${showRoleModal ? "modal-open" : ""}`}>
-            <div className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg flex flex-col justify-center items-center">
-              <h2 className="text-2xl font-bold mb-4">Créer un nouveau rôle</h2>
-              <form className="overflow-y-auto" onSubmit={handleCreateRole}>
-                <div className="form-control w-full">
-                  <label className="label">Nom du rôle</label>
-                  <input
-                    type="text"
-                    placeholder="Nom du rôle"
-                    value={newRole}
-                    onChange={(e) => setNewRole(e.target.value)}
-                    className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                    required
-                  />
-                </div>
-                <div className="modal-action flex justify-center items-center">
+          <div
+            className={`fixed inset-0 z-50 overflow-y-auto ${
+              showRoleModal ? "visible" : "invisible"
+            }`}
+          >
+            <div
+              className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={handleCloseRoleModal}
+            ></div>
+            <div className="flex items-center justify-center min-h-screen p-4">
+              <div className="relative z-50 w-full max-w-md bg-white rounded-xl shadow-2xl">
+                <div className="p-6 max-h-[90vh] overflow-y-auto">
                   <button
-                    type="submit"
-                    className="btn flex justify-center items-center btn-primary w-[50%] bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg"
-                  >
-                    Créer
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-outline btn-error w-[40%] mt-2"
                     onClick={handleCloseRoleModal}
+                    className="absolute right-4 top-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
                   >
-                    Annuler
+                    ✕
                   </button>
+                  <h2 className="text-2xl font-bold mb-6">
+                    Créer un nouveau rôle
+                  </h2>
+                  <form className="overflow-y-auto" onSubmit={handleCreateRole}>
+                    <div className="form-control w-full">
+                      <label className="label">Nom du rôle</label>
+                      <input
+                        type="text"
+                        placeholder="Nom du rôle"
+                        value={newRole}
+                        onChange={(e) => setNewRole(e.target.value)}
+                        className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                        required
+                      />
+                    </div>
+                    <div className="modal-action flex justify-center items-center">
+                      <button
+                        type="submit"
+                        className="btn flex justify-center items-center btn-primary w-[50%] bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg"
+                      >
+                        Créer
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-error w-[40%] mt-2"
+                        onClick={handleCloseRoleModal}
+                      >
+                        Annuler
+                      </button>
+                    </div>
+                  </form>
                 </div>
-              </form>
+              </div>
             </div>
           </div>
 
           {/* Modal for editing agents */}
-          <div className={`modal ${openEditModal ? "modal-open" : ""}`}>
-            <div className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg flex flex-col justify-center items-center">
-              <h2 className="text-2xl font-bold mb-4">Modifier l'agent</h2>
-              <form className="overflow-y-auto" onSubmit={handleUpdateAgent}>
-                <div className="form-control w-full">
-                  <label className="label">Prénom</label>
-                  <input
-                    type="text"
-                    placeholder="Prénom"
-                    name="prenom"
-                    value={editingAgent?.prenom || ""}
-                    onChange={(e) =>
-                      setEditingAgent({
-                        ...editingAgent,
-                        prenom: e.target.value,
-                      })
-                    }
-                    className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                    required
-                  />
-                </div>
-                <div className="form-control w-full">
-                  <label className="label">Nom</label>
-                  <input
-                    type="text"
-                    placeholder="Nom"
-                    name="nom"
-                    value={editingAgent?.nom || ""}
-                    onChange={(e) =>
-                      setEditingAgent({ ...editingAgent, nom: e.target.value })
-                    }
-                    className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                    required
-                  />
-                </div>
-                <div className="form-control w-full">
-                  <label className="label">Numéro de téléphone</label>
-                  <input
-                    type="text"
-                    placeholder="Numéro de téléphone"
-                    name="tel_number"
-                    value={editingAgent?.tel_number || ""}
-                    onChange={(e) =>
-                      setEditingAgent({
-                        ...editingAgent,
-                        tel_number: e.target.value,
-                      })
-                    }
-                    className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                    required
-                  />
-                </div>
-                <div className="form-control w-full">
-                  <label className="label">Email</label>
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    name="mail"
-                    value={editingAgent?.mail || ""}
-                    onChange={(e) =>
-                      setEditingAgent({ ...editingAgent, mail: e.target.value })
-                    }
-                    className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                    required
-                  />
-                </div>
-                <div className="form-control w-full">
-                  <label className="label">Login</label>
-                  <input
-                    type="text"
-                    placeholder="Login"
-                    name="login"
-                    value={editingAgent?.login || ""}
-                    onChange={(e) =>
-                      setEditingAgent({
-                        ...editingAgent,
-                        login: e.target.value,
-                      })
-                    }
-                    className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                    required
-                  />
-                </div>
-                <div className="form-control w-full">
-                  <label className="label">Service</label>
-                  <select
-                    name="service"
-                    value={editingAgent?.service || ""}
-                    onChange={(e) =>
-                      setEditingAgent({
-                        ...editingAgent,
-                        service: e.target.value,
-                      })
-                    }
-                    className="select select-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                    required
+          <div
+            className={`fixed mt-20 inset-0 z-[99999] overflow-y-auto ${
+              openEditModal ? "visible" : "invisible"
+            }`}
+          >
+            <div
+              className="fixed mt-10 min-h-screen inset-0 bg-black/50 backdrop-blur-sm"
+              onClick={handleCloseEditModal}
+            ></div>
+            <div className="flex items-center justify-center min-h-screen p-4">
+              <div className="relative z-50 w-full max-w-2xl bg-white rounded-xl shadow-2xl">
+                <div className="p-6 max-h-[90vh] overflow-y-auto">
+                  <button
+                    onClick={handleCloseEditModal}
+                    className="absolute right-4 text-black top-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
                   >
-                    {servicesData.map((directory) => (
-                      <optgroup
-                        key={directory.directory_id}
-                        label={directory.nom_directory}
+                    ✕
+                  </button>
+                  <h2 className="text-2xl text-black font-bold mb-6">
+                    Modifier l&apos;agent
+                  </h2>
+                  <form
+                    className="overflow-y-auto"
+                    onSubmit={handleUpdateAgent}
+                  >
+                    <div className="form-control w-full">
+                      <label className="label">Prénom</label>
+                      <input
+                        type="text"
+                        placeholder="Prénom"
+                        name="prenom"
+                        value={editingAgent?.prenom || ""}
+                        onChange={(e) =>
+                          setEditingAgent({
+                            ...editingAgent,
+                            prenom: e.target.value,
+                          })
+                        }
+                        className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                        required
+                      />
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">Nom</label>
+                      <input
+                        type="text"
+                        placeholder="Nom"
+                        name="nom"
+                        value={editingAgent?.nom || ""}
+                        onChange={(e) =>
+                          setEditingAgent({
+                            ...editingAgent,
+                            nom: e.target.value,
+                          })
+                        }
+                        className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                        required
+                      />
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">Numéro de téléphone</label>
+                      <input
+                        type="text"
+                        placeholder="Numéro de téléphone"
+                        name="tel_number"
+                        value={editingAgent?.tel_number || ""}
+                        onChange={(e) =>
+                          setEditingAgent({
+                            ...editingAgent,
+                            tel_number: e.target.value,
+                          })
+                        }
+                        className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                        required
+                      />
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">Email</label>
+                      <input
+                        type="email"
+                        placeholder="Email"
+                        name="mail"
+                        value={editingAgent?.mail || ""}
+                        onChange={(e) =>
+                          setEditingAgent({
+                            ...editingAgent,
+                            mail: e.target.value,
+                          })
+                        }
+                        className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                        required
+                      />
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">Login</label>
+                      <input
+                        type="text"
+                        placeholder="Login"
+                        name="login"
+                        value={editingAgent?.login || ""}
+                        onChange={(e) =>
+                          setEditingAgent({
+                            ...editingAgent,
+                            login: e.target.value,
+                          })
+                        }
+                        className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                        required
+                      />
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">Service</label>
+                      <select
+                        name="service"
+                        value={editingAgent?.service || ""}
+                        onChange={(e) =>
+                          setEditingAgent({
+                            ...editingAgent,
+                            service: e.target.value,
+                          })
+                        }
+                        className="select select-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                        required
                       >
-                        {directory.services.map((service) => (
-                          <option key={service.id} value={service.id}>
-                            {service.nom_service}
+                        {servicesData.map((directory) => (
+                          <optgroup
+                            key={directory.directory_id}
+                            label={directory.nom_directory}
+                          >
+                            {directory.services.map((service) => (
+                              <option key={service.id} value={service.id}>
+                                {service.nom_service}
+                              </option>
+                            ))}
+                          </optgroup>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="form-control w-full">
+                      <label className="label">Fonction</label>
+                      <select
+                        name="fonction_id"
+                        value={editingAgent?.fonction_id || ""}
+                        onChange={(e) =>
+                          setEditingAgent({
+                            ...editingAgent,
+                            fonction_id: e.target.value,
+                          })
+                        }
+                        className="select select-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                        required
+                      >
+                        {roles.map((role) => (
+                          <option key={role.id} value={role.id}>
+                            {role.nom_role}
                           </option>
                         ))}
-                      </optgroup>
-                    ))}
-                  </select>
+                      </select>
+                    </div>
+                    <div className="modal-action flex justify-center items-center">
+                      <button
+                        type="submit"
+                        className="btn flex justify-center items-center btn-primary w-[50%] bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg"
+                      >
+                        <PlusCircle className="mr-2" />
+                        Mettre à jour
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-outline btn-error w-[40%] mt-2"
+                        onClick={handleCloseEditModal}
+                      >
+                        Annuler
+                      </button>
+                    </div>
+                  </form>
                 </div>
-                <div className="form-control w-full">
-                  <label className="label">Fonction</label>
-                  <select
-                    name="fonction_id"
-                    value={editingAgent?.fonction_id || ""}
-                    onChange={(e) =>
-                      setEditingAgent({
-                        ...editingAgent,
-                        fonction_id: e.target.value,
-                      })
-                    }
-                    className="select select-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                    required
-                  >
-                    {roles.map((role) => (
-                      <option key={role.id} value={role.id}>
-                        {role.nom_role}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="modal-action flex justify-center items-center">
-                  <button
-                    type="submit"
-                    className="btn flex justify-center items-center btn-primary w-[50%] bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg"
-                  >
-                    <PlusCircle className="mr-2" />
-                    Mettre à jour
-                  </button>
-                  <button
-                    type="button"
-                    className="btn btn-outline btn-error w-[40%] mt-2"
-                    onClick={handleCloseEditModal}
-                  >
-                    Annuler
-                  </button>
-                </div>
-              </form>
+              </div>
             </div>
           </div>
 

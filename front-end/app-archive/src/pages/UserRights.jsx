@@ -3,18 +3,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SideBar from "../Components/Side_bar";
 import TopBar from "../Components/Top_bar";
-import {
-  Container,
-  Paper,
-  Typography,
-  List,
-  ListItem,
-  ListItemText,
-  Checkbox,
-  FormControlLabel,
-  Box,
-  Modal,
-} from "@mui/material";
+import { Checkbox, Modal } from "@mui/material";
 import axios from "axios";
 import { CSSTransition } from "react-transition-group";
 import "./styles/UserRights.css";
@@ -23,11 +12,13 @@ import { ListCheckIcon } from "lucide-react";
 const translateAction = (action) => {
   switch (action) {
     case "view":
-      return "afficher";
+      return "Afficher";
     case "delete":
-      return "supprimer";
+      return "Supprimer";
     case "edit":
-      return "modifier";
+      return "Modifier";
+    case "search":
+      return "Rechercher";
     default:
       return action;
   }
@@ -35,12 +26,14 @@ const translateAction = (action) => {
 
 const translateActionToEnglish = (action) => {
   switch (action) {
-    case "afficher":
+    case "Afficher":
       return "view";
-    case "supprimer":
+    case "Supprimer":
       return "delete";
-    case "modifier":
+    case "Modifier":
       return "edit";
+    case "Rechercher":
+      return "search";
     default:
       return action;
   }
@@ -69,6 +62,8 @@ const UserRights = () => {
         const response = await axios.get(
           "http://localhost:3000/rights/permissions"
         );
+        console.log(response);
+
         const grouped = response.data.reduce((acc, element) => {
           const section = element.section || element.rubrique;
           if (!acc[section]) {
@@ -216,193 +211,198 @@ const UserRights = () => {
   // };
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
+    <div className="flex h-screen bg-[#f0f2f5]">
       <SideBar isVisible={true} />
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          marginLeft: "0px",
-          borderRadius: "20px",
-        }}
-      >
+      <div className="flex-1 flex flex-col">
         <TopBar />
-        <Container style={{ padding: "20px", flex: 1, overflowY: "auto" }}>
-          <Paper style={{ padding: "20px", marginTop: "70px" }}>
-            <Typography variant="h4" gutterBottom>
+        <div className="p-6 flex-1 overflow-y-auto">
+          {/* Header Section */}
+          <div className="mb-6">
+            <h1 className="text-2xl font-bold text-gray-800">
               Gestion des Droits Utilisateurs
-            </Typography>
+            </h1>
+            <p className="text-gray-600">
+              Configurez les permissions pour chaque profil utilisateur
+            </p>
+          </div>
 
-            <Box
-              display="flex"
-              flexDirection="row"
-              justifyContent="space-between"
+          {/* Main Content */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Profils Section */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="p-2 bg-blue-100 rounded-lg">
+                  <ListCheckIcon className="h-5 w-5 text-blue-600" />
+                </span>
+                <h2 className="text-lg font-semibold text-gray-800">
+                  Sélection du Profil
+                </h2>
+              </div>
+              <div className="space-y-2">
+                {profils.map((profil) => (
+                  <button
+                    key={profil.id}
+                    onClick={() => handleSelectProfil(profil)}
+                    className={`w-full font-bold text-left px-4 py-3 rounded-lg transition-all ${
+                      selectedProfil && selectedProfil.id === profil.id
+                        ? "bg-blue-50 border-blue-200 text-blue-700"
+                        : "bg-gray-50 hover:bg-gray-100"
+                    } border`}
+                  >
+                    {profil.nom_profil}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Sections Panel */}
+            <CSSTransition
+              in={!!selectedProfil}
+              timeout={300}
+              classNames="fade"
+              unmountOnExit
             >
-              <Box flex={1} marginRight="20px">
-                <Typography variant="h5" gutterBottom>
-                  1. Sélectionner un Profil
-                </Typography>
-                <List>
-                  {profils.map((profil) => (
-                    <ListItem
-                      key={profil.id}
-                      button
-                      onClick={() => handleSelectProfil(profil)}
-                      selected={
-                        selectedProfil && selectedProfil.id === profil.id
-                      }
-                      style={{
-                        backgroundColor:
-                          selectedProfil && selectedProfil.id === profil.id
-                            ? "#f0f0f0"
-                            : "white",
-                        border: "1px solid #ddd",
-                        borderRadius: "5px",
-                        marginBottom: "10px",
-                        boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-                      }}
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="p-2 bg-green-100 rounded-lg">
+                    <ListCheckIcon className="h-5 w-5 text-green-600" />
+                  </span>
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    Sections Disponibles
+                  </h2>
+                </div>
+                <div className="space-y-2">
+                  {Object.keys(groupedElements).map((section) => (
+                    <button
+                      key={section}
+                      onClick={() => handleSelectSection(section)}
+                      className={`w-full font-bold text-left px-4 py-3 rounded-lg transition-all ${
+                        selectedSection === section
+                          ? "bg-green-50 border-green-200 text-green-700"
+                          : "bg-gray-50 hover:bg-gray-100"
+                      } border`}
                     >
-                      <ListItemText primary={profil.nom_profil} />
-                    </ListItem>
+                      {section}
+                    </button>
                   ))}
-                </List>
-              </Box>
+                </div>
+              </div>
+            </CSSTransition>
 
-              <CSSTransition
-                in={!!selectedProfil}
-                timeout={300}
-                classNames="fade"
-                unmountOnExit
-              >
-                <Box flex={1} marginRight="20px">
-                  <Typography variant="h5" gutterBottom>
-                    2. Sélectionner des Sections
-                  </Typography>
-                  <List>
-                    {Object.keys(groupedElements).map((section) => (
-                      <ListItem
-                        key={section}
-                        button
-                        onClick={() => handleSelectSection(section)}
-                        style={{
-                          backgroundColor:
-                            selectedSection === section ? "#f0f0f0" : "white",
-                          border: "1px solid #ddd",
-                          borderRadius: "5px",
-                          marginBottom: "10px",
-                          boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-                        }}
-                      >
-                        <ListItemText primary={section} />
-                      </ListItem>
-                    ))}
-                  </List>
-                </Box>
-              </CSSTransition>
-
-              <CSSTransition
-                in={!!selectedSection}
-                timeout={300}
-                classNames="fade"
-                unmountOnExit
-              >
-                <Box flex={1}>
-                  <Typography variant="h5" gutterBottom>
-                    3. Actions pour {selectedSection}
-                  </Typography>
-                  <Box>
-                    {groupedElements[selectedSection] &&
-                      groupedElements[selectedSection].map((action) => (
-                        <FormControlLabel
-                          key={action.id}
-                          control={
-                            <Checkbox
-                              checked={action.selected || false}
-                              onChange={() => handleToggleAction(action.id)}
-                            />
-                          }
-                          label={translateAction(action.action)}
-                        />
-                      ))}
-                  </Box>
-                </Box>
-              </CSSTransition>
-            </Box>
-            <button
-              className="btn btn-outline border-t-neutral-700 text-black mt-5"
-              onClick={handleOpenModal}
+            {/* Actions Panel */}
+            <CSSTransition
+              in={!!selectedSection}
+              timeout={300}
+              classNames="fade"
+              unmountOnExit
             >
-              <ListCheckIcon size={20} className="mr-2" />
-              Prévisualiser
-            </button>
-          </Paper>
-        </Container>
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="p-2 bg-purple-100 rounded-lg">
+                    <ListCheckIcon className="h-5 w-5 text-purple-600" />
+                  </span>
+                  <h2 className="text-lg font-semibold text-gray-800">
+                    Actions - {selectedSection}
+                  </h2>
+                </div>
+                <div className="space-y-3">
+                  {groupedElements[selectedSection] &&
+                    groupedElements[selectedSection].map((action) => (
+                      <label
+                        key={action.id}
+                        className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
+                      >
+                        <Checkbox
+                          checked={action.selected || false}
+                          onChange={() => handleToggleAction(action.id)}
+                          className="text-purple-600"
+                        />
+                        <span className="text-gray-700">
+                          {translateAction(action.action)}
+                        </span>
+                      </label>
+                    ))}
+                </div>
+              </div>
+            </CSSTransition>
+          </div>
+
+          {/* Preview Button */}
+          <button
+            onClick={handleOpenModal}
+            className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition-all flex items-center gap-2"
+          >
+            <ListCheckIcon className="h-5 w-5" />
+            Prévisualiser les modifications
+          </button>
+        </div>
       </div>
 
+      {/* Modal with improved styling */}
       <Modal
         open={openModal}
         onClose={handleCloseModal}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
+        className="flex items-center justify-center"
       >
-        <Paper
-          style={{
-            padding: "20px",
-            width: "50%",
-            maxHeight: "80vh",
-            overflowY: "auto",
-          }}
-        >
-          <Typography variant="h5" gutterBottom>
-            Prévisualisation des Droits Utilisateurs
-          </Typography>
+        <div className="bg-white rounded-xl shadow-2xl w-2/3 max-h-[80vh] overflow-y-auto p-6">
+          <div className="border-b pb-4 mb-4">
+            <h2 className="text-xl font-bold text-gray-800">
+              Prévisualisation des Modifications
+            </h2>
+          </div>
+
           {selectedProfil ? (
-            <>
-              <Typography variant="h6">
-                Profil: {selectedProfil.nom_profil}
-              </Typography>
-              <Typography variant="h6">Éléments Modifiés:</Typography>
-              <List>
+            <div className="space-y-4">
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <h3 className="font-semibold text-blue-800">
+                  Profil: {selectedProfil.nom_profil}
+                </h3>
+              </div>
+
+              <div className="space-y-4">
                 {Object.keys(groupedElements).map(
                   (section) =>
                     groupedElements[section].filter(
                       (element) => element.selected
                     ).length > 0 && (
-                      <ListItem key={section}>
-                        <ListItemText primary={section} />
-                        <List>
+                      <div
+                        key={section}
+                        className="bg-gray-50 p-4 rounded-lg space-y-2"
+                      >
+                        <h4 className="font-semibold text-gray-700">
+                          {section}
+                        </h4>
+                        <div className="ml-4 space-y-1">
                           {groupedElements[section]
                             .filter((element) => element.selected)
                             .map((action) => (
-                              <ListItem key={action.id}>
-                                <ListItemText
-                                  primary={translateAction(action.action)}
-                                />
-                              </ListItem>
+                              <div
+                                key={action.id}
+                                className="text-gray-600 flex items-center gap-2"
+                              >
+                                <span className="w-2 h-2 bg-blue-400 rounded-full" />
+                                {translateAction(action.action)}
+                              </div>
                             ))}
-                        </List>
-                      </ListItem>
+                        </div>
+                      </div>
                     )
                 )}
-              </List>
+              </div>
+
               <button
-                className="btn btn-outline border-t-neutral-700 text-black mt-5"
                 onClick={handleSendToBackend}
+                className="w-full mt-4 px-6 py-3 bg-green-600 text-white rounded-lg shadow-lg hover:bg-green-700 transition-all"
               >
-                Envoyer
+                Confirmer les modifications
               </button>
-            </>
+            </div>
           ) : (
-            <Typography variant="h6">
-              Aucun profil sélectionné. Veuillez sélectionner un profil et des
-              éléments.
-            </Typography>
+            <div className="text-center text-gray-600 py-8">
+              Veuillez sélectionner un profil et des éléments pour continuer.
+            </div>
           )}
-        </Paper>
+        </div>
       </Modal>
       <ToastContainer />
     </div>

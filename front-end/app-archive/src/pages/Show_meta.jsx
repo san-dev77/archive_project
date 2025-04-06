@@ -6,6 +6,7 @@ import "daisyui/dist/full.css";
 import Side_bar from "../Components/Side_bar";
 import TopBar from "../Components/Top_bar";
 import EditMetadata from "../pages/update/EditMetadata";
+import Select from "react-select";
 import {
   DatabaseZap,
   SquarePen,
@@ -36,8 +37,6 @@ export default function ShowMeta() {
     severity: "",
   });
   const [creating, setCreating] = useState(false);
-  const [key, setKey] = useState("");
-  const [metaType, setMetaType] = useState("text"); // Définir 'text' comme valeur par défaut
   const [modalOpen, setModalOpen] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -49,6 +48,9 @@ export default function ShowMeta() {
   const [editMetadataId, setEditMetadataId] = useState(null);
   const [filteredServices, setFilteredServices] = useState([]);
   const [filteredDocumentTypes, setFilteredDocumentTypes] = useState([]);
+  const [metadataFields, setMetadataFields] = useState([
+    { key: "", metaType: "text", required: false },
+  ]);
 
   const handleServiceSelect = (serviceId, serviceName) => {
     setSelectedService(serviceName);
@@ -200,25 +202,48 @@ export default function ShowMeta() {
   const handleCreateNew = () => {
     setEditMode(false);
     setModalOpen(true);
-    setMetaType("text"); // Réinitialiser le type à 'text' lors de l'ouverture de la modale
+    setMetadataFields([{ key: "", metaType: "text", required: false }]);
+  };
+
+  const addMetadataField = () => {
+    setMetadataFields([
+      ...metadataFields,
+      { key: "", metaType: "text", required: false },
+    ]);
+  };
+
+  const removeMetadataField = (index) => {
+    setMetadataFields(metadataFields.filter((_, i) => i !== index));
+  };
+
+  const updateMetadataField = (index, field, value) => {
+    const newFields = [...metadataFields];
+    newFields[index] = { ...newFields[index], [field]: value };
+    setMetadataFields(newFields);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormLoading(true);
-    console.log(key, metaType, selectedDocumentTypeId);
+
     try {
-      await axios.post("http://localhost:3000/metadata", {
-        key,
-        metaType,
-        documentTypeId: selectedDocumentTypeId,
-      });
-      setKey("");
-      setMetaType("text"); // Réinitialiser le type à 'text' après la création
-      toast.success("Métadonnée créée avec succès!");
+      // Créer toutes les métadonnées en parallèle
+      await Promise.all(
+        metadataFields.map((field) =>
+          axios.post("http://localhost:3000/metadata", {
+            key: field.key,
+            metaType: field.metaType,
+            required: field.required,
+            documentTypeId: selectedDocumentTypeId,
+          })
+        )
+      );
+
+      setMetadataFields([{ key: "", metaType: "text", required: false }]);
+      toast.success("Métadonnées créées avec succès!");
       Swal.fire({
-        title: "Element créé !",
-        text: "Meta-donnée créé avec succès !",
+        title: "Elements créés !",
+        text: "Meta-données créées avec succès !",
         icon: "success",
         confirmButtonColor: "#444",
         confirmButtonText: "OK",
@@ -226,7 +251,7 @@ export default function ShowMeta() {
       await fetchMetadataRefresh();
     } catch (error) {
       console.error("Error creating metadata:", error);
-      toast.error("Échec de la création de la métadonnée.");
+      toast.error("Échec de la création des métadonnées.");
     } finally {
       setFormLoading(false);
       setCreating(false);
@@ -251,222 +276,579 @@ export default function ShowMeta() {
   }
 
   return (
-    <div className="flex h-screen bg-gray-300 overflow-hidden">
+    <div className="flex min-h-screen bg-gradient-to-b from-gray-300 to-gray-400">
       <Side_bar isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar />
-        <div className="container w-[90%] mx-auto mt-28 bg-white rounded-xl shadow-2xl flex flex-col h-full overflow-y-auto">
-          <h1 className="text-2xl mt-4 ml-2 font-extrabold text-gray-800 flex justify-start w-full">
-            <LayoutList size="28px" className="mr-3 text-red-500" />
-            Liste des Métadonnées
-          </h1>
-          <div className="border-b-2 border-gray-300 w-full"></div>
-          <div className="bg-gray-300 w-full rounded-lg shadow-md p-6 mb-6 flex-1 overflow-y-auto">
-            <div className="flex gap-4 mb-6">
-              <div className="w-full">
-                <div className="form-control">
-                  <label className="label flex items-start justify-start text-black">
-                    <Settings className="mr-1" />
-                    Choisissez un service
-                  </label>
-                  <select
-                    className="select select-bordered w-full text-black bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
-                    onChange={(e) =>
-                      handleServiceSelect(
-                        e.target.value,
-                        e.target.options[e.target.selectedIndex].text
-                      )
-                    }
-                    value={selectedServiceId}
-                  >
-                    <option value="" disabled>
-                      Sélectionner un service
-                    </option>
-                    {servicesData.map((directory) => (
-                      <optgroup
-                        key={directory.directory_id}
-                        label={directory.nom_directory}
-                      >
-                        {directory.services.map((service) => (
-                          <option key={service.id} value={service.id}>
-                            {service.nom_service}
-                          </option>
-                        ))}
-                      </optgroup>
-                    ))}
-                  </select>
+        <div className="container w-full mx-auto px-4 py-8 mt-20">
+          <div className="bg-gray-800 w-full rounded-lg shadow-xl p-6 border-l-4 border-[#00B7FF]">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-white flex items-center">
+                <LayoutList className="h-8 w-8 text-[#00B7FF] mr-2" />
+                Gestion des Métadonnées
+              </h1>
+
+              <div className="stats shadow bg-gray-700 text-white">
+                <div className="stat">
+                  <div className="stat-figure text-[#00B7FF]">
+                    <DatabaseZap className="h-6 w-6" />
+                  </div>
+                  <div className="stat-title text-gray-300">
+                    Total Métadonnées
+                  </div>
+                  <div className="stat-value text-[#00B7FF]">
+                    {metadata.length}
+                  </div>
+                  <div className="stat-desc text-gray-400">
+                    Pour {selectedDocumentTypeName || "aucun type"}
+                  </div>
                 </div>
               </div>
-              <div className="w-full">
-                <div className="form-control">
-                  <label className="label flex items-start justify-start text-black">
-                    <Layers3 className="mr-1" />
-                    Choisissez un type de document
-                  </label>
-                  <select
-                    className="select select-bordered w-full text-black bg-gray-100 hover:bg-gray-200 transition-colors duration-200"
-                    onChange={(e) =>
-                      handleDocumentTypeSelect(
-                        e.target.value,
-                        e.target.options[e.target.selectedIndex].text
-                      )
-                    }
-                    value={selectedDocumentTypeId}
-                  >
-                    <option value="" disabled>
-                      Sélectionner un type de document
-                    </option>
-                    {documentTypes.map((docType) => (
-                      <option key={docType.id} value={docType.id}>
-                        {docType.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-4 mb-6">
-              <input
-                type="text"
-                placeholder="Rechercher une métadonnée"
-                className="input input-bordered w-full max-w-xs bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-800"
-                onChange={(e) => {
-                  const searchTerm = e.target.value.toLowerCase();
-                  const filteredMetadata = metadata.filter((meta) =>
-                    meta.cle.toLowerCase().includes(searchTerm)
-                  );
-                  if (searchTerm === "") fetchMetadataRefresh();
-                  setMetadata(filteredMetadata);
-                }}
-              />
-              {selectedDocumentTypeId && (
-                <button
-                  className="btn btn-primary ml-auto bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
-                  onClick={handleCreateNew}
-                >
-                  <Plus size={20} className="mr-2" />
-                  Nouvelle
-                </button>
-              )}
             </div>
 
-            <div className="">
-              <div className="max-h-96 overflow-y-auto">
-                <table className="table w-full border-collapse">
-                  <thead className="sticky top-0 rounded-lg bg-gray-600 text-white">
-                    <tr>
-                      <th className="text-lg p-4"></th>
-                      <th className="text-lg p-4">|</th>
-                      <th className="text-lg p-4">Nom métadonnées</th>
-                      <th className="text-lg p-4">|</th>
-                      <th className="text-lg p-4">Type des métadonnées</th>
-                      <th className="text-lg p-4">|</th>
-                      <th className="text-lg p-4 text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {metadata.map((meta) => (
-                      <tr
-                        key={meta.id}
-                        className="hover:bg-gray-300  bg-gray-100 transition duration-200"
-                      >
-                        <td className="flex items-center justify-center bg-gray-800 rounded-lg text-white text-base mt-2">
-                          <DatabaseZap className="mr-2" />
-                        </td>
-                        <td className="text-base text-gray-900">|</td>
-                        <td className="text-base text-gray-900">{meta.cle}</td>
-                        <td className="text-base text-gray-900">|</td>
-                        <td className="flex items-center text-base text-gray-900">
-                          {meta.metaType}
-                        </td>
-                        <td className="text-base text-gray-900">|</td>
-                        <td className="text-right text-base text-gray-900">
-                          <Tooltip title="Modifier">
-                            <button
-                              className="btn btn-outline bg-gray-600 btn-md text-white mr-2 hover:bg-indigo-500 transition duration-300 rounded-md"
-                              onClick={() => handleEdit(meta)}
-                            >
-                              <SquarePen className="mr-1" />
-                            </button>
-                          </Tooltip>
-                          <Tooltip title="Supprimer">
-                            <button
-                              className="btn btn-outline text-white bg-gray-600 btn-md  hover:bg-red-500 transition duration-300 rounded-md"
-                              onClick={() => handleDelete(meta.id)}
-                            >
-                              <Trash2 className="mr-1" />
-                            </button>
-                          </Tooltip>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            <div className="bg-[#3a3a3a] rounded-lg p-6 shadow-inner">
+              <div className="flex flex-col md:flex-row gap-6 mb-8">
+                <div className="w-full md:w-1/2">
+                  <div className="form-control">
+                    <label className="label flex items-start justify-start text-white font-medium">
+                      <Settings className="mr-2 text-[#00B7FF]" />
+                      Service
+                    </label>
+                    <div className="relative">
+                      <Select
+                        className="text-sm"
+                        classNamePrefix="select"
+                        placeholder="Sélectionner un service"
+                        onChange={(selectedOption) =>
+                          handleServiceSelect(
+                            selectedOption.value,
+                            selectedOption.label
+                          )
+                        }
+                        value={servicesData
+                          .flatMap((directory) =>
+                            directory.services.map((service) => ({
+                              value: service.id,
+                              label: service.nom_service,
+                            }))
+                          )
+                          .find(
+                            (service) => service.value === selectedServiceId
+                          )}
+                        options={servicesData.flatMap((directory) => ({
+                          label: directory.nom_directory,
+                          options: directory.services.map((service) => ({
+                            value: service.id,
+                            label: service.nom_service,
+                          })),
+                        }))}
+                        styles={{
+                          control: (base) => ({
+                            ...base,
+                            backgroundColor: "#2a2a2a",
+                            borderColor: "#4a4a4a",
+                            color: "white",
+                            borderRadius: "0.5rem",
+                            padding: "0.25rem",
+                            boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                          }),
+                          menu: (base) => ({
+                            ...base,
+                            backgroundColor: "#2a2a2a",
+                            borderRadius: "0.5rem",
+                            overflow: "hidden",
+                            zIndex: 100,
+                          }),
+                          option: (base, state) => ({
+                            ...base,
+                            backgroundColor: state.isFocused
+                              ? "#4a4a4a"
+                              : "#2a2a2a",
+                            color: "white",
+                            padding: "0.75rem 1rem",
+                          }),
+                          singleValue: (base) => ({
+                            ...base,
+                            color: "white",
+                          }),
+                          groupHeading: (base) => ({
+                            ...base,
+                            color: "#00B7FF",
+                            fontWeight: "bold",
+                            fontSize: "0.9rem",
+                          }),
+                        }}
+                      />
+                      {!selectedServiceId && (
+                        <div className="text-xs text-gray-400 mt-1 ml-1">
+                          Sélectionnez un service pour continuer
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <div className="w-full md:w-1/2">
+                  <div className="form-control">
+                    <label className="label flex items-start justify-start text-white font-medium">
+                      <Layers3 className="mr-2 text-[#00B7FF]" />
+                      Type de document
+                    </label>
+                    <div className="relative">
+                      <Select
+                        className="text-sm"
+                        classNamePrefix="select"
+                        placeholder="Sélectionner un type de document"
+                        isDisabled={!selectedServiceId}
+                        onChange={(selectedOption) =>
+                          handleDocumentTypeSelect(
+                            selectedOption.value,
+                            selectedOption.label
+                          )
+                        }
+                        value={documentTypes
+                          .map((docType) => ({
+                            value: docType.id,
+                            label: docType.name,
+                          }))
+                          .find(
+                            (docType) =>
+                              docType.value === selectedDocumentTypeId
+                          )}
+                        options={documentTypes.map((docType) => ({
+                          value: docType.id,
+                          label: docType.name,
+                        }))}
+                        styles={{
+                          control: (base) => ({
+                            ...base,
+                            backgroundColor: "#2a2a2a",
+                            borderColor: "#4a4a4a",
+                            color: "white",
+                            borderRadius: "0.5rem",
+                            padding: "0.25rem",
+                            boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                          }),
+                          menu: (base) => ({
+                            ...base,
+                            backgroundColor: "#2a2a2a",
+                            borderRadius: "0.5rem",
+                            overflow: "hidden",
+                          }),
+                          option: (base, state) => ({
+                            ...base,
+                            backgroundColor: state.isFocused
+                              ? "#4a4a4a"
+                              : "#2a2a2a",
+                            color: "white",
+                            padding: "0.75rem 1rem",
+                          }),
+                          singleValue: (base) => ({
+                            ...base,
+                            color: "white",
+                          }),
+                        }}
+                      />
+                      {selectedServiceId && !selectedDocumentTypeId && (
+                        <div className="text-xs text-gray-400 mt-1 ml-1">
+                          Sélectionnez un type de document pour voir ses
+                          métadonnées
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
+
+              {selectedDocumentTypeId && (
+                <div className="bg-[#2a2a2a] p-4 rounded-lg mb-6 border-l-2 border-[#00B7FF]">
+                  <h3 className="text-white text-lg font-medium mb-2 flex items-center">
+                    <Layers3 className="h-5 w-5 mr-2 text-[#00B7FF]" />
+                    Informations sur le type de document
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-300">
+                    <div>
+                      <p>
+                        <span className="font-medium">Service:</span>{" "}
+                        {selectedService}
+                      </p>
+                      <p>
+                        <span className="font-medium">Type de document:</span>{" "}
+                        {selectedDocumentTypeName}
+                      </p>
+                    </div>
+                    <div>
+                      <p>
+                        <span className="font-medium">
+                          Nombre de métadonnées:
+                        </span>{" "}
+                        {metadata.length}
+                      </p>
+                      <p>
+                        <span className="font-medium">Types disponibles:</span>{" "}
+                        Texte, Date, Nombre
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="flex flex-col md:flex-row gap-6 mb-8 justify-between items-center">
+                <div className="relative w-full md:w-1/2">
+                  <input
+                    type="text"
+                    placeholder="Rechercher une métadonnée..."
+                    className="px-4 py-3 bg-[#2a2a2a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent w-full pl-10"
+                    onChange={(e) => {
+                      const searchTerm = e.target.value.toLowerCase();
+                      const filteredMetadata = metadata.filter((meta) =>
+                        meta.cle.toLowerCase().includes(searchTerm)
+                      );
+                      if (searchTerm === "") fetchMetadataRefresh();
+                      setMetadata(filteredMetadata);
+                    }}
+                  />
+                  <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                {selectedDocumentTypeId && (
+                  <button
+                    className="bg-white hover:bg-gray-200 text-black hover:text-black px-6 py-3 rounded-lg flex items-center transition-colors duration-200 shadow-md w-full md:w-auto justify-center"
+                    onClick={handleCreateNew}
+                  >
+                    <Plus className="h-5 w-5 mr-2" />
+                    Nouvelle Métadonnée
+                  </button>
+                )}
+              </div>
+
+              {selectedDocumentTypeId && metadata.length === 0 ? (
+                <div className="bg-[#2a2a2a] rounded-lg p-8 text-center">
+                  <div className="text-gray-400 mb-4">
+                    <DatabaseZap className="h-16 w-16 mx-auto mb-4 text-[#00B7FF] opacity-50" />
+                    <p className="text-xl font-medium">
+                      Aucune métadonnée trouvée
+                    </p>
+                    <p className="mt-2">
+                      Commencez par créer une nouvelle métadonnée pour ce type
+                      de document.
+                    </p>
+                  </div>
+                  <button
+                    className="mt-4 bg-[#00B7FF] hover:bg-[#009ad3] text-white px-6 py-3 rounded-lg flex items-center transition-colors duration-200 mx-auto"
+                    onClick={handleCreateNew}
+                  >
+                    <Plus className="h-5 w-5 mr-2" />
+                    Créer une métadonnée
+                  </button>
+                </div>
+              ) : (
+                selectedDocumentTypeId && (
+                  <div className="bg-[#2a2a2a] rounded-lg overflow-hidden shadow-lg border border-[#4a4a4a]">
+                    <table className="w-full">
+                      <thead className="bg-[#1a1a1a] text-white">
+                        <tr>
+                          <th className="px-6 py-4 text-left text-sm font-medium"></th>
+                          <th className="px-6 py-4 text-left text-sm font-medium">
+                            Nom métadonnée
+                          </th>
+                          <th className="px-6 py-4 text-left text-sm font-medium">
+                            Type
+                          </th>
+                          <th className="px-6 py-4 text-left text-sm font-medium">
+                            Obligatoire
+                          </th>
+                          <th className="px-6 py-4 text-right text-sm font-medium">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-[#4a4a4a]">
+                        {metadata.map((meta, index) => (
+                          <tr
+                            key={meta.id}
+                            className={`hover:bg-[#3a3a3a] transition-colors duration-200`}
+                          >
+                            <td className="px-6 py-4">
+                              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#2a2a2a]">
+                                {meta.metaType === "text" && (
+                                  <span className="text-[#00B7FF]">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      className="h-5 w-5"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="currentColor"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M3 5h12M9 3v18m12-13H9m12 8H9"
+                                      />
+                                    </svg>
+                                  </span>
+                                )}
+                                {meta.metaType === "Date" && (
+                                  <span className="text-[#00B7FF]">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      className="h-5 w-5"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="currentColor"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                      />
+                                    </svg>
+                                  </span>
+                                )}
+                                {meta.metaType === "number" && (
+                                  <span className="text-[#00B7FF]">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      className="h-5 w-5"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      stroke="currentColor"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
+                                      />
+                                    </svg>
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-white font-medium">
+                              {meta.cle}
+                            </td>
+                            <td className="px-6 py-4">
+                              <span
+                                className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                  meta.metaType === "text"
+                                    ? "bg-blue-900 text-blue-200"
+                                    : meta.metaType === "Date"
+                                    ? "bg-green-900 text-green-200"
+                                    : "bg-purple-900 text-purple-200"
+                                }`}
+                              >
+                                {meta.metaType}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span
+                                className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                  meta.required
+                                    ? "bg-red-900 text-red-200"
+                                    : "bg-gray-700 text-gray-300"
+                                }`}
+                              >
+                                {meta.required ? "Obligatoire" : "Optionnel"}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex justify-end space-x-2">
+                                <Tooltip title="Modifier" arrow>
+                                  <button
+                                    onClick={() => handleEdit(meta)}
+                                    className="p-2 text-[#00B7FF] hover:bg-[#404040] rounded-lg transition-colors duration-200"
+                                  >
+                                    <SquarePen className="h-5 w-5" />
+                                  </button>
+                                </Tooltip>
+                                <Tooltip title="Supprimer" arrow>
+                                  <button
+                                    onClick={() => handleDelete(meta.id)}
+                                    className="p-2 text-red-500 hover:bg-[#404040] rounded-lg transition-colors duration-200"
+                                  >
+                                    <Trash2 className="h-5 w-5" />
+                                  </button>
+                                </Tooltip>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )
+              )}
+
+              {!selectedServiceId && (
+                <div className="bg-[#2a2a2a] rounded-lg p-8 text-center">
+                  <div className="text-gray-400">
+                    <Settings className="h-16 w-16 mx-auto mb-4 text-[#00B7FF] opacity-50" />
+                    <p className="text-xl font-medium">
+                      Sélectionnez un service
+                    </p>
+                    <p className="mt-2">
+                      Veuillez choisir un service pour afficher les types de
+                      documents disponibles.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {selectedServiceId && !selectedDocumentTypeId && (
+                <div className="bg-[#2a2a2a] rounded-lg p-8 text-center">
+                  <div className="text-gray-400">
+                    <Layers3 className="h-16 w-16 mx-auto mb-4 text-[#00B7FF] opacity-50" />
+                    <p className="text-xl font-medium">
+                      Sélectionnez un type de document
+                    </p>
+                    <p className="mt-2">
+                      Veuillez choisir un type de document pour gérer ses
+                      métadonnées.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
 
+      {/* Modal pour créer une nouvelle métadonnée */}
       {modalOpen && !editMode && (
-        <div
-          className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-50"
-          onClick={() => setModalOpen(false)}
-        >
-          <div
-            className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg w-full flex flex-col justify-center items-center"
-            onClick={(e) => e.stopPropagation()}
-          >
+        <div className="fixed inset-0 flex z-50 items-center justify-center bg-black/70 backdrop-blur-sm">
+          <div className="modal-box bg-white text-gray-800 rounded-2xl shadow-2xl transform transition-all duration-300 max-w-2xl w-full p-8">
             <button
-              className="btn btn-sm btn-circle absolute right-2 top-2"
+              className="btn btn-circle btn-ghost absolute right-4 top-4 text-gray-500 hover:text-gray-700"
               onClick={() => setModalOpen(false)}
             >
               ✕
             </button>
-            <h2 className="text-2xl font-bold mb-4">
-              Créer une nouvelle métadonnée
+            <h2 className="text-3xl font-bold mb-2 text-gray-800">
+              Nouvelles métadonnées
             </h2>
-            <form onSubmit={handleSubmit} className="w-full">
-              <div className="form-control w-full">
-                <label className="label">Nom du champ</label>
-                <input
-                  type="text"
-                  className="input  input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                  value={key}
-                  onChange={(e) => setKey(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-control">
-                <label className="label">Type du champ</label>
-                <select
-                  className="select select-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                  value={metaType}
-                  onChange={(e) => setMetaType(e.target.value)}
-                  required
+            <p className="text-gray-600 mb-6">
+              Ajoutez des métadonnées pour le type de document:{" "}
+              <span className="font-medium">{selectedDocumentTypeName}</span>
+            </p>
+
+            <form onSubmit={handleSubmit}>
+              {metadataFields.map((field, index) => (
+                <div
+                  key={index}
+                  className="flex gap-4 mb-6 items-end bg-gray-50 p-4 rounded-lg border border-gray-200"
                 >
-                  <option disabled selected>
-                    Sélectionner un type
-                  </option>
-                  <option value="text">Texte</option>
-                  <option value="Date">Date</option>
-                  <option value="number">Nombre</option>
-                </select>
-              </div>
-              <div className="modal-action flex justify-center items-center">
-                <button
-                  type="submit"
-                  className="btn flex justify-center items-center btn-primary w-[50%] bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg"
-                >
-                  <Plus className="mr-2" />
-                  Créer
-                </button>
+                  <div className="form-control flex-1">
+                    <label className="label font-medium text-gray-700">
+                      Nom du champ
+                    </label>
+                    <input
+                      type="text"
+                      className="input input-bordered w-full bg-white text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                      value={field.key}
+                      onChange={(e) =>
+                        updateMetadataField(index, "key", e.target.value)
+                      }
+                      required
+                      placeholder="Ex: Numéro de facture, Date d'émission..."
+                    />
+                  </div>
+                  <div className="form-control w-1/4">
+                    <label className="label font-medium text-gray-700">
+                      Type
+                    </label>
+                    <select
+                      className="select select-bordered w-full bg-white text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
+                      value={field.metaType}
+                      onChange={(e) =>
+                        updateMetadataField(index, "metaType", e.target.value)
+                      }
+                      required
+                    >
+                      <option value="text">Texte</option>
+                      <option value="Date">Date</option>
+                      <option value="number">Nombre</option>
+                    </select>
+                  </div>
+                  <div className="form-control">
+                    <label className="label font-medium text-gray-700">
+                      Obligatoire
+                    </label>
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        className="toggle toggle-primary"
+                        checked={field.required}
+                        onChange={(e) =>
+                          updateMetadataField(
+                            index,
+                            "required",
+                            e.target.checked
+                          )
+                        }
+                      />
+                      <span className="ml-2 text-sm text-gray-600">
+                        {field.required ? "Oui" : "Non"}
+                      </span>
+                    </div>
+                  </div>
+                  {metadataFields.length > 1 && (
+                    <button
+                      type="button"
+                      className="btn btn-circle btn-error"
+                      onClick={() => removeMetadataField(index)}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+              ))}
+
+              <div className="flex justify-center mt-6">
                 <button
                   type="button"
-                  className="btn btn-outline btn-error w-[40%] mt-2"
+                  className="btn btn-outline border-gray-300 text-gray-700 hover:bg-gray-100"
+                  onClick={addMetadataField}
+                >
+                  <Plus className="mr-2" />
+                  Ajouter un champ
+                </button>
+              </div>
+
+              <div className="modal-action flex justify-between items-center mt-8">
+                <button
+                  type="button"
+                  className="btn btn-outline border-gray-300 text-gray-700 hover:bg-gray-100 px-6"
                   onClick={() => setModalOpen(false)}
                 >
                   Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="btn flex justify-center items-center bg-gray-800 text-white hover:bg-gray-900 transition duration-300 rounded-lg px-8"
+                  disabled={formLoading}
+                >
+                  {formLoading ? (
+                    <span className="loading loading-spinner loading-sm mr-2"></span>
+                  ) : (
+                    <Plus className="mr-2" />
+                  )}
+                  Créer
                 </button>
               </div>
             </form>

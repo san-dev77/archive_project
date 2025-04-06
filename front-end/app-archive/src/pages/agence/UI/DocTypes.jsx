@@ -6,24 +6,32 @@ import "daisyui/dist/full.css";
 import Sidebar_agence from "../../../Components/Sidebar_agence";
 import TopBar from "../../../Components/Top_bar";
 import {
-  LayoutList,
   Plus,
   SquarePen,
   Trash2,
-  ChevronUp,
-  ChevronDown,
-  Network,
-  ArrowUpToLine,
-  Download,
   Settings,
+  StretchHorizontal,
+  DatabaseZap,
+  Settings2Icon,
+  ServerOff,
+  PackageCheck,
+  Layers2,
 } from "lucide-react";
 import { Tooltip } from "@mui/material";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2"; // Import SweetAlert2
+import Swal from "sweetalert2";
+import Loader_component from "../../../Components/Loader";
 
 const deleteDocumentType = async (id) => {
-  await axios.delete(`http://localhost:3000/agence/document-type/${id}`);
+  console.log("Tentative de suppression de l'ID:", id);
+  const response = await axios.delete(
+    `http://localhost:3000/agence/document-type/${id}`
+  );
+  if (response.status !== 200) {
+    throw new Error("Failed to delete document type");
+  }
+  return response.data;
 };
 
 const updateDocumentType = async (docType) => {
@@ -34,8 +42,10 @@ const updateDocumentType = async (docType) => {
 };
 
 const createDocumentType = async (docType) => {
-  console.log(docType);
-  await axios.post("http://localhost:3000/agence/document-type", docType);
+  return await axios.post(
+    "http://localhost:3000/agence/document-type",
+    docType
+  );
 };
 
 const fetchDocumentTypes = async () => {
@@ -49,29 +59,41 @@ export default function DocType() {
   const [searchText, setSearchText] = useState("");
   const [openModal, setOpenModal] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [configModalOpen, setConfigModalOpen] = useState(false);
   const [currentDocType, setCurrentDocType] = useState({
     id: "",
     nom_document_type: "",
   });
-  const [expandedDocType, setExpandedDocType] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const queryClient = useQueryClient();
   const { data: document_type = [] } = useQuery(
     "document-type",
-    fetchDocumentTypes
-  );
-
-  const filteredDocumentTypes = document_type.filter((docType) =>
-    docType.nom_document_type.toLowerCase().includes(searchText.toLowerCase())
+    fetchDocumentTypes,
+    {
+      onSuccess: () => setLoading(false),
+      onError: (err) => {
+        setError(err.message);
+        setLoading(false);
+      },
+    }
   );
 
   const deleteMutation = useMutation(deleteDocumentType, {
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.message ||
+        "Échec lors de la suppression du type de document.";
+      Swal.fire({
+        icon: "error",
+        title: "Erreur",
+        text: errorMessage,
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries("document-type");
       toast.success("Type de document supprimé avec succès !");
-    },
-    onError: () => {
-      toast.error("Échec lors de la suppression du type de document.");
     },
   });
 
@@ -87,39 +109,46 @@ export default function DocType() {
   });
 
   const createMutation = useMutation(createDocumentType, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("document-type");
-      toast.success("Type de document créé avec succès !");
-      setOpenModal(false);
+    onSuccess: (data) => {
+      if (data.data && data.data.exists) {
+        Swal.fire({
+          icon: "error",
+          title: "Erreur",
+          text: "Ce type de document existe déjà.",
+        });
+      } else {
+        queryClient.invalidateQueries("document-type");
+        toast.success("Type de document créé avec succès !");
+        setOpenModal(false);
+      }
     },
-    onError: () => {
-      toast.error("Échec lors de la création du type de document.");
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error ||
+        "Échec lors de la création du type de document.";
+      Swal.fire({
+        icon: "error",
+        title: "Erreur",
+        text: errorMessage,
+      });
     },
   });
 
   const navigate = useNavigate();
 
-  const handleLinkPage = () => {
-    navigate("/agence/show-links");
-  };
-
   const handleDelete = (id) => {
     Swal.fire({
-      title: "Êtes-vous sûr?",
-      text: "Vous ne pourrez pas revenir en arrière!",
+      title: "Êtes-vous sûr ?",
+      text: "Cette action est irréversible !",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d33",
-      cancelButtonColor: "#3085d6",
+      confirmButtonColor: "#333",
+      cancelButtonColor: "#d33",
       confirmButtonText: "Oui, supprimer!",
+      cancelButtonText: "Annuler",
     }).then((result) => {
       if (result.isConfirmed) {
         deleteMutation.mutate(id);
-        Swal.fire(
-          "Supprimé!",
-          "Le type de document a été supprimé.",
-          "success"
-        );
       }
     });
   };
@@ -133,159 +162,225 @@ export default function DocType() {
     e.preventDefault();
     if (currentDocType.id) {
       updateMutation.mutate(currentDocType);
-      Swal.fire(
-        "Mis à jour!",
-        "Le type de document a été mis à jour.",
-        "success"
-      );
     } else {
       createMutation.mutate(currentDocType);
     }
     setCurrentDocType({ id: "", nom_document_type: "" });
   };
 
-  const toggleDocType = (docTypeId) => {
-    if (expandedDocType === docTypeId) {
-      setExpandedDocType(null);
-    } else {
-      setExpandedDocType(docTypeId);
-    }
-  };
-
   const handleSettings = (docTypeId) => {
     navigate(`/agence/config-docType/${docTypeId}`);
   };
 
+  const filteredDocumentTypes = document_type.filter((docType) =>
+    docType.nom_document_type.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   const renderDocTypeList = () => {
     if (filteredDocumentTypes.length === 0) {
       return (
-        <div className="text-center text-gray-900 mt-4">
-          Aucun type de document disponible.
+        <div className="text-center py-8">
+          <ServerOff className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-300">Aucun type de document disponible</p>
         </div>
       );
     }
 
     return (
-      <ul className="list-none w-full">
-        {filteredDocumentTypes.map((docType) => (
-          <li key={docType.id} className="w-full">
-            <button
-              className="btn btn-default relative btn-outline border-t-cyan-800 w-full text-left flex justify-between items-center"
-              onClick={() => toggleDocType(docType.id)}
-            >
-              <div className="flex items-center p-2 rounded-full bg-white">
-                <Network className="mr-2 text-gray-800" />
-                <span
-                  className="text-sm text-gray-800 overflow-hidden whitespace-nowrap text-ellipsis"
-                  style={{ maxWidth: "600px" }}
-                >
+      <div className="overflow-x-auto w-full">
+        <table className="w-full rounded-lg">
+          <thead className="rounded-lg">
+            <tr className="bg-gray-100 rounded-lg w-full  text-black">
+              <th className="p-4 text-left">Type de document</th>
+              <th className="p-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredDocumentTypes.map((docType) => (
+              <tr
+                key={docType.id}
+                className="border-b border-gray-600 hover:bg-gray-600/30"
+              >
+                <td className="flex items-center p-4 text-base text-white">
+                  <Layers2 className="mr-2" />
                   {docType.nom_document_type}
-                </span>
-              </div>
-              <div className="flex items-center space-x-2">
-                {expandedDocType === docType.id ? (
-                  <>
-                    <Tooltip title="Parametrer ce type">
+                </td>
+                <td className="text-right p-4">
+                  <div className="flex flex-col sm:flex-row justify-end items-center space-y-2 sm:space-y-0 sm:space-x-2">
+                    <Tooltip title="Paramètres">
                       <button
-                        className="btn btn-outline bg-gray-600 text-white hover:bg-orange-600 transition duration-300 rounded-md"
+                        className="btn btn-circle bg-gray-600 text-white hover:bg-orange-500 transition duration-300"
                         onClick={() => handleSettings(docType.id)}
                       >
-                        <Settings className="mr-1" />
+                        <Settings />
                       </button>
                     </Tooltip>
-                    <Tooltip title="Modifier le type de document">
+                    <Tooltip title="Modifier">
                       <button
-                        className="btn btn-outline bg-gray-600 text-white hover:bg-blue-600 transition duration-300 rounded-md"
+                        className="btn btn-circle bg-gray-600 text-white hover:bg-indigo-400 transition duration-300"
                         onClick={() => handleEdit(docType)}
                       >
-                        <SquarePen className="mr-1" />
+                        <SquarePen />
                       </button>
                     </Tooltip>
-                    <Tooltip title="Supprimer le type de document">
+                    <Tooltip title="Supprimer">
                       <button
-                        className="btn btn-outline bg-gray-600 text-white hover:bg-red-600 transition duration-300 rounded-md"
+                        className="btn btn-circle bg-gray-600 text-white hover:bg-red-500 transition duration-300"
                         onClick={() => handleDelete(docType.id)}
                       >
-                        <Trash2 className="mr-1" />
+                        <Trash2 />
                       </button>
                     </Tooltip>
-                    <ChevronUp />
-                  </>
-                ) : (
-                  <ChevronDown />
-                )}
-              </div>
-            </button>
-          </li>
-        ))}
-      </ul>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     );
   };
 
-  return (
-    <div className="flex min-h-screen  bg-gray-300 to-gray-900">
-      <Sidebar_agence isVisible={true} />
-      <div className="flex-1 flex flex-col ">
-        <TopBar position="fixed" title="Types de documents" />
+  const handleConfigOpen = () => {
+    setConfigModalOpen(true);
+  };
 
-        <div className="container w-[90%] mx-auto mt-28 bg-white rounded-xl shadow-2xl flex flex-col h-auto">
-          <div className="bg-white w-full rounded-lg shadow-md p-6 ">
-            <div className="flex justify-between items-center mb-4">
-              <h1 className="text-2xl font-extrabold text-gray-800 flex justify-start w-full">
-                <LayoutList size="28px" className="mr-3 ml-2 text-red-600" />
-                Types de documents
-              </h1>
-            </div>
+  const handleConfigClose = () => {
+    setConfigModalOpen(false);
+  };
 
-            <div className="flex flex-row-reverse w-full justify-between rounded-lg border-2 p-4 border-gray-300 space-x-2 mb-4">
-              <div className="flex items-center justify-center gap-4">
-                <button className="btn btn-primary bg-gray-600 text-white hover:bg-gray-800 transition duration-300 shadow-md">
-                  <Download size={20} className="mr-2" />
-                  Importer
-                </button>
-                <button className="btn btn-primary text-white bg-gray-600  hover:bg-gray-700 transition duration-300 shadow-md">
-                  <ArrowUpToLine size={20} className="mr-2" />
-                  Exporter
+  const renderConfigModal = () => {
+    return (
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          zIndex: 100,
+        }}
+        onClick={handleConfigClose}
+      >
+        <div
+          className="modal-box bg-gradient-to-br from-gray-800 to-gray-900 text-white rounded-xl shadow-2xl transform transition-all duration-300 max-w-4xl w-full mx-4 p-8"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            className="btn btn-sm btn-circle absolute right-4 top-4 bg-gray-700 hover:bg-gray-600 border-0"
+            onClick={handleConfigClose}
+          >
+            ✕
+          </button>
+
+          <h3 className="font-bold text-2xl mb-8 text-center">Configuration</h3>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="card bg-gray-700 hover:bg-gray-600 transition-colors duration-300 rounded-xl shadow-lg p-6">
+              <div className="card-body text-center">
+                <div className="flex items-center justify-center w-full">
+                  <DatabaseZap size={50} />
+                </div>
+                <h2 className="card-title text-xl mb-4 justify-center">
+                  Configurer les méta données
+                </h2>
+                <p className="mb-6 text-gray-300">
+                  Gérez et configurez les différents types de documents
+                </p>
+                <button
+                  className="btn bg-white hover:bg-orange-600 text-black border-0 w-full"
+                  onClick={() => navigate("/agence/meta_agence")}
+                >
+                  Configurer
                 </button>
               </div>
+            </div>
+
+            <div className="card bg-gray-700 hover:bg-gray-600 transition-colors duration-300 rounded-xl shadow-lg p-6">
+              <div className="card-body text-center">
+                <div className="flex items-center justify-center w-full">
+                  <StretchHorizontal size={50} />
+                </div>
+                <h2 className="card-title text-xl mb-4 justify-center">
+                  Configuration des pièces
+                </h2>
+                <p className="mb-6 text-gray-300">
+                  Accédez aux autres paramètres de configuration
+                </p>
+                <button
+                  className="btn bg-white hover:bg-orange-600 text-black border-0 w-full"
+                  onClick={() => navigate("/agence/config-piece")}
+                >
+                  Configurer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Loader_component className="loader" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-red-500">{error}</div>;
+  }
+
+  return (
+    <div className="flex min-h-screen bg-gray-300">
+      <Sidebar_agence isVisible={true} />
+      <div className="flex-1 flex flex-col">
+        <TopBar position="fixed" title="Types de documents" />
+        <div className="container w-full mx-auto px-4 py-8 mt-20">
+          <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-white flex items-center">
+                <PackageCheck className="h-8 w-8 text-[#00B7FF] mr-2" />
+                Gestion des Types de Documents
+              </h1>
               <button
-                className="btn btn-primary bg-gray-500 text-white hover:bg-gray-500 transition duration-300 shadow-md"
                 onClick={() => setOpenModal(true)}
+                className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
               >
-                <Plus size={20} className="mr-2" />
-                Nouveau
+                <Plus className="h-5 w-5 mr-2" />
+                Nouveau Type
               </button>
             </div>
-            <div className="border-t border-gray-700 my-4"></div>
 
-            <div className="flex justify-between mb-4">
-              <div className="w-full flex flex-col justify-start items-start gap-2">
-                <h2 className="text-lg font-bold text-gray-800">Rechercher</h2>
-                <input
-                  type="text"
-                  placeholder="Rechercher un type de document..."
-                  className="input input-bordered w-full max-w-lg bg-white text-black border-2 border-gray-300 rounded-lg shadow-md"
-                  onChange={(e) => setSearchText(e.target.value)}
-                />
+            <div className="mb-6">
+              <div className="flex items-center space-x-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-white mb-1">
+                    Rechercher un type de document
+                  </label>
+                  <input
+                    type="text"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    placeholder="Rechercher par nom..."
+                    className="w-full px-4 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                  />
+                </div>
+                <button
+                  className="btn bg-[#3a3a3a] text-white hover:bg-[#4a4a4a] border-0"
+                  onClick={handleConfigOpen}
+                >
+                  <Settings2Icon className="h-5 w-5 mr-2" />
+                  Configuration
+                </button>
               </div>
-
-              <div
-                className="flex items-center  mr-10"
-                onClick={handleLinkPage}
-              ></div>
             </div>
 
-            <div className="flex justify-start items-center mb-4">
-              <h2 className="text-lg font-bold flex text-gray-800">
-                <LayoutList size="28px" className="mr-3 ml-2 text-red-600" />
-                Liste des types de documents
-              </h2>
-            </div>
-
-            <div className="overflow-x-auto">
-              <div className="h-[600px] py-4 rounded-lg bg-gray-700 px-10 overflow-y-auto">
-                {renderDocTypeList()}
-              </div>
+            <div className="bg-[#3a3a3a] rounded-lg p-4">
+              {renderDocTypeList()}
             </div>
           </div>
         </div>
@@ -300,6 +395,7 @@ export default function DocType() {
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 100,
           }}
           onClick={() => setOpenModal(false)}
         >
@@ -315,8 +411,8 @@ export default function DocType() {
             </button>
             <h3 className="font-bold text-lg">
               {currentDocType.id
-                ? "Modifier l'agence"
-                : "Créer une nouvelle agence"}
+                ? "Modifier le type de document"
+                : "Créer un nouveau type de document"}
             </h3>
             <form onSubmit={handleSubmit}>
               <div className="form-control mt-4">
@@ -363,6 +459,7 @@ export default function DocType() {
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "rgba(0, 0, 0, 0.5)",
+            zIndex: 100,
           }}
           onClick={() => setEditModalOpen(false)}
         >
@@ -412,6 +509,8 @@ export default function DocType() {
           </div>
         </div>
       )}
+
+      {configModalOpen && renderConfigModal()}
 
       <ToastContainer />
     </div>

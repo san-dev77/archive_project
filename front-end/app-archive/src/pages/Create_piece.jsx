@@ -119,90 +119,96 @@ export default function CreatePiece() {
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-gray-300">
       <Side_bar isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar position="fixed" title="Pièces" />
-        <div className="container w-[90%] mx-auto mt-24 bg-white rounded-xl shadow-2xl flex flex-col h-screen">
-          <h1 className="text-2xl mt-4 font-extrabold text-gray-800 flex justify-start w-full">
-            <LayoutList size="28px" className="mr-3 ml-3 text-orange-600" />
-            Liste des Pièces
-          </h1>
-          <div className="border-b-2 border-gray-300 mb-4 w-full"></div>
-          <div className=" h-full bg-gray-400  text-white w-full rounded-lg shadow-md p-6 mb-6">
-            <div className="flex gap-4 mb-6">
-              <input
-                type="text"
-                placeholder="Rechercher une pièce"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="input input-bordered w-full max-w-xs bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-              />
-              <button
-                className="btn btn-primary ml-auto bg-gray-700 text-white hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
-                onClick={() => setOpenModal(true)}
-              >
-                <Plus size={20} className="mr-2" />
-                Nouvelle
-              </button>
-              <button
-                onClick={() => {
-                  window.location.href = "/pieces";
-                }}
-                className="btn btn-outline btn-default flex items-center justify-center text-black"
-              >
-                <Settings /> Configurer les pièces
-              </button>
+        <div className="container w-full mx-auto px-4 py-8 mt-20">
+          <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-white flex items-center">
+                <LayoutList className="h-8 w-8 text-[#00B7FF] mr-2" />
+                Liste des Pièces
+              </h1>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setOpenModal(true)}
+                  className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
+                >
+                  <Plus className="h-5 w-5 mr-2" />
+                  Nouvelle Pièce
+                </button>
+                <button
+                  onClick={() => {
+                    window.location.href = "/pieces";
+                  }}
+                  className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
+                >
+                  <Settings className="h-5 w-5 mr-2" />
+                  Configurer
+                </button>
+              </div>
             </div>
 
-            <div className="overflow-x-auto ">
-              <div className=" overflow-y-auto">
-                <table className="table w-full border-collapse">
-                  <thead className="sticky top-0 rounded-lg bg-gray-700 text-white">
+            <div className="mb-6">
+              <div className="flex items-center space-x-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-white mb-1">
+                    Rechercher une pièce
+                  </label>
+                  <input
+                    type="text"
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Rechercher par code ou nom..."
+                    className="w-full px-4 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-[#3a3a3a] rounded-lg p-4">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-[#2a2a2a] text-white">
                     <tr>
-                      <th className="text-lg p-4">Code de la pièce</th>
-                      <td className="">|</td>
-                      <th className="text-lg p-4">Nom de la pièce</th>
-                      <td className="">|</td>
-                      <th className="text-lg p-4 text-right">Actions</th>
+                      <th className="px-4 py-3 text-left">Code de la pièce</th>
+                      <th className="px-4 py-3 text-left">Nom de la pièce</th>
+                      <th className="px-4 py-3 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredPieces.map((piece, index) => (
                       <tr
                         key={piece.id}
-                        className={`hover:bg-gray-100 transition duration-200 ${
-                          index % 2 === 0 ? "bg-gray-50" : "bg-white"
-                        }`}
+                        className={`border-b border-[#4a4a4a] hover:bg-[#2a2a2a] transition-colors duration-200`}
                       >
-                        <td className="flex items-center btn btn-outline border-t-neutral-700 rounded-lg mt-2 justify-center p-2 text-base text-gray-800">
-                          <Ungroup className="mr-2 text-gray-800" />
-                          {piece.code_piece}
+                        <td className="px-4 py-3">
+                          <div className="flex items-center">
+                            <Ungroup className="h-5 w-5 text-[#00B7FF] mr-2" />
+                            <span className="text-white">{piece.code_piece}</span>
+                          </div>
                         </td>
-                        <td className="">|</td>
-                        <td className="flex items-center p-4 text-base text-gray-800">
-                          <Bookmark size={20} className="text-gray-800 mr-2" />
-                          {piece.nom_piece}
+                        <td className="px-4 py-3">
+                          <div className="flex items-center">
+                            <Bookmark className="h-5 w-5 text-[#00B7FF] mr-2" />
+                            <span className="text-white">{piece.nom_piece}</span>
+                          </div>
                         </td>
-                        <td className="">|</td>
-                        <td className="text-right p-4 text-base text-gray-800">
-                          <div className="flex flex-col sm:flex-row justify-end items-center space-y-2 sm:space-y-0 sm:space-x-2">
-                            <Tooltip title="Modifier">
-                              <button
-                                className="btn btn-outline bg-gray-600 text-white btn-md w-full sm:w-auto hover:bg-indigo-500 transition duration-300 rounded-md"
-                                onClick={() => handleEdit(piece)}
-                              >
-                                <SquarePen className="mr-1" />
-                              </button>
-                            </Tooltip>
-                            <Tooltip title="Supprimer">
-                              <button
-                                className="btn btn-outline bg-gray-600 btn-md text-white  hover:bg-red-500 transition duration-300 rounded-md"
-                                onClick={() => handleDelete(piece.id)}
-                              >
-                                <Trash2 className="mr-1" />
-                              </button>
-                            </Tooltip>
+                        <td className="px-4 py-3">
+                          <div className="flex justify-end space-x-2">
+                            <button
+                              onClick={() => handleEdit(piece)}
+                              className="p-2 text-[#00B7FF] hover:bg-[#404040] rounded-lg transition-colors duration-200"
+                            >
+                              <SquarePen className="h-5 w-5" />
+                            </button>
+                            <button
+                              onClick={() => handleDelete(piece.id)}
+                              className="p-2 text-red-500 hover:bg-[#404040] rounded-lg transition-colors duration-200"
+                            >
+                              <Trash2 className="h-5 w-5" />
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -213,85 +219,85 @@ export default function CreatePiece() {
             </div>
           </div>
         </div>
-      </div>
 
-      {openModal && (
-        <div
-          className="fixed inset-0 flex z-50 items-center justify-center bg-black bg-opacity-50"
-          onClick={() => setOpenModal(false)}
-        >
-          <div
-            className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="btn btn-sm btn-circle absolute right-2 top-2"
-              onClick={() => setOpenModal(false)}
-            >
-              ✕
-            </button>
-            <h2 className="text-2xl font-bold mb-4">
-              {editMode ? "Modifier la pièce" : "Créer une nouvelle pièce"}
-            </h2>
-            <form onSubmit={editMode ? handlePieceUpdated : handlePieceCreated}>
-              <div className="form-control">
-                <label className="label">Code de la pièce</label>
-                <input
-                  type="text"
-                  placeholder="Code de la pièce"
-                  value={editMode ? currentPiece.code_piece : code_piece}
-                  onChange={(e) =>
-                    editMode
-                      ? setCurrentPiece({
-                          ...currentPiece,
-                          code_piece: e.target.value,
-                        })
-                      : setCode(e.target.value)
-                  }
-                  required
-                  className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                />
-              </div>
-              <div className="form-control">
-                <label className="label">Nom de la pièce</label>
-                <input
-                  type="text"
-                  placeholder="Nom de la pièce"
-                  value={editMode ? currentPiece.nom_piece : nom_piece}
-                  onChange={(e) =>
-                    editMode
-                      ? setCurrentPiece({
-                          ...currentPiece,
-                          nom_piece: e.target.value,
-                        })
-                      : setName(e.target.value)
-                  }
-                  required
-                  className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                />
-              </div>
-              <div className="modal-action flex justify-center items-center">
+        {openModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-[#2a2a2a] rounded-lg shadow-xl p-6 w-full max-w-lg mx-4">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-white">
+                  {editMode ? "Modifier la pièce" : "Nouvelle pièce"}
+                </h3>
                 <button
-                  type="submit"
-                  className="btn flex justify-center items-center btn-primary w-[50%] bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg"
-                >
-                  <Plus className="mr-2" />
-                  {editMode ? "Mettre à jour" : "Créer"}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-outline btn-error w-[40%] mt-2"
                   onClick={() => setOpenModal(false)}
+                  className="text-gray-400 hover:text-gray-200"
                 >
-                  Annuler
+                  ✕
                 </button>
               </div>
-            </form>
-          </div>
-        </div>
-      )}
 
-      <ToastContainer />
+              <form onSubmit={editMode ? handlePieceUpdated : handlePieceCreated}>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-white mb-1">
+                    Code de la pièce
+                  </label>
+                  <input
+                    type="text"
+                    value={editMode ? currentPiece.code_piece : code_piece}
+                    onChange={(e) =>
+                      editMode
+                        ? setCurrentPiece({
+                            ...currentPiece,
+                            code_piece: e.target.value,
+                          })
+                        : setCode(e.target.value)
+                    }
+                    required
+                    className="w-full px-3 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                  />
+                </div>
+
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-white mb-1">
+                    Nom de la pièce
+                  </label>
+                  <input
+                    type="text"
+                    value={editMode ? currentPiece.nom_piece : nom_piece}
+                    onChange={(e) =>
+                      editMode
+                        ? setCurrentPiece({
+                            ...currentPiece,
+                            nom_piece: e.target.value,
+                          })
+                        : setName(e.target.value)
+                    }
+                    required
+                    className="w-full px-3 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-4">
+                  <button
+                    type="button"
+                    onClick={() => setOpenModal(false)}
+                    className="px-4 py-2 text-sm font-medium text-white bg-[#4a4a4a] rounded-lg hover:bg-[#5a5a5a] focus:outline-none focus:ring-2 focus:ring-[#6a6a6a]"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 text-sm font-medium text-white bg-[#00B7FF] rounded-lg hover:bg-[#0096FF] focus:outline-none focus:ring-2 focus:ring-[#00B7FF]"
+                  >
+                    {editMode ? "Mettre à jour" : "Ajouter"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        <ToastContainer />
+      </div>
     </div>
   );
 }

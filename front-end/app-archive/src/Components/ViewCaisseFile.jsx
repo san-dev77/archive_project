@@ -57,6 +57,7 @@ const ViewCaisseFile = ({ onClose }) => {
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: "rgba(0, 0, 0, 0.5)",
+        zIndex: 100,
       }}
       onClick={onClose}
     >
@@ -93,13 +94,10 @@ const ViewCaisseFile = ({ onClose }) => {
       </div>
       {isFileModalOpen && (
         <div
-          className="fixed z-50 mt-14  inset-0 flex items-center justify-center bg-black bg-opacity-85"
-          style={{ zIndex: 1000 }} // Ajout du z-index à la modale
+          className="fixed z-50 inset-0 flex items-center justify-center bg-black bg-opacity-85"
+          style={{ zIndex: 1000 }}
         >
-          <div
-            className="modal-box bg-white w-full text-black rounded-lg shadow-lg p-4"
-            style={{ width: "80%" }}
-          >
+          <div className="modal-box bg-white w-3/4 max-w-5xl text-black rounded-lg shadow-lg p-4">
             <h3 className="font-bold text-lg">
               Prévisualisation des fichiers de la pièce
             </h3>
@@ -110,10 +108,10 @@ const ViewCaisseFile = ({ onClose }) => {
                   <div key={index} className="mt-2">
                     <h4>{filePath}</h4>
                     <object
-                      data={`http://localhost:3000/agence_uploads/caisse/${filePath}`} // Utilisez l'URL du fichier sur le serveur
+                      data={`http://localhost:3000/agence_uploads/caisse/${filePath}`}
                       type="application/pdf"
-                      width="500"
-                      height="500"
+                      width="100%"
+                      height="600"
                     >
                       <p>
                         Votre navigateur ne supporte pas les PDF. Téléchargez le

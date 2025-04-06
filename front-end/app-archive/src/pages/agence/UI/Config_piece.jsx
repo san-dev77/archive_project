@@ -5,8 +5,19 @@ import "react-toastify/dist/ReactToastify.css";
 import Sidebar_agence from "../../../Components/Sidebar_agence";
 import TopBar from "../../../Components/Top_bar";
 import { useQuery } from "react-query";
-import { GitBranchPlus, Link, Link2Off, Ungroup } from "lucide-react";
+import {
+  GitBranchPlus,
+  Link,
+  Link2Off,
+  Ungroup,
+  Plus,
+  ServerOff,
+  SquarePen,
+} from "lucide-react";
 import Select from "react-select";
+import Swal from "sweetalert2";
+import { showDeleteConfirmation } from "../../../utils/alerts";
+import Loader_component from "../../../Components/Loader";
 
 const fetchAllPieces = async () => {
   const response = await axios.get("http://localhost:3000/agence/piece");
@@ -37,8 +48,17 @@ export default function ConfigPiece() {
     value: "",
     label: "Choisir un type de document",
   });
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isRelationModalOpen, setIsRelationModalOpen] = useState(false);
   const [selectedPieces, setSelectedPieces] = useState([]);
+  const [code_piece, setCode] = useState("");
+  const [nom_piece, setName] = useState("");
+  const [editMode, setEditMode] = useState(false);
+  const [currentPiece, setCurrentPiece] = useState({
+    id: "",
+    code_piece: "",
+    nom_piece: "",
+  });
 
   const { data: allPieces = [] } = useQuery("allPieces", fetchAllPieces);
   const { data: documentTypes = [] } = useQuery(
@@ -74,8 +94,11 @@ export default function ConfigPiece() {
       })
       .then(() => {
         toast.success("Relations ajoutées avec succès !");
-        setIsModalOpen(false);
+        setIsRelationModalOpen(false);
         setSelectedPieces([]);
+        if (selectedType.value) {
+          fetchPieces(selectedType.value).then(setPieces);
+        }
       })
       .catch((error) => {
         toast.error("Erreur lors de l'ajout des relations.");
@@ -87,17 +110,61 @@ export default function ConfigPiece() {
     console.log(value);
   };
 
-  const handleDeletePiece = (pieceId) => {
-    if (window.confirm("Êtes-vous sûr de vouloir supprimer cette pièce ?")) {
-      axios
-        .delete(`http://localhost:3000/agence/piece/${pieceId}`)
-        .then(() => {
+  const handleDeletePiece = async (pieceId) => {
+    const confirm = await showDeleteConfirmation();
+    if (confirm) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:3000/agence/piece/${pieceId}`
+        );
+        if (response.status === 200) {
+          // Refresh des données
+          if (selectedType.value) {
+            await fetchPieces(selectedType.value).then(setPieces);
+          }
           toast.success("Pièce supprimée avec succès !");
-        })
-        .catch((error) => {
-          toast.error("Erreur lors de la suppression de la pièce.");
-          console.error(error);
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Erreur",
+            text:
+              response.data.message || "Échec de la suppression de la pièce.",
+          });
+        }
+      } catch (error) {
+        console.error("Error deleting piece:", error);
+        const errorMessage =
+          error.response?.data?.message ||
+          "Une erreur est survenue lors de la suppression.";
+        Swal.fire({
+          icon: "error",
+          title: "Erreur",
+          text: errorMessage,
         });
+      }
+    }
+  };
+
+  const handlePieceCreated = async (event) => {
+    event.preventDefault();
+    try {
+      await axios.post("http://localhost:3000/agence/piece", {
+        code_piece,
+        nom_piece,
+      });
+      setCode("");
+      setName("");
+      // Refresh des données
+      const updatedPieces = await fetchAllPieces();
+      if (selectedType.value) {
+        const updatedLinkedPieces = await fetchPieces(selectedType.value);
+        setPieces(updatedLinkedPieces);
+      }
+      toast.success("Pièce créée avec succès !");
+      setIsCreateModalOpen(false);
+    } catch (error) {
+      console.error("Error creating piece:", error);
+      toast.error("Échec lors de la création de la pièce.");
     }
   };
 
@@ -187,27 +254,40 @@ export default function ConfigPiece() {
   };
 
   return (
-    <div className="flex min-h-screen mt-8 bg-gray-300 to-gray-900">
+    <div className="flex min-h-screen bg-gray-300">
       <Sidebar_agence isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar position="fixed" title="Config Pièces" />
-
-        <div className="container w-[90%] mx-auto mt-16 bg-white rounded-xl shadow-2xl flex flex-col h-auto">
-          <div className="bg-white w-full rounded-lg shadow-md p-6">
-            <div className="flex flex-col gap-4 justify-between items-center mb-4">
-              <div className="flex gap-2 justify-between items-center w-full">
-                <h1 className="text-2xl font-extrabold text-gray-800 flex items-center gap-2">
-                  <Link className="w-6 h-6" />
-                  Config Pièces
-                </h1>
-              </div>
-
-              <div className="flex justify-start gap-2 rounded-lg bg-gray-200 p-4 items-center w-full my-4">
-                <label
-                  htmlFor="documentType"
-                  className="text-gray-800 font-bold"
+        <div className="container w-full mx-auto px-4 py-8 mt-20">
+          <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-white flex items-center">
+                <Link className="h-8 w-8 text-[#00B7FF] mr-2" />
+                Configuration des Pièces
+              </h1>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
                 >
-                  Sélectionner un type de document :
+                  <Plus className="h-5 w-5 mr-2" />
+                  Nouvelle Pièce
+                </button>
+                <button
+                  onClick={() => setIsRelationModalOpen(true)}
+                  className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
+                  disabled={!selectedType.value}
+                >
+                  <GitBranchPlus className="h-5 w-5 mr-2" />
+                  Ajouter Relation
+                </button>
+              </div>
+            </div>
+
+            <div className="bg-[#3a3a3a] rounded-lg p-6 space-y-6">
+              <div className="flex items-center space-x-4 bg-[#2a2a2a] p-4 rounded-lg">
+                <label className="text-white font-medium whitespace-nowrap">
+                  Type de document :
                 </label>
                 <Select
                   options={documentTypes.map((type) => ({
@@ -216,74 +296,198 @@ export default function ConfigPiece() {
                   }))}
                   value={selectedType}
                   onChange={handleTypeChange}
-                  className="w-64 text-black"
+                  className="flex-1"
+                  styles={{
+                    control: (base) => ({
+                      ...base,
+                      backgroundColor: "#3a3a3a",
+                      borderColor: "#4a4a4a",
+                      color: "white",
+                    }),
+                    menu: (base) => ({
+                      ...base,
+                      backgroundColor: "#3a3a3a",
+                    }),
+                    option: (base, state) => ({
+                      ...base,
+                      backgroundColor: state.isFocused ? "#4a4a4a" : "#3a3a3a",
+                      color: "white",
+                    }),
+                    singleValue: (base) => ({
+                      ...base,
+                      color: "white",
+                    }),
+                  }}
                 />
               </div>
 
-              <div className="border-t border-gray-700 my-4"></div>
-
-              <div className="flex space-x-4 justify-between items-center w-full">
-                <div className="flex flex-col w-1/2 justify-start items-start gap-2">
-                  {/* Rechercher */}
-                  <label htmlFor="search" className="text-gray-800 font-bold">
-                    Rechercher :
-                  </label>
+              <div className="flex items-center space-x-4">
+                <div className="flex-1">
                   <input
                     type="text"
-                    placeholder="Rechercher"
-                    className="input input-bordered bg-gray-200 w-full max-w-xs"
+                    placeholder="Rechercher une pièce..."
+                    className="w-full px-4 py-2 bg-[#2a2a2a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
                     onChange={(e) => handleSearch(e.target.value)}
                   />
                 </div>
-
-                <button
-                  className="btn btn-outline bg-gray-800 text-white hover:bg-gray-600"
-                  onClick={() => setIsModalOpen(true)}
-                >
-                  <GitBranchPlus className="w-6 h-6" />
-                  Ajouter Relation
-                </button>
               </div>
-            </div>
 
-            <div className="overflow-x-auto">
-              <div className="h-[600px] py-4 rounded-lg bg-gray-300 px-10 overflow-y-auto">
-                {renderPiecesList()}
+              <div className="bg-[#2a2a2a] rounded-lg overflow-hidden">
+                {pieces.length === 0 ? (
+                  <div className="text-center py-8">
+                    <ServerOff className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <p className="text-gray-300">
+                      Aucune pièce disponible pour ce type de document
+                    </p>
+                  </div>
+                ) : (
+                  <table className="w-full">
+                    <thead className="bg-[#4a4a4a] text-white">
+                      <tr>
+                        <th className="p-4 text-left">
+                          <Ungroup className="w-6 h-6 text-[#00B7FF]" />
+                        </th>
+                        <th className="p-4 text-left">Nom de la pièce</th>
+                        <th className="p-4 text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {pieces.map((piece, index) => (
+                        <tr
+                          key={piece.id}
+                          className={`border-t border-[#4a4a4a] hover:bg-[#3a3a3a] transition-colors duration-200`}
+                        >
+                          <td className="p-4">
+                            <Link className="w-6 h-6 text-[#00B7FF]" />
+                          </td>
+                          <td className="p-4 text-white">{piece.nom_piece}</td>
+                          <td className="p-4 text-right">
+                            <button
+                              onClick={() => handleDeletePiece(piece.id)}
+                              className="p-2 text-red-500 hover:bg-[#4a4a4a] rounded-lg transition-colors duration-200"
+                            >
+                              <Link2Off className="w-5 h-5" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {isModalOpen && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          }}
-          onClick={() => setIsModalOpen(false)}
-        >
-          <div
-            className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg w-full mx-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="btn btn-sm btn-circle absolute right-2 top-2"
-              onClick={() => setIsModalOpen(false)}
-            >
-              ✕
-            </button>
-            <h3 className="font-bold text-lg">Ajouter une nouvelle relation</h3>
-            <div className="mt-4">{renderAllPiecesList()}</div>
-            <div className="flex justify-end mt-4">
+      {/* Modal Création */}
+      {isCreateModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-[#2a2a2a] rounded-lg shadow-xl p-6 w-full max-w-lg mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-white">
+                Créer une nouvelle pièce
+              </h3>
               <button
-                className="btn btn-outline bg-gray-800 text-white hover:bg-gray-600"
+                onClick={() => {
+                  setIsCreateModalOpen(false);
+                  setCode("");
+                  setName("");
+                }}
+                className="text-gray-400 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            <form onSubmit={handlePieceCreated}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-white mb-1">
+                  Code de la pièce
+                </label>
+                <input
+                  type="text"
+                  value={code_piece}
+                  onChange={(e) => setCode(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-white mb-1">
+                  Nom de la pièce
+                </label>
+                <input
+                  type="text"
+                  value={nom_piece}
+                  onChange={(e) => setName(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div className="flex justify-end space-x-4">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateModalOpen(false)}
+                  className="px-4 py-2 text-sm font-medium text-white bg-[#4a4a4a] rounded-lg hover:bg-[#5a5a5a] focus:outline-none focus:ring-2 focus:ring-[#6a6a6a]"
+                >
+                  Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-sm font-medium text-white bg-[#00B7FF] rounded-lg hover:bg-[#0096FF] focus:outline-none focus:ring-2 focus:ring-[#00B7FF]"
+                >
+                  Créer
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Relations */}
+      {isRelationModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-[#2a2a2a] rounded-lg shadow-xl p-6 w-full max-w-lg mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-white">
+                Ajouter une nouvelle relation
+              </h3>
+              <button
+                onClick={() => {
+                  setIsRelationModalOpen(false);
+                  setSelectedPieces([]);
+                }}
+                className="text-gray-400 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="mt-4 space-y-2 max-h-[60vh] overflow-y-auto pr-2">
+              {allPieces.map((piece) => (
+                <div
+                  key={piece.id}
+                  className="flex items-center p-3 bg-[#3a3a3a] hover:bg-[#4a4a4a] rounded-lg cursor-pointer"
+                  onClick={() => handlePieceSelection(piece.id)}
+                >
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-info"
+                    checked={selectedPieces.includes(piece.id)}
+                    onChange={() => handlePieceSelection(piece.id)}
+                  />
+                  <span className="text-white ml-3">{piece.nom_piece}</span>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end mt-6">
+              <button
+                className="px-4 py-2 bg-[#00B7FF] text-white rounded-lg hover:bg-[#0096FF] disabled:opacity-50"
                 onClick={handleAddRelations}
-                disabled={selectedPieces.length === 0 || !selectedType.value}
+                disabled={selectedPieces.length === 0}
               >
                 Confirmer
               </button>

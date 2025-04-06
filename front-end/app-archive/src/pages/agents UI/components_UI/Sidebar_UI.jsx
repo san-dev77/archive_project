@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -12,14 +12,22 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import "daisyui/dist/full.css";
+import logo from "../../../assets/icones/logo 3.jpg";
 
 const SideBar_UI = () => {
   const [showDocuments, setShowDocuments] = useState(false);
   const [documentTypes, setDocumentTypes] = useState([]);
+  const [userPermissions, setUserPermissions] = useState([]);
 
-  const handleDocumentsClick = async () => {
-    setShowDocuments(!showDocuments);
-    if (!showDocuments) {
+  useEffect(() => {
+    // Récupérer les permissions de l'utilisateur du localStorage
+    const permissions = JSON.parse(localStorage.getItem("permissions") || "[]");
+    console.log(permissions);
+
+    setUserPermissions(permissions);
+
+    // Charger les types de documents au montage du composant
+    const fetchDocumentTypes = async () => {
       const serviceId = localStorage.getItem("serviceId");
       try {
         const response = await axios.get(
@@ -32,90 +40,111 @@ const SideBar_UI = () => {
           error
         );
       }
-    }
+    };
+    fetchDocumentTypes();
+  }, []);
+
+  // Fonction pour vérifier si l'utilisateur a la permission de voir une section
+  const hasViewPermission = (section) => {
+    return userPermissions.some(
+      (permission) =>
+        permission.section === section && permission.action === "view"
+    );
   };
 
   return (
-    <div
-      style={{
-        transition: "transform 0.3s ease-in-out",
-      }}
-      className="relative mt-28 ml-2 h-[70vh] overflow-y-auto overflow-x-hidden scrollbar-state rounded-lg z-40 bg-gradient-to-b from-gray-600 to-gray-800 shadow-lg flex flex-col justify-between items-center py-2 w-64"
-    >
-      <div className="flex flex-col items-center space-y-4 w-full">
-        <div className="cursor-pointer p-2 rounded-full bg-gray-800 hover:bg-gray-600 transition-colors duration-300">
-          <LayoutDashboard
-            color="white"
-            size="24px"
-            className="transition-transform duration-300 ease-in-out transform hover:scale-110"
-          />
-        </div>
-        <div className="divider"></div>
-        <ul className="menu p-0 w-full">
-          <li className="w-full">
-            <Link
-              to="/type_doc_UI"
-              className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105"
+    <div className="z-50 sticky top-0 h-screen bg-gradient-to-b from-gray-900 to-gray-800 shadow-xl flex flex-col px-4 py-4 w-64 transition-all duration-300">
+      {/* Logo section */}
+      <div className="flex p-4 items-center gap-3 mb-6 border-b border-gray-700 pb-6">
+        <img
+          src={logo}
+          alt="logo_BMS"
+          className="w-12 h-12 rounded-full bg-white shadow-lg transform hover:scale-105 transition-transform duration-200"
+        />
+        <h1 className="text-white text-xl font-bold tracking-wide">Digi Doc</h1>
+      </div>
+
+      {/* Navigation Menu */}
+      <nav className="flex flex-col gap-3">
+        <Link
+          to="/agents"
+          className="flex items-center gap-3 p-3 text-gray-200 hover:bg-gray-700/50 rounded-lg transition-colors duration-200 hover:text-white"
+        >
+          <LayoutDashboard size={22} />
+          <span className="font-medium">Dashboard</span>
+        </Link>
+
+        {hasViewPermission("Types de documents") && (
+          <Link
+            to="/type_doc_UI"
+            className="flex items-center gap-3 p-3 text-gray-200 hover:bg-gray-700/50 rounded-lg transition-colors duration-200 hover:text-white"
+          >
+            <Layers3 size={22} />
+            <span className="font-medium">Types de documents</span>
+          </Link>
+        )}
+
+        {hasViewPermission("Pieces") && (
+          <Link
+            to="/pieces_UI"
+            className="flex items-center gap-3 p-3 text-gray-200 hover:bg-gray-700/50 rounded-lg transition-colors duration-200 hover:text-white"
+          >
+            <Album size={22} />
+            <span className="font-medium">Pièces</span>
+          </Link>
+        )}
+
+        {hasViewPermission("Meta-donnees") && (
+          <Link
+            to="/meta_UI"
+            className="flex items-center gap-3 p-3 text-gray-200 hover:bg-gray-700/50 rounded-lg transition-colors duration-200 hover:text-white"
+          >
+            <Zap size={22} />
+            <span className="font-medium">Méta-données</span>
+          </Link>
+        )}
+
+        {/* Dossier section */}
+        {hasViewPermission("Dossiers") && (
+          <div className="relative">
+            <button
+              onClick={() => setShowDocuments(!showDocuments)}
+              className="flex items-center justify-between w-full p-3 text-gray-200 hover:bg-gray-700/50 rounded-lg transition-colors duration-200 hover:text-white group"
             >
-              <Layers3 color="white" size="24px" />
-              <span className="text-sm ml-2">Types de documents</span>
-            </Link>
-          </li>
-          <li className="w-full">
-            <Link
-              to="/pieces_UI"
-              className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105"
-            >
-              <Album color="white" size="24px" />
-              <span className="text-sm ml-2">Pièces</span>
-            </Link>
-          </li>
-          <li className="w-full">
-            <Link
-              to="/meta_UI"
-              className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105"
-            >
-              <Zap color="white" size="24px" />
-              <span className="text-sm ml-2">Méta-données</span>
-            </Link>
-          </li>
-          <li className="w-full">
-            <div
-              onClick={handleDocumentsClick}
-              className="flex w-full items-center justify-between text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
-            >
-              <div className="flex items-center">
-                <BookMarked color="white" size="24px" />
-                <span className="text-sm ml-2">Dossier</span>
+              <div className="flex items-center gap-3">
+                <BookMarked size={22} />
+                <span className="font-medium">Dossier</span>
               </div>
               {showDocuments ? (
-                <ChevronUp size="20px" />
+                <ChevronUp
+                  size={18}
+                  className="transform transition-transform duration-200"
+                />
               ) : (
-                <ChevronDown size="20px" />
+                <ChevronDown
+                  size={18}
+                  className="transform transition-transform duration-200"
+                />
               )}
-            </div>
+            </button>
+
             {showDocuments && (
-              <ul className="pl-4 mt-2">
+              <div className="mt-2 ml-6 pl-3 border-l-2 border-gray-600 space-y-2">
                 {documentTypes.map((docType) => (
-                  <li
+                  <Link
                     key={docType.id}
-                    className="text-white w-full hover:text-yellow-300 py-1"
+                    to={`/document_UI/${docType.id}`}
+                    className="flex items-center gap-3 p-2 text-gray-300 hover:bg-gray-700/30 rounded-lg transition-colors duration-200 hover:text-white"
                   >
-                    <Link
-                      to={`/document_UI/${docType.id}`}
-                      className="flex items-center"
-                    >
-                      <Layers2 className="mr-2" size="20px" />
-                      <span className="text-sm">{docType.name}</span>
-                    </Link>
-                  </li>
+                    <Layers2 size={18} />
+                    <span className="text-sm font-medium">{docType.name}</span>
+                  </Link>
                 ))}
-              </ul>
+              </div>
             )}
-          </li>
-        </ul>
-        <div className="divider"></div>
-      </div>
+          </div>
+        )}
+      </nav>
     </div>
   );
 };

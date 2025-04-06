@@ -39,26 +39,58 @@ import DocType from "./pages/agence/UI/DocTypes";
 import ConfigDocType from "./pages/agence/UI/Config_docType";
 import Dossier from "./pages/agence/UI/Dossier";
 import Config_piece from "./pages/agence/UI/Config_piece";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import LandingPage from "./pages/Landing";
+import Metadata_agence from "./pages/agence/UI/Metadata";
+import Search_agence from "./pages/agence/UI/search";
+import Meta_dir from "./pages/Meta_dir";
+import Docs_dir from "./pages/afficher/Docs_dir";
+import Stats from "./pages/Stats";
+import Profile from "./pages/profil/Admin_profil";
+import Upload_dataPage from "./pages/agence/UI/Upload_dataPage";
+import Stats_agents from "./pages/agents UI/activities_UI/Stats";
+import Reports_agents from "./pages/agents UI/activities_UI/Rapports_agents";
+import LinkPieceUI from "./pages/agents UI/activities_UI/Link_piece_UI";
+import Home_up from "./pages/agent up/Home_up";
+import Service_up from "./pages/agent up/pages/Service_up";
+import ConnectionLogs from "./pages/Connexions_details";
+import Agents_page from "./pages/agent up/pages/Agents_page";
+import DoctypeUp from "./pages/agent up/pages/Doctype_up";
+import MetaUp from "./pages/agent up/pages/Meta_up";
+import Profil_up from "./pages/agent up/pages/Profil_up";
+import Doc_up from "./pages/agent up/pages/Doc_up";
+import ErrorPage from "./pages/ErrorPage";
+import useLogoutHandler from "./hooks/useLogoutHandler";
+import usePageViewTracker from "./hooks/usePageViewTracker";
+import Repports from "./pages/Repports";
+import Follow_up from "./pages/Follow_up";
 
 export default function App() {
-  // const handleKeyDown = (event) => {
-  //   if (event.key === "ArrowLeft") {
-  //     // Navigate to the previous page
-  //     window.history.back();
-  //   } else if (event.key === "ArrowRight") {
-  //     // Navigate to the previous page
-  //     window.history.forward();
-  //   }
-  // };
+  const [hasError, setHasError] = useState(false);
+  const [errorInfo, setErrorInfo] = useState(null);
 
-  // useEffect(() => {
-  //   window.addEventListener("keydown", handleKeyDown);
-  //   return () => {
-  //     window.removeEventListener("keydown", handleKeyDown);
-  //   };
-  // }, []);
+  // Utiliser les hooks personnalisés
+  // useLogoutHandler();
+  usePageViewTracker();
+
+  const handleKeyDown = (event) => {
+    if (event.ctrlKey) {
+      if (event.key === "ArrowLeft") {
+        // Navigate to the previous page
+        window.history.back();
+      } else if (event.key === "ArrowRight") {
+        // Navigate to the next page
+        window.history.forward();
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -71,6 +103,42 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
+  // Gestionnaire d'erreurs global pour l'application
+  useEffect(() => {
+    const handleError = (event) => {
+      console.error("Erreur détectée:", event);
+      setHasError(true);
+      setErrorInfo({
+        message: event.message || "Une erreur inattendue s'est produite",
+        stack: event.error?.stack || "Détails non disponibles",
+      });
+    };
+
+    window.addEventListener("error", handleError);
+
+    // Gestionnaire pour les erreurs de promesses non gérées (comme les appels API échoués)
+    window.addEventListener("unhandledrejection", (event) => {
+      console.error("Promesse rejetée non gérée:", event);
+      setHasError(true);
+      setErrorInfo({
+        message: "Erreur de connexion ou problème avec le serveur",
+        stack: event.reason?.stack || "Détails non disponibles",
+      });
+    });
+
+    return () => {
+      window.removeEventListener("error", handleError);
+      window.removeEventListener("unhandledrejection", handleError);
+    };
+  }, []);
+
+  // Si une erreur est détectée, afficher la page d'erreur
+  if (hasError) {
+    return (
+      <ErrorPage error={errorInfo} resetError={() => setHasError(false)} />
+    );
+  }
+
   const token = sessionStorage.getItem("token");
 
   return (
@@ -78,6 +146,7 @@ export default function App() {
       {/* <FloatingGuideButton /> */}
       <Routes>
         <Route path="/" element={<LandingPage />}></Route>
+        <Route path="/error" element={<ErrorPage />}></Route>
         <Route
           path="/settings"
           element={token ? <SettingsPage /> : <Navigate to="/" />}
@@ -95,8 +164,52 @@ export default function App() {
           element={token ? <Dashboard /> : <Navigate to="/" />}
         ></Route>
         <Route
+          path="/profile"
+          element={token ? <Profile /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/stats_agents"
+          element={token ? <Stats_agents /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/rapports_agents"
+          element={token ? <Reports_agents /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/agence/meta_agence"
+          element={token ? <Metadata_agence /> : <Navigate to="/" />}
+        ></Route>
+        <Route
           path="/search"
           element={token ? <Search /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/stats"
+          element={token ? <Stats /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/suivi"
+          element={token ? <Follow_up /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/agence/upload"
+          element={token ? <Upload_dataPage /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/reports"
+          element={token ? <Repports /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/meta_dir"
+          element={token ? <Meta_dir /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/docs_dir"
+          element={token ? <Docs_dir /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/agence/search"
+          element={token ? <Search_agence /> : <Navigate to="/" />}
         ></Route>
         <Route path="/login" element={<Login />}></Route>
         <Route
@@ -148,6 +261,42 @@ export default function App() {
           element={token ? <Dossier /> : <Navigate to="/" />}
         ></Route>
         <Route
+          path="/connexions-details"
+          element={token ? <ConnectionLogs /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/agent_up"
+          element={token ? <Home_up /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/service_up"
+          element={token ? <Service_up /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/type_doc_up"
+          element={token ? <DoctypeUp /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/doc_up"
+          element={token ? <Doc_up /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/piece_up"
+          element={token ? <Service_up /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/profil_up"
+          element={token ? <Profil_up /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/meta_up"
+          element={token ? <MetaUp /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/agent_data_up"
+          element={token ? <Agents_page /> : <Navigate to="/" />}
+        ></Route>
+        <Route
           path="/agence/config-piece"
           element={token ? <Config_piece /> : <Navigate to="/" />}
         ></Route>
@@ -178,6 +327,10 @@ export default function App() {
         <Route
           path="/profil"
           element={token ? <ProfilPage /> : <Navigate to="/" />}
+        ></Route>
+        <Route
+          path="/link_piece_UI"
+          element={token ? <LinkPieceUI /> : <Navigate to="/" />}
         ></Route>
         <Route
           path="/search-config"
@@ -228,12 +381,30 @@ export default function App() {
           element={token ? <Show_meta /> : <Navigate to="/" />}
         ></Route>
         <Route
+          path="/"
+          element={token ? <Show_meta /> : <Navigate to="/" />}
+        ></Route>
+        <Route
           path="/document-types"
           element={token ? <Show_doc_type /> : <Navigate to="/" />}
         ></Route>
         <Route
           path="/create-document-type"
           element={token ? <Create_doc_type /> : <Navigate to="/" />}
+        ></Route>
+        {/* Ajout d'une route catch-all pour les URLs non gérées */}
+        <Route
+          path="*"
+          element={
+            <ErrorPage
+              error={{
+                message: "Page introuvable",
+                details:
+                  "L'URL demandée n'existe pas ou n'est plus disponible.",
+              }}
+              isNotFound={true}
+            />
+          }
         ></Route>
       </Routes>
     </div>

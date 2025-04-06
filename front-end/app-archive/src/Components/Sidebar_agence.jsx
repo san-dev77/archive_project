@@ -7,6 +7,8 @@ import {
   TicketCheck,
   BookMarked,
   Layers3,
+  SearchCheck,
+  Upload,
 } from "lucide-react";
 import "daisyui/dist/full.css";
 import logo from "../assets/icones/logo 3.jpg";
@@ -20,8 +22,8 @@ const SideBar_agence = () => {
 
   return (
     <>
-      <div className="sticky top-0  h-screen overflow-y-auto overflow-x-hidden scrollbar-state  z-20 bg-gray-800 shadow-lg flex flex-col justify-between items-center px-2 py-2 w-64">
-        <div className="flex flex-col  items-center overflow-x-hidden space-y-4 w-full overflow-y-auto max-h-[80vh]">
+      <div className="sticky top-0 h-screen overflow-x-hidden scrollbar-state z-20 bg-gray-900 shadow-lg flex flex-col justify-between items-center px-2 py-2 w-64">
+        <div className="flex flex-col items-center space-y-4 w-full max-h-[80vh]">
           {/* Le logo */}
           <div className="flex p-6 h-[50px] text-left w-full items-start justify-start ">
             <div className="flex items-center justify-normal w-full gap-2 align-middle h-full">
@@ -113,6 +115,24 @@ const SideBar_agence = () => {
               >
                 <BookMarked color="white" size="24px" />
                 <span className="text-sm ml-2">Dossiers</span>
+              </div>
+            </li>
+            <li className="w-full">
+              <div
+                onClick={() => handleNavigate("/agence/search")}
+                className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
+              >
+                <SearchCheck color="white" size="24px" />
+                <span className="text-sm ml-2">Recherche avancée</span>
+              </div>
+            </li>
+            <li className="w-full">
+              <div
+                onClick={() => handleNavigate("/agence/upload")}
+                className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
+              >
+                <Upload color="white" size="24px" />
+                <span className="text-sm ml-2">Import de données</span>
               </div>
             </li>
           </ul>

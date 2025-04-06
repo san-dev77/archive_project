@@ -13,6 +13,7 @@ import {
   Settings2Icon,
   Layers2,
   ArrowLeftRight,
+  Zap,
 } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -109,9 +110,11 @@ export default function ShowDocType() {
       const response = await axios.get(
         "http://localhost:3000/document-types/docType_dir"
       );
+
+      console.log(response.data);
+
       if (response.data && Array.isArray(response.data)) {
         console.log("data", response.data);
-
         setDocTypeDirData(response.data);
       } else {
         console.error("Invalid data format for docType_dir:", response.data);
@@ -170,6 +173,49 @@ export default function ShowDocType() {
       }
     }
   };
+  const handleDelete_dir = async (docTypeId) => {
+    const confirmed = await showDeleteConfirmation();
+
+    console.log(docTypeId);
+
+    if (confirmed) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:3000/document-types/doctype_dir/${docTypeId.docTypeDirId}`
+        );
+        console.log(response.data.message);
+
+        if (response.data.message.includes("Impossible")) {
+          Swal.fire({
+            title: "Erreur",
+            text: response.data.message,
+            icon: "error",
+            confirmButtonColor: "#444",
+            confirmButtonText: "OK",
+          }).then(() => {
+            fetchDocTypeDir();
+            // Force re-render by resetting the state
+            setDocTypeDirData((prevData) => [...prevData]);
+          });
+        } else {
+          Swal.fire({
+            title: "Succès",
+            text: response.data.message,
+            icon: "success",
+            confirmButtonColor: "#444",
+            confirmButtonText: "OK",
+          }).then(() => {
+            fetchDocTypeDir();
+            // Force re-render by resetting the state
+            setDocTypeDirData((prevData) => [...prevData]);
+          });
+        }
+      } catch (error) {
+        console.error("Error deleting document type:", error);
+        toast.error("Échec de la suppression du type de document.");
+      }
+    }
+  };
 
   const handleEdit = (docType) => {
     setNewDocType({
@@ -178,6 +224,15 @@ export default function ShowDocType() {
       serviceId: docType.serviceId,
     });
     setOpenModal(true);
+  };
+  const handleEdit_dir = (docType) => {
+    console.log(docType);
+    setDocTypeDir({
+      id: docType.docTypeDirId,
+      name_docType_dir: docType.docTypeName,
+    });
+    setSelectedDirectory(docType.directoryId);
+    setNewModal(true);
   };
 
   const handleDocumentTypeCreated = async (event) => {
@@ -193,14 +248,43 @@ export default function ShowDocType() {
       toast.error("Failed to create document type.");
     }
   };
+
   const handleCreateDocumentTypeDirections = async (event) => {
+    event.preventDefault();
+
+    // Si on est en mode édition
+    if (DocTypeDir.id) {
+      try {
+        console.log(DocTypeDir);
+
+        await axios.put(
+          `http://localhost:3000/document-types/doctype_dir/${DocTypeDir.id}`,
+          {
+            name_docType_dir: DocTypeDir.name_docType_dir,
+          }
+        );
+        setDocTypeDir({ name_docType_dir: "" });
+        fetchDocTypeDir();
+        toast.success("Type de document mis à jour avec succès !");
+        setNewModal(false);
+      } catch (error) {
+        console.error("Error updating document type:", error);
+        toast.error("Échec de la mise à jour du type de document.");
+      }
+      return;
+    }
+
+    // Mode création
+    if (!selectedDirectory) {
+      toast.error("Veuillez sélectionner une direction");
+      return;
+    }
+
     const DocTypeDirectory = {
       name_docType_dir: DocTypeDir.name_docType_dir,
       directoryId: selectedDirectory,
     };
-    console.log(DocTypeDirectory);
 
-    event.preventDefault();
     try {
       await axios.post(
         "http://localhost:3000/document-types/doctype_dir",
@@ -214,12 +298,13 @@ export default function ShowDocType() {
       setNewModal(false);
     } catch (error) {
       console.error("Error creating document type:", error);
-      toast.error("Failed to create document type.");
+      toast.error("Échec de la création du type de document.");
     }
   };
 
   const handleDocumentTypeUpdated = async (event) => {
     event.preventDefault();
+
     try {
       await axios.put(`http://localhost:3000/document-types/${newDocType.id}`, {
         name: newDocType.name,
@@ -244,9 +329,11 @@ export default function ShowDocType() {
 
   const handleOpenModal = () => {
     if (showAlternateContent) {
-      setNewModal(true); // Open the new modal if the switch is checked
+      setDocTypeDir({ name_docType_dir: "" });
+      setSelectedDirectory(null);
+      setNewModal(true);
     } else {
-      setOpenModal(true); // Open the regular modal otherwise
+      setOpenModal(true);
     }
   };
 
@@ -266,14 +353,15 @@ export default function ShowDocType() {
 
   const serviceOptions = servicesData.map((directory) => ({
     label: directory.nom_directory,
+    dir_id: directory.directory_id,
     options: directory.services.map((service) => ({
       value: service.id,
       label: service.nom_service,
     })),
   }));
-  const directoryOptions = directories.map((directory) => ({
-    value: directory.id,
-    label: directory.name,
+  const directoryOptions = servicesData.map((directory) => ({
+    value: directory.directory_id,
+    label: directory.nom_directory,
   }));
 
   const handleSearchChange = (event) => {
@@ -306,233 +394,245 @@ export default function ShowDocType() {
       <Side_bar isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar position="fixed" title="Types de documents" />
-        <div className="container w-[90%] mx-auto mt-28 bg-white rounded-xl shadow-2xl flex flex-col min-h-screen">
-          <div className="bg-white w-full rounded-lg shadow-md p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h1 className="text-2xl font-extrabold text-gray-800 flex justify-start w-full">
-                <Layers3 size="28px" className="mr-3 ml-2 text-red-600" />
+        <div className="container w-full mx-auto px-4 py-8 mt-20">
+          <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-white flex items-center">
+                <Layers3 className="h-8 w-8 text-[#00B7FF] mr-2" />
                 Types de documents
               </h1>
-
-              <div className="flex gap-3 items-end justify-end">
+              <div className="flex gap-4">
                 <button
-                  className="btn btn-primary bg-gray-500 text-white text-black hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
+                  className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
                   onClick={handleOpenModal}
                 >
-                  <Plus size={20} className="mr-2" />
+                  <Plus className="h-5 w-5 mr-2" />
                   Nouveau
                 </button>
                 <button
-                  className="btn btn-outline flex gap-2 btn-default border-black text-black mt-10"
+                  className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
                   onClick={handleShowMetadataModal}
                 >
-                  <Settings />
+                  <Settings className="h-5 w-5 mr-2" />
                   Configuration
                 </button>
               </div>
             </div>
 
-            <div className="flex justify-start flex-col items-start mb-4 w-full">
-              <h2 className="text-lg font-bold text-gray-800 mr-4">
-                Rechercher :
-              </h2>
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={handleSearchChange}
-                placeholder="Rechercher..."
-                className="input w-[40%] input-bordered border-2 border-gray-300 bg-white text-black rounded-lg p-2"
-              />
+            <div className="mb-6">
+              <div className="flex items-center space-x-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-white mb-1">
+                    Rechercher un type de document
+                  </label>
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    placeholder="Rechercher..."
+                    className="w-full px-4 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                  />
+                </div>
+              </div>
             </div>
 
-            {/* Toggle Switch */}
-            <div className="flex  rounded-lg p-4 border-2 border-gray-700 text-black  w-full justify-between items-end  mb-4">
-              <label className="mr-2 font-bold flex items-center justify-center gap-2">
-                <ArrowLeftRight className="mr-1" />
+            <div className="flex rounded-xl p-4 border-2 border-[#4a4a4a] bg-[#3a3a3a] w-full justify-between items-center mb-6 hover:border-[#00B7FF] transition-all duration-300">
+              <label className="font-semibold flex items-center text-white">
+                <ArrowLeftRight className="mr-3 text-[#00B7FF]" />
                 Mode Direction
               </label>
               <input
                 type="checkbox"
                 checked={showAlternateContent}
                 onChange={() => setShowAlternateContent(!showAlternateContent)}
-                className="toggle toggle-info"
+                className="toggle toggle-lg bg-gray-600 checked:bg-[#00B7FF]"
               />
             </div>
 
-            <div className="overflow-x-auto">
-              <div className="h-[600px] bg-gray-500 py-2 rounded-lg px-4 overflow-y-auto">
-                {showAlternateContent ? (
-                  <div className="overflow-x-auto">
-                    <div className="h-[600px] bg-gray-500 py-2 rounded-lg px-4 overflow-y-auto">
-                      <ul className={`list-none w-full grid grid-cols-2 gap-4`}>
-                        {docTypeDirData.map((item) => (
-                          <li
-                            key={item.id}
-                            className={`w-full border rounded-lg p-4`}
-                          >
-                            <button
-                              className={`btn w-full bg-gray-500 hover:bg-gray-400 transition duration-300 rounded-lg shadow-md text-left flex justify-between items-center`}
-                              onClick={() => {
-                                // Toggle the expanded state for document types
-                                item.expanded = !item.expanded;
-                                setDocTypeDirData([...docTypeDirData]); // Update state to trigger re-render
-                              }}
-                            >
-                              <div className="flex text-black items-center p-2 rounded-full bg-white">
-                                <Settings className="mr-2" />
-                                {item.directoryName}
-                              </div>
-                            </button>
-                            {item.expanded && ( // Check if the document types should be displayed
-                              <ul className="list-none mt-2 bg-white p-3 rounded-lg">
-                                <span className="text-black flex gap-2 items-center justify-center border-b-2 border-black font-bold text-lg text-center">
-                                  <Layers3 />
-                                  Les types de documents par direction
-                                </span>
-                                {item.docTypes.map((docType) => (
-                                  <li
-                                    key={docType.docTypeDirId}
-                                    className="p-2  flex items-start gap-1 justify-start rounded-lg w-full bg-slate-800 text-white font-bold"
-                                  >
-                                    <Layers2 />
-                                    {docType.docTypeName}
-                                    <div className="flex items-end justify-end gap-2 w-full">
-                                      <Tooltip title="Modifier">
-                                        <button
-                                          className="btn btn-outline btn-sm bg-gray-700 text-white mr-2 hover:bg-indigo-400 transition duration-300 rounded-md"
-                                          onClick={() => handleEdit(docType)}
-                                        >
-                                          <SquarePen className="mr-1" />
-                                        </button>
-                                      </Tooltip>
-                                      <Tooltip title="Supprimer">
-                                        <button
-                                          className="btn btn-outline bg-gray-700 text-white btn-sm hover:bg-red-500 transition duration-300 rounded-md"
-                                          onClick={() =>
-                                            handleDelete(docType.id)
-                                          }
-                                        >
-                                          <Trash2 className="mr-1" />
-                                        </button>
-                                      </Tooltip>
-                                    </div>
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                ) : (
-                  <ul
-                    className={`list-none w-full ${
-                      viewMode === "grid" ? "grid grid-cols-2 gap-4" : ""
-                    }`}
-                  >
-                    {filteredDirectories.map((directory) => (
-                      <li
-                        key={directory.id}
-                        className={`w-full ${
-                          viewMode === "grid" ? "border rounded-lg p-4" : ""
-                        }`}
-                      >
-                        <button
-                          className={`btn ${
-                            viewMode === "grid"
-                              ? "w-full bg-gray-500 hover:bg-gray-400"
-                              : "bg-gray-500 w-full  text-black hover:bg-gray-400"
-                          } transition duration-300 rounded-lg shadow-md text-left flex justify-between items-center`}
-                          onClick={() => toggleDirectory(directory.id)}
+            <div className="bg-[#3a3a3a] rounded-lg p-4">
+              <div className="overflow-x-auto">
+                <div className="h-[600px] bg-gray-800 py-4 rounded-xl px-6 overflow-y-auto shadow-inner">
+                  {showAlternateContent ? (
+                    <div className="overflow-x-auto">
+                      <div className="h-[600px] w-full bg-gray-800 py-2 rounded-lg px-4 overflow-y-auto">
+                        <ul
+                          className={`list-none w-full grid grid-cols-1 gap-4`}
                         >
-                          <div className="flex text-black items-center p-2 rounded-full bg-white">
-                            <Settings className="mr-2" />
-                            {directory.name}
-                          </div>
-                          {expandedDirectory === directory.id ? (
-                            <ChevronUp />
-                          ) : (
-                            <ChevronDown />
-                          )}
-                        </button>
-                        {expandedDirectory === directory.id && (
-                          <ul className="list-none w-full mt-2 ml-1 border-l-2 border-gray-300 pl-4">
-                            <span className="text-white flex items-center justify-center gap-2 font-bold text-2xl">
+                          {docTypeDirData.map((item) => (
+                            <li
+                              key={item.id}
+                              className={`w-full border rounded-lg p-4`}
+                            >
+                              <button
+                                className={`btn w-full  bg-gray-700 hover:bg-gray-400 transition duration-300 rounded-lg shadow-md text-left flex justify-between items-center`}
+                                onClick={() => {
+                                  // Toggle the expanded state for document types
+                                  item.expanded = !item.expanded;
+                                  setDocTypeDirData([...docTypeDirData]); // Update state to trigger re-render
+                                }}
+                              >
+                                <div className="flex text-black items-center p-2 rounded-full bg-white">
+                                  <Settings className="mr-2" />
+                                  {item.directoryName}
+                                </div>
+                              </button>
+                              {item.expanded && ( // Check if the document types should be displayed
+                                <ul className="list-none mt-2 bg-white p-3 rounded-lg">
+                                  <span className="text-black flex gap-2 items-center justify-center border-b-2 border-black font-bold text-lg text-center">
+                                    <Layers3 />
+                                    Les types de documents par direction
+                                  </span>
+                                  {item.docTypes.map((docType) => (
+                                    <li
+                                      key={docType.docTypeDirId}
+                                      className="p-2  flex items-start gap-1 justify-start rounded-lg w-full bg-slate-800 text-white font-bold"
+                                    >
+                                      <Layers2 />
+                                      {docType.docTypeName}
+                                      <div className="flex items-end justify-end gap-2 w-full">
+                                        <Tooltip title="Modifier">
+                                          <button
+                                            className="btn btn-outline btn-circle bg-gray-700 text-white hover:bg-indigo-400 transition duration-300 "
+                                            onClick={() =>
+                                              handleEdit_dir(docType)
+                                            }
+                                          >
+                                            <SquarePen className="" />
+                                          </button>
+                                        </Tooltip>
+                                        <Tooltip title="Supprimer">
+                                          <button
+                                            className="btn btn-outline btn-circle bg-gray-700 text-white  hover:bg-red-500 transition duration-300"
+                                            onClick={() =>
+                                              handleDelete_dir(docType)
+                                            }
+                                          >
+                                            <Trash2 className="" />
+                                          </button>
+                                        </Tooltip>
+                                      </div>
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  ) : (
+                    <ul
+                      className={`list-none w-full ${
+                        viewMode === "grid" ? "grid grid-cols-1 gap-4" : ""
+                      }`}
+                    >
+                      {filteredDirectories.map((directory) => (
+                        <li
+                          key={directory.id}
+                          className={`w-full ${
+                            viewMode === "grid"
+                              ? "border border-white rounded-lg p-4"
+                              : ""
+                          }`}
+                        >
+                          <button
+                            className={`btn ${
+                              viewMode === "grid"
+                                ? "w-full bg-gray-500 hover:bg-gray-400"
+                                : "bg-gray-500 w-full  text-black hover:bg-gray-400"
+                            } transition duration-300 rounded-lg shadow-md text-left flex justify-between items-center`}
+                            onClick={() => toggleDirectory(directory.id)}
+                          >
+                            <div className="flex text-black items-center p-2 rounded-full bg-white">
                               <Settings className="mr-2" />
-                              Services
-                            </span>
-                            {directory.services.map((service) => (
-                              <li key={service.id} className="w-full">
-                                <button
-                                  className="btn btn-outline border-t-cyan-800 w-full text-left flex justify-between items-center"
-                                  onClick={() => toggleService(service.id)}
-                                >
-                                  <div className="flex items-center p-2 rounded-full text-gray-700 bg-gray-200">
-                                    <Settings className="mr-2" />
-                                    {service.name}
-                                  </div>
-                                </button>
-                                {expandedService === service.id && (
-                                  <table className="table w-full mt-2">
-                                    <thead className="sticky top-0 rounded-lg bg-gray-700 text-white ">
-                                      <tr>
-                                        <th className="text-lg p-4">
-                                          Type de document
-                                        </th>
-                                        <th className="text-lg p-4 text-right">
-                                          Actions
-                                        </th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-                                      {service.documentTypes.map((docType) => (
-                                        <tr
-                                          key={docType.id}
-                                          className="hover:bg-gray-200 rounded-lg bg-gray-100 transition duration-200"
-                                        >
-                                          <td className="flex items-center p-4 text-base text-gray-800">
-                                            <Layers3
-                                              size={20}
-                                              className="mr-2"
-                                            />
-                                            {docType.name}
-                                          </td>
-                                          <td className="text-right  p-4 text-base text-gray-800">
-                                            <Tooltip title="Modifier">
-                                              <button
-                                                className="btn btn-outline btn-md bg-gray-700 text-white  hover:bg-indigo-500 transition duration-300 rounded-md"
-                                                onClick={() =>
-                                                  handleEdit(docType)
-                                                }
-                                              >
-                                                <SquarePen className="mr-1" />
-                                              </button>
-                                            </Tooltip>
-                                            <Tooltip title="Supprimer">
-                                              <button
-                                                className="btn btn-outline bg-gray-700 text-white btn-md hover:bg-red-500 transition duration-300 rounded-md"
-                                                onClick={() =>
-                                                  handleDelete(docType.id)
-                                                }
-                                              >
-                                                <Trash2 className="mr-1" />
-                                              </button>
-                                            </Tooltip>
-                                          </td>
+                              {directory.name}
+                            </div>
+                            {expandedDirectory === directory.id ? (
+                              <ChevronUp />
+                            ) : (
+                              <ChevronDown />
+                            )}
+                          </button>
+                          {expandedDirectory === directory.id && (
+                            <ul className="list-none w-full mt-2 ml-1 border-l-2 border-gray-300 pl-4">
+                              <span className="text-white flex items-center justify-center gap-2 font-bold text-2xl">
+                                <Settings className="mr-2" />
+                                Services
+                              </span>
+                              {directory.services.map((service) => (
+                                <li key={service.id} className="w-full">
+                                  <button
+                                    className="btn btn-outline border-t-cyan-800 w-full text-left flex justify-between items-center"
+                                    onClick={() => toggleService(service.id)}
+                                  >
+                                    <div className="flex items-center p-2 rounded-full text-gray-700 bg-gray-200">
+                                      <Settings className="mr-2" />
+                                      {service.name}
+                                    </div>
+                                  </button>
+                                  {expandedService === service.id && (
+                                    <table className="table w-full mt-2">
+                                      <thead className="sticky top-0 rounded-lg bg-gray-700 text-white ">
+                                        <tr>
+                                          <th className="text-lg p-4">
+                                            Type de document
+                                          </th>
+                                          <th className="text-lg p-4 text-right">
+                                            Actions
+                                          </th>
                                         </tr>
-                                      ))}
-                                    </tbody>
-                                  </table>
-                                )}
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                                      </thead>
+                                      <tbody>
+                                        {service.documentTypes.map(
+                                          (docType) => (
+                                            <tr
+                                              key={docType.id}
+                                              className="hover:bg-gray-200 rounded-lg bg-gray-100 transition duration-200"
+                                            >
+                                              <td className="flex items-center p-4 text-base text-gray-800">
+                                                <Layers3
+                                                  size={20}
+                                                  className="mr-2"
+                                                />
+                                                {docType.name}
+                                              </td>
+                                              <td className="text-right  p-4 text-base text-gray-800">
+                                                <Tooltip title="Modifier">
+                                                  <button
+                                                    className="btn btn-outline btn-circle bg-gray-700 text-white  hover:bg-indigo-500 transition duration-300 "
+                                                    onClick={() =>
+                                                      handleEdit(docType)
+                                                    }
+                                                  >
+                                                    <SquarePen className="" />
+                                                  </button>
+                                                </Tooltip>
+                                                <Tooltip title="Supprimer">
+                                                  <button
+                                                    className="btn btn-outline  bg-gray-700 text-white btn-circle hover:bg-red-500 transition duration-300 "
+                                                    onClick={() =>
+                                                      handleDelete(docType.id)
+                                                    }
+                                                  >
+                                                    <Trash2 className="" />
+                                                  </button>
+                                                </Tooltip>
+                                              </td>
+                                            </tr>
+                                          )
+                                        )}
+                                      </tbody>
+                                    </table>
+                                  )}
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -540,33 +640,21 @@ export default function ShowDocType() {
       </div>
 
       {openModal && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: 100,
-          }}
-          onClick={handleCloseModal}
-        >
-          <div
-            className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg w-full mx-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="btn btn-sm btn-circle absolute right-2 top-2"
-              onClick={handleCloseModal}
-            >
-              ✕
-            </button>
-            <h3 className="font-bold text-lg">
-              {newDocType.id
-                ? "Modifier le type de document"
-                : "Ajouter un nouveau type de document"}
-            </h3>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-slate-700 rounded-lg shadow-xl p-6 w-full max-w-lg mx-4">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-white">
+                {newDocType.id
+                  ? "Modifier le type de document"
+                  : "Ajouter un nouveau type de document"}
+              </h3>
+              <button
+                onClick={handleCloseModal}
+                className="text-gray-400 hover:text-gray-200"
+              >
+                ✕
+              </button>
+            </div>
             <form
               onSubmit={
                 newDocType.id
@@ -583,7 +671,7 @@ export default function ShowDocType() {
                       .find((option) => option.value === newDocType.serviceId)}
                     onChange={handleServiceChange}
                     options={serviceOptions}
-                    className="mb-2"
+                    className="mb-2 text-black"
                     placeholder="Choisir un service"
                     isClearable
                   />
@@ -621,7 +709,7 @@ export default function ShowDocType() {
         </div>
       )}
 
-      {newModal && ( // New modal for when the switch is checked
+      {newModal && (
         <div
           style={{
             position: "fixed",
@@ -645,21 +733,31 @@ export default function ShowDocType() {
               ✕
             </button>
             <h3 className="font-bold text-lg">
-              Ajouter un nouveau type de document (Mode Alternatif)
+              {DocTypeDir.id
+                ? "Modifier le type de document (Mode direction)"
+                : "Nouveau type de document (Mode direction)"}
             </h3>
             <form onSubmit={handleCreateDocumentTypeDirections}>
               <div className="form-control">
-                <label className="label">Sélectionner une direction</label>
-                <Select
-                  value={directoryOptions.find(
-                    (option) => option.value === selectedDirectory
-                  )}
-                  onChange={(option) => setSelectedDirectory(option.value)}
-                  options={directoryOptions}
-                  className="mb-2"
-                  placeholder="Choisir une direction"
-                  isClearable
-                />
+                {!DocTypeDir.id && (
+                  <>
+                    <label className="label">Sélectionner une direction</label>
+                    <Select
+                      value={directoryOptions.find(
+                        (opt) => opt.value === selectedDirectory
+                      )}
+                      onChange={(selectedOption) =>
+                        setSelectedDirectory(
+                          selectedOption ? selectedOption.value : null
+                        )
+                      }
+                      options={directoryOptions}
+                      className="mb-2 text-black"
+                      placeholder="Choisir une direction"
+                      isClearable
+                    />
+                  </>
+                )}
               </div>
               <div className="form-control mt-4">
                 <label className="label">Nom du type de document</label>
@@ -669,7 +767,7 @@ export default function ShowDocType() {
                   onChange={(e) =>
                     setDocTypeDir({
                       ...DocTypeDir,
-                      name_docType_dir: e.target.value.trim(),
+                      name_docType_dir: e.target.value,
                     })
                   }
                   className="input input-bordered border-2 border-gray-300 bg-white text-black"
@@ -681,7 +779,7 @@ export default function ShowDocType() {
                   type="submit"
                   className="btn border-t-neutral-700 w-[40%] bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg"
                 >
-                  Ajouter
+                  {DocTypeDir.id ? "Mettre à jour" : "Ajouter"}
                 </button>
                 <button
                   type="button"
@@ -698,53 +796,81 @@ export default function ShowDocType() {
 
       {showMetadataModal && (
         <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: 100,
-          }}
+          className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50"
           onClick={handleCloseMetadataModal}
         >
           <div
-            className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg w-full mx-4"
+            className="bg-white/90 rounded-2xl shadow-2xl p-8 max-w-4xl w-full mx-4 transform transition duration-500 hover:scale-[1.02]"
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              className="btn btn-sm btn-circle absolute right-2 top-2"
+              className="absolute right-4 top-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
               onClick={handleCloseMetadataModal}
             >
-              ✕
+              <span className="sr-only">Fermer</span>✕
             </button>
-            <h3 className="font-bold w-full text-2xl text-center">
-              <Settings className="" size={40} />
-              Choix de la configuration
-            </h3>
-            <div className="flex justify-around mt-4 gap-4 items-center">
+
+            <div className="text-center mb-8">
+              <Settings className="mx-auto text-gray-700 mb-4" size={48} />
+              <h3 className="text-3xl font-bold text-gray-800">
+                Configuration du système
+              </h3>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div
-                className="card  bg-gray-400 p-4  hover:bg-slate-700 transition-all hover:text-white rounded-lg shadow-md cursor-pointer"
+                className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300"
                 onClick={() => (window.location.href = "/pieces")}
               >
-                <h4 className="font-bold flex w-full justify-center">
-                  <Settings2Icon className="" size={40} />
-                </h4>
-                <p className="text-center font-bold">
-                  Configuration des Pièces.
-                </p>
+                <div className=" cursor-pointer absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className=" cursor-pointer relative p-6 text-center">
+                  <Settings2Icon
+                    className="mx-auto text-gray-700 group-hover:text-blue-600 transition-colors mb-4"
+                    size={48}
+                  />
+                  <h4 className="text-xl font-bold text-gray-800 mb-2">
+                    Pièces
+                  </h4>
+                  <p className="text-gray-600">
+                    Configuration et gestion des pièces
+                  </p>
+                </div>
               </div>
+
               <div
-                className="card bg-gray-400 p-4 hover:bg-slate-700 transition-all hover:text-white  rounded-lg shadow-md cursor-pointer"
+                className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300"
                 onClick={() => (window.location.href = "/metadata")}
               >
-                <h4 className="font-bold w-full flex items-center justify-center text-center">
-                  <Database className="" size={40} />
-                </h4>
-                <p className="text-center font-bold">
-                  Configurer les méta-données.
-                </p>
+                <div className=" cursor-pointer absolute inset-0 bg-gradient-to-br from-gray-500/20 to-teal-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className=" cursor-pointer relative p-6 text-center">
+                  <Database
+                    className="mx-auto text-gray-700 group-hover:text-green-600 transition-colors mb-4"
+                    size={48}
+                  />
+                  <h4 className="text-xl font-bold text-gray-800 mb-2">
+                    Méta-données pour les services
+                  </h4>
+                  <p className="text-gray-600">
+                    Gestion des méta-données par service
+                  </p>
+                </div>
+              </div>
+
+              <div
+                className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300"
+                onClick={() => (window.location.href = "/meta_dir")}
+              >
+                <div className=" cursor-pointer absolute inset-0 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="cursor-pointer relative p-6 text-center">
+                  <Zap
+                    className="mx-auto text-gray-700 group-hover:text-yellow-600 transition-colors mb-4"
+                    size={48}
+                  />
+                  <h4 className="text-xl font-bold text-gray-800 mb-2">
+                    Méta-données par direction
+                  </h4>
+                  <p className="text-gray-600">Configuration par direction</p>
+                </div>
               </div>
             </div>
           </div>

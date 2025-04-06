@@ -6,21 +6,16 @@ import "daisyui/dist/full.css";
 import Sidebar_agence from "../../../Components/Sidebar_agence";
 import TopBar from "../../../Components/Top_bar";
 import {
-  LayoutList,
   Plus,
   SquarePen,
   Trash2,
-  ChevronUp,
-  ChevronDown,
-  ArrowUpToLine,
-  Download,
-  Link2Off,
   Landmark,
-  SquareCheck,
+  PackageCheck,
+  FolderCog,
 } from "lucide-react";
-import { Tooltip } from "@mui/material";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import Swal from "sweetalert2";
+import DocumentListModal from "../../../Components/DocTypeListAgence";
 
 const fetchAgences = async () => {
   const response = await axios.get("http://localhost:3000/agences");
@@ -28,7 +23,10 @@ const fetchAgences = async () => {
 };
 
 const deleteAgence = async (id) => {
-  await axios.delete(`http://localhost:3000/agences/${id}`);
+  const response = await axios.delete(`http://localhost:3000/agences/${id}`);
+  if (response.status !== 204) {
+    throw new Error("Failed to delete agence");
+  }
 };
 
 const updateAgence = async (agence) => {
@@ -36,27 +34,28 @@ const updateAgence = async (agence) => {
 };
 
 const createAgence = async (agence) => {
-  console.log(agence);
-
-  await axios.post("http://localhost:3000/agences", agence);
+  return await axios.post("http://localhost:3000/agences", agence);
 };
 
-const fetchDocumentsByAgence = async () => {
-  const response = await axios.get(`http://localhost:3000/relations/agence`);
+const fetchDocumentTypes = async () => {
+  const response = await axios.get(
+    `http://localhost:3000/agence/document-type/agence`
+  );
+  console.log(response);
+
   return response.data;
 };
 
 export default function ShowAgence() {
   const [searchText, setSearchText] = useState("");
   const [openModal, setOpenModal] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
   const [currentAgence, setCurrentAgence] = useState({
     id: "",
     nom_agence: "",
     code_agence: "",
   });
-  const [expandedAgence, setExpandedAgence] = useState(null);
-  const [documents, setDocuments] = useState([]);
+  const [documentTypes, setDocumentTypes] = useState([]);
+  const [showDocumentModal, setShowDocumentModal] = useState(false);
 
   const queryClient = useQueryClient();
   const { data: agences = [] } = useQuery("agences", fetchAgences);
@@ -67,15 +66,28 @@ export default function ShowAgence() {
       const errorMessage =
         error.response?.data?.message ||
         "Échec lors de la suppression de l'agence.";
+
+      // Structure for error message
       Swal.fire({
         icon: "error",
         title: "Erreur",
         text: errorMessage,
       });
+
+      // Separate structure for logging the error
+      toast.error("Erreur lors de la suppression de l'agence.");
     },
     onSuccess: () => {
+      console.log("Suppression réussie");
       queryClient.invalidateQueries("agences");
       toast.success("Agence supprimée avec succès !");
+
+      // Structure for success message
+      Swal.fire({
+        icon: "success",
+        title: "Supprimée !",
+        text: "L'agence a été supprimée avec succès.",
+      });
     },
   });
 
@@ -83,7 +95,7 @@ export default function ShowAgence() {
     onSuccess: () => {
       queryClient.invalidateQueries("agences");
       toast.success("Agence mise à jour avec succès !");
-      setEditModalOpen(false);
+      setOpenModal(false); // Close modal after update
     },
     onError: () => {
       toast.error("Échec lors de la mise à jour de l'agence.");
@@ -91,23 +103,33 @@ export default function ShowAgence() {
   });
 
   const createMutation = useMutation(createAgence, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("agences");
-      toast.success("Agence créée avec succès !");
-      setOpenModal(false);
+    onSuccess: (data) => {
+      if (data.data && data.data.exists) {
+        Swal.fire({
+          icon: "error",
+          title: "Erreur",
+          text: "Le code de l'agence existe déjà.",
+        });
+      } else {
+        queryClient.invalidateQueries("agences");
+        toast.success("Agence créée avec succès !");
+        setOpenModal(false);
+      }
     },
-    onError: () => {
-      toast.error("Échec lors de la création de l'agence.");
+    onError: (error) => {
+      const errorMessage =
+        error.response?.data?.error || "Échec lors de la création de l'agence.";
+      Swal.fire({
+        icon: "error",
+        title: "Erreur",
+        text: errorMessage,
+      });
     },
   });
 
-  const handleDelete = (id) => {
-    deleteMutation.mutate(id);
-  };
-
   const handleEdit = (agence) => {
     setCurrentAgence(agence);
-    setEditModalOpen(true);
+    setOpenModal(true); // Open modal for editing
   };
 
   const handleSubmit = (e) => {
@@ -120,197 +142,130 @@ export default function ShowAgence() {
     setCurrentAgence({ id: "", nom_agence: "", code_agence: "" });
   };
 
-  const toggleAgence = async (agenceId) => {
-    if (expandedAgence === agenceId) {
-      setExpandedAgence(null);
-      setDocuments([]);
-    } else {
-      setExpandedAgence(agenceId);
-      try {
-        const docs = await fetchDocumentsByAgence(agenceId);
-        setDocuments(docs);
-      } catch (error) {
-        toast.error("Échec lors de la récupération des documents.");
+  const handleDelete = (id) => {
+    Swal.fire({
+      title: "Êtes-vous sûr ?",
+      text: "Vous ne pourrez pas revenir en arrière !",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Oui, supprimer !",
+      cancelButtonText: "Annuler",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log("ID de l'agence à supprimer:", id);
+        deleteMutation.mutate(id);
       }
-    }
+    });
   };
 
-  const renderDocuments = () => {
-    if (documents.length === 0) {
-      return (
-        <div className="text-center text-white mt-2">
-          Aucun type de documet lié.
-        </div>
-      );
-    }
-
-    return (
-      <ul className="list-disc pl-5 mt-4 list-style-none">
-        {documents.map((doc) => (
-          <li
-            key={doc.id}
-            className="text-gray-800 w-full bg-gray-100 p-2 rounded-lg shadow-md flex justify-between items-center"
-          >
-            <span className="font-semibold flex items-center text-blue-600">
-              <SquareCheck className="mr-2" />
-              {doc.nom_document_type}
-            </span>
-            <button
-              className="btn btn-outline btn-error btn-sm"
-              onClick={() => handleDeleteDocument(doc.id)}
-            >
-              <Tooltip title="Détacher de l'élément">
-                <Link2Off className="mr-1" />
-              </Tooltip>
-            </button>
-          </li>
-        ))}
-      </ul>
-    );
-  };
-
-  const handleDeleteDocument = async (documentId) => {
-    try {
-      await axios.delete(
-        `http://localhost:3000/relations/unlink-agence/${documentId}`
-      );
-      setDocuments((prevDocuments) =>
-        prevDocuments.filter((doc) => doc.id !== documentId)
-      );
-      toast.success("Document détaché avec succès");
-    } catch (error) {
-      console.error("Erreur lors de la suppression:", error);
-      toast.error("Échec lors du détachement du document.");
-    }
+  const handleShowDocuments = async () => {
+    const types = await fetchDocumentTypes();
+    setDocumentTypes(types);
+    setShowDocumentModal(true);
   };
 
   const filteredAgences = agences.filter((agence) =>
     agence.nom_agence.toLowerCase().includes(searchText.toLowerCase())
   );
 
-  const renderAgenceList = () => {
-    if (filteredAgences.length === 0) {
-      return (
-        <div className="text-center text-gray-900 mt-4">
-          Aucune agence disponible.
-        </div>
-      );
-    }
-
-    return (
-      <ul className="list-none w-full">
-        {filteredAgences.map((agence) => (
-          <li key={agence.id} className="w-full">
-            <button
-              className="btn relative btn-outline border-t-cyan-800 w-full text-left flex justify-between items-center"
-              onClick={() => toggleAgence(agence.id)}
-            >
-              <div className="absolute -top-2 -left-2 bg-gray-900 rounded-full px-2 py-1">
-                <p className="text-[10px] z-[5] text-white">
-                  {agence.code_agence}
-                </p>
-              </div>
-              <div className="flex items-center p-2 rounded-full bg-white">
-                <Landmark className="mr-2 text-gray-800" />
-                <span
-                  className="text-sm text-gray-800 overflow-hidden whitespace-nowrap text-ellipsis"
-                  style={{ maxWidth: "600px" }}
-                >
-                  {agence.nom_agence}
-                </span>
-              </div>
-              <div className="flex items-center space-x-2">
-                {expandedAgence === agence.id ? (
-                  <>
-                    <Tooltip title="Modifier l'agence">
-                      <button
-                        className="btn btn-outline bg-gray-600 text-white hover:bg-blue-600 transition duration-300 rounded-md"
-                        onClick={() => handleEdit(agence)}
-                      >
-                        <SquarePen className="mr-1" />
-                      </button>
-                    </Tooltip>
-                    <Tooltip title="Supprimer l'agence">
-                      <button
-                        className="btn btn-outline bg-gray-600 text-white hover:bg-red-600 transition duration-300 rounded-md"
-                        onClick={() => handleDelete(agence.id)}
-                      >
-                        <Trash2 className="mr-1" />
-                      </button>
-                    </Tooltip>
-                    <ChevronUp />
-                  </>
-                ) : (
-                  <ChevronDown />
-                )}
-              </div>
-            </button>
-            {expandedAgence === agence.id && renderDocuments()}
-          </li>
-        ))}
-      </ul>
-    );
-  };
-
   return (
-    <div className="flex min-h-screen  bg-gray-300 ">
+    <div className="flex min-h-screen bg-gray-300">
       <Sidebar_agence isVisible={true} />
-      <div className="flex-1 flex flex-col ">
+      <div className="flex-1 flex flex-col">
         <TopBar position="fixed" title="Agences" />
-
-        <div className="container w-[90%] mx-auto mt-28 bg-white rounded-xl shadow-2xl flex flex-col h-auto">
-          <div className="bg-white w-full rounded-lg shadow-md p-6 ">
-            <div className="flex justify-between items-center mb-4">
-              <h1 className="text-2xl font-extrabold text-gray-800 flex justify-start w-full">
-                <LayoutList size="28px" className="mr-3 ml-2 text-red-600" />
-                Agences
+        <div className="container w-full mx-auto px-4 py-8 mt-20">
+          <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-white flex items-center">
+                <PackageCheck className="h-8 w-8 text-[#00B7FF] mr-2" />
+                Gestion des Agences
               </h1>
-            </div>
-
-            <div className="flex flex-row-reverse w-full justify-between rounded-lg border-2 p-4 border-gray-300 space-x-2 mb-4">
-              <div className="flex items-center justify-center gap-4">
-                <button className="btn btn-primary bg-gray-600 text-white hover:bg-gray-800 transition duration-300 shadow-md">
-                  <Download size={20} className="mr-2" />
-                  Importer
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => {
+                    setCurrentAgence({
+                      id: "",
+                      nom_agence: "",
+                      code_agence: "",
+                    }); // Reset currentAgence for new agency
+                    setOpenModal(true);
+                  }}
+                  className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
+                >
+                  <Plus className="h-5 w-5 mr-2" />
+                  Nouvelle Agence
                 </button>
-                <button className="btn btn-primary text-white bg-gray-600  hover:bg-gray-700 transition duration-300 shadow-md">
-                  <ArrowUpToLine size={20} className="mr-2" />
-                  Exporter
+                <button
+                  onClick={handleShowDocuments}
+                  className="bg-white  gap-2 hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
+                >
+                  <FolderCog />
+                  Dossiers
                 </button>
               </div>
-              <button
-                className="btn btn-primary bg-gray-500 text-white hover:bg-gray-500 transition duration-300 shadow-md"
-                onClick={() => setOpenModal(true)}
-              >
-                <Plus size={20} className="mr-2" />
-                Nouveau
-              </button>
             </div>
-            <div className="border-t border-gray-700 my-4"></div>
 
-            <div className="flex justify-start mb-4">
-              <div className="w-full flex flex-col justify-start items-start gap-2">
-                <h2 className="text-lg font-bold text-gray-800">Rechercher</h2>
-                <input
-                  type="text"
-                  placeholder="Rechercher une agence..."
-                  className="input input-bordered w-full max-w-lg bg-white text-black border-2 border-gray-300 rounded-lg shadow-md"
-                  onChange={(e) => setSearchText(e.target.value)}
-                />
+            <div className="mb-6">
+              <div className="flex items-center space-x-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-white mb-1">
+                    Rechercher une agence
+                  </label>
+                  <input
+                    type="text"
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    placeholder="Rechercher par nom..."
+                    className="w-full px-4 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="flex justify-start items-center mb-4">
-              <h2 className="text-lg font-bold flex text-gray-800">
-                <LayoutList size="28px" className="mr-3 ml-2 text-red-600" />
-                Liste des agences
-              </h2>
-            </div>
-
-            <div className="overflow-x-auto">
-              <div className="h-[600px] py-4 rounded-lg bg-gray-700 px-10 overflow-y-auto">
-                {renderAgenceList()}
-              </div>
+            <div className="bg-[#3a3a3a] rounded-lg p-4">
+              {filteredAgences.length === 0 ? (
+                <div className="text-center py-8">
+                  <Landmark className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-300">Aucune agence disponible</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {filteredAgences.map((agence) => (
+                    <div
+                      key={agence.id}
+                      className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-4 hover:shadow-md transition-shadow duration-200"
+                    >
+                      <div className="flex justify-between items-center">
+                        <div className="flex items-center">
+                          <Landmark className="h-5 w-5 text-[#00B7FF] mr-2" />
+                          <span className="font-medium text-white">
+                            {agence.code_agence}
+                          </span>
+                          <span className="text-gray-400 ml-2">
+                            ({agence.nom_agence})
+                          </span>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleEdit(agence)}
+                            className="p-2 text-[#00B7FF] hover:bg-[#404040] rounded-lg transition-colors duration-200"
+                          >
+                            <SquarePen className="h-5 w-5" />
+                          </button>
+                          <button
+                            onClick={() => handleDelete(agence.id)}
+                            className="p-2 text-red-500 hover:bg-[#404040] rounded-lg transition-colors duration-200"
+                          >
+                            <Trash2 className="h-5 w-5" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -318,34 +273,32 @@ export default function ShowAgence() {
 
       {openModal && (
         <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          }}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
           onClick={() => setOpenModal(false)}
         >
           <div
-            className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg w-full mx-4"
+            className="bg-[#2a2a2a] rounded-lg shadow-xl p-6 w-full max-w-lg mx-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              className="btn btn-sm btn-circle absolute right-2 top-2"
-              onClick={() => setOpenModal(false)}
-            >
-              ✕
-            </button>
-            <h3 className="font-bold text-lg">
-              {currentAgence.id
-                ? "Modifier l'agence"
-                : "Créer une nouvelle agence"}
-            </h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-white">
+                {currentAgence.id
+                  ? "Modifier l'agence"
+                  : "Ajouter une nouvelle agence"}
+              </h3>
+              <button
+                onClick={() => setOpenModal(false)}
+                className="text-gray-400 hover:text-gray-200"
+              >
+                ✕
+              </button>
+            </div>
+
             <form onSubmit={handleSubmit}>
-              <div className="form-control mt-4">
-                <label className="label">Code de l&apos;agence</label>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-white mb-1">
+                  Code de l&apos;agence
+                </label>
                 <input
                   type="text"
                   value={currentAgence.code_agence}
@@ -355,12 +308,15 @@ export default function ShowAgence() {
                       code_agence: e.target.value,
                     })
                   }
-                  className="input input-bordered border-2 border-gray-300 bg-white text-black"
+                  className="w-full px-3 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
                   required
                 />
               </div>
-              <div className="form-control mt-4">
-                <label className="label">Nom de l&apos;agence</label>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-white mb-1">
+                  Nom de l&apos;agence
+                </label>
                 <input
                   type="text"
                   value={currentAgence.nom_agence}
@@ -370,23 +326,24 @@ export default function ShowAgence() {
                       nom_agence: e.target.value,
                     })
                   }
-                  className="input input-bordered border-2 border-gray-300 bg-white text-black"
+                  className="w-full px-3 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
                   required
                 />
               </div>
-              <div className="modal-action flex justify-center items-center">
-                <button
-                  type="submit"
-                  className="btn border-t-neutral-700 w-[40%] bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg"
-                >
-                  {currentAgence.id ? "Mettre à jour" : "Ajouter"}
-                </button>
+
+              <div className="flex justify-end space-x-4">
                 <button
                   type="button"
-                  className="btn btn-outline btn-error w-[40%] mt-2"
                   onClick={() => setOpenModal(false)}
+                  className="px-4 py-2 text-sm font-medium text-white bg-[#4a4a4a] rounded-lg hover:bg-[#5a5a5a] focus:outline-none focus:ring-2 focus:ring-[#6a6a6a]"
                 >
                   Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-sm font-medium text-white bg-[#00B7FF] rounded-lg hover:bg-[#0096FF] focus:outline-none focus:ring-2 focus:ring-[#00B7FF]"
+                >
+                  {currentAgence.id ? "Mettre à jour" : "Ajouter"}
                 </button>
               </div>
             </form>
@@ -394,78 +351,11 @@ export default function ShowAgence() {
         </div>
       )}
 
-      {editModalOpen && (
-        <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          }}
-          onClick={() => setEditModalOpen(false)}
-        >
-          <div
-            className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg w-full mx-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="btn btn-sm btn-circle absolute right-2 top-2"
-              onClick={() => setEditModalOpen(false)}
-            >
-              ✕
-            </button>
-            <h3 className="font-bold text-lg">Modifier l&apos;agence</h3>
-            <form onSubmit={handleSubmit}>
-              <div className="form-control mt-4">
-                <label className="label">Code de l&apos;agence</label>
-                <input
-                  type="text"
-                  value={currentAgence.code_agence}
-                  onChange={(e) =>
-                    setCurrentAgence({
-                      ...currentAgence,
-                      code_agence: e.target.value,
-                    })
-                  }
-                  className="input input-bordered border-2 border-gray-300 bg-white text-black"
-                  required
-                />
-              </div>
-              <div className="form-control mt-4">
-                <label className="label">Nom de l&apos;agence</label>
-                <input
-                  type="text"
-                  value={currentAgence.nom_agence}
-                  onChange={(e) =>
-                    setCurrentAgence({
-                      ...currentAgence,
-                      nom_agence: e.target.value,
-                    })
-                  }
-                  className="input input-bordered border-2 border-gray-300 bg-white text-black"
-                  required
-                />
-              </div>
-              <div className="modal-action flex justify-center items-center">
-                <button
-                  type="submit"
-                  className="btn border-t-neutral-700 w-[40%] bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg"
-                >
-                  {currentAgence.id ? "Mettre à jour" : "Ajouter"}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-outline btn-error w-[40%] mt-2"
-                  onClick={() => setEditModalOpen(false)}
-                >
-                  Annuler
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+      {showDocumentModal && (
+        <DocumentListModal
+          documentTypes={documentTypes}
+          onClose={() => setShowDocumentModal(false)}
+        />
       )}
 
       <ToastContainer />

@@ -9,7 +9,9 @@ import TopBar from "../../Components/Top_bar";
 import {
   ArrowUpDown,
   Building2,
+  CircleX,
   DatabaseZap,
+  FileChartColumn,
   FileUp,
   FolderCheckIcon,
   FolderPlusIcon,
@@ -38,65 +40,62 @@ import {
 } from "@mui/material";
 import Swal from "sweetalert2"; // Assurez-vous d'importer SweetAlert2
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { useNavigate } from "react-router-dom";
 
 const MainContainer = ({ children }) => (
   <div className="flex w-full  bg-gray-300">{children}</div>
 );
 
 const ContentContainer = ({ children }) => (
-  <div className=" mt-10 p-4 bg-gray-100 rounded-lg  shadow-none flex flex-col h-screen items-stretch max-w-full w-[70%] ml-7">
+  <div className="mt-24 p-1 bg-gray-100 rounded-lg shadow-none flex flex-col h-screen overflow-auto mr-10 w-full ml-7">
     {children}
   </div>
 );
 
 const StyledBox = ({ children }) => (
-  <div className="bg-white rounded-lg shadow-lg p-3 mb-4">{children}</div>
+  <div className="bg-white rounded-lg shadow-lg p-3 mb-4 overflow-x-auto">
+    {children}
+  </div>
 );
-
-const ActionContainer = ({ children }) => (
-  <div className="flex items-center gap-1 mb-2">{children}</div>
-);
-
-const CenteredModal = ({ open, onClose, children }) => (
-  <div
-    className={`modal ${open ? "modal-open" : ""}`}
-    style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      display: open ? "flex" : "none",
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: "rgba(0, 0, 0, 0.8)",
-      zIndex: 1000,
-    }}
-  >
-    <div
-      className="modal-box bg-white shadow-lg rounded-lg p-3"
-      style={{
-        width: "80%", // Ajustez la largeur selon vos besoins
-        maxWidth: "500px", // Limitez la largeur maximale pour s'adapter à l'écran
-        maxHeight: "90%", // Limitez la hauteur maximale pour s'adapter à l'écran
-        overflowY: "auto", // Ajoutez un défilement vertical si le contenu dépasse la hauteur
-      }}
-    >
-      {children}
-      <div className="modal-action">
-        <button
-          className="btn btn-outline border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-          onClick={onClose}
-        >
-          Fermer
-        </button>
-      </div>
-    </div>
+const StyledBox2 = ({ children }) => (
+  <div className="bg-gray-800 rounded-lg shadow-2xl p-3 mb-4 overflow-x-auto">
+    {children}
   </div>
 );
 
+const ActionContainer = ({ children }) => (
+  <div className="flex justify-between mt-1 items-center gap-2 mb-2">
+    {children}
+  </div>
+);
+
+const CenteredModal = ({ open, onClose, children, maxWidth = "lg" }) => {
+  const maxWidthClasses = {
+    sm: "max-w-lg",
+    lg: "max-w-4xl",
+    xl: "max-w-6xl",
+    full: "max-w-full mx-4",
+  };
+
+  return (
+    <div
+      className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${
+        open ? "" : "hidden"
+      }`}
+      onClick={onClose}
+    >
+      <div
+        className={`bg-[#2a2a2a] rounded-lg shadow-xl p-6 w-full ${maxWidthClasses[maxWidth]} mx-4`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {children}
+      </div>
+    </div>
+  );
+};
+
 const DetailsTable = ({ children }) => (
-  <div className="max-h-96 mt-2 overflow-auto">{children}</div>
+  <div className="max-h-96 mt-2 w-full overflow-auto">{children}</div>
 );
 
 const DetailsDialog = ({
@@ -105,218 +104,463 @@ const DetailsDialog = ({
   document,
   metadataKeys,
   documentLot,
+  refreshDocuments,
   handleFileClick,
+  selectedDocType,
+  setDocuments,
+  setDocumentLot,
 }) => {
   const [isPieceMode, setIsPieceMode] = useState(true);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  const toggleMode = () => {
-    setIsPieceMode((prevMode) => !prevMode);
+  const handleDeleteFile = async (fileId, filePath, isPiece) => {
+    setIsDeleting(true);
+    try {
+      const result = await Swal.fire({
+        title: "Êtes-vous sûr?",
+        text: `Voulez-vous vraiment supprimer ${
+          isPiece ? "cette pièce" : "ce lot"
+        } : ${filePath}?`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Oui, supprimer!",
+        cancelButtonText: "Annuler",
+      });
+
+      if (result.isConfirmed) {
+        const endpoint = isPiece
+          ? `http://localhost:3000/documents/file_piece/${fileId}`
+          : `http://localhost:3000/documents/lot/file/${fileId}`;
+
+        await axios.delete(endpoint);
+
+        // Rafraîchir les documents après suppression
+        if (isPiece) {
+          // Rafraîchir les pièces
+          const docResponse = await axios.get(
+            `http://localhost:3000/documents/type/pieces/${selectedDocType}`
+          );
+          if (docResponse.data) {
+            setDocuments(docResponse.data);
+          }
+        } else {
+          // Rafraîchir les lots
+          const docResponseLot = await axios.get(
+            `http://localhost:3000/documents/type/lot/${selectedDocType}`
+          );
+          if (docResponseLot.data) {
+            setDocumentLot(docResponseLot.data);
+          }
+        }
+
+        // Rafraîchir les deux types de données pour assurer la cohérence
+        await refreshDocuments();
+
+        Swal.fire(
+          "Supprimé!",
+          `Le fichier a été supprimé avec succès.`,
+          "success"
+        );
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression:", error);
+      Swal.fire(
+        "Erreur!",
+        "Une erreur est survenue lors de la suppression du fichier.",
+        "error"
+      );
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
-    <CenteredModal open={open} onClose={onClose}>
-      <div className="flex gap-2 items-center justify-center mb-2">
-        <div className="avatar bg-gray-300 p-2 rounded-full text-black">
-          <InfoOutlined />
+    <CenteredModal open={open} onClose={onClose} maxWidth="lg">
+      <div className="flex justify-between items-center mb-4 border-b border-gray-600 pb-3">
+        <div className="flex items-center">
+          <InfoOutlined className="text-[#00B7FF] mr-2" />
+          <h3 className="text-xl font-bold text-white">Détails du document</h3>
         </div>
-        <h5 className="font-bold text-center text-black">
-          Détails du document
-        </h5>
-      </div>
-      <div className="modal-content">
         <button
-          onClick={toggleMode}
-          className="btn btn-outline border-2 w-full justify-center border-gray-400 text-gray-800 hover:bg-gray-400 hover:text-white"
+          onClick={onClose}
+          className="text-gray-400 hover:text-gray-200 bg-gray-700 hover:bg-gray-600 rounded-full p-2 transition-all duration-200"
         >
-          <ArrowUpDown className="mr-2" />{" "}
-          {isPieceMode ? "Passer au mode Lot" : "Passer au mode Pièce"}
-          {console.log(isPieceMode)}
+          <CircleX size={18} />
         </button>
-        <DetailsTable>
-          <table className="table w-full ">
-            <thead className="text-black">
-              <tr>
-                <th>Aperçu</th>
-                <th>Metadonnées</th>
-                <th>Valeurs</th>
-              </tr>
-            </thead>
-            <tbody>
-              {document &&
-                metadataKeys
-                  .filter(
-                    (meta, index, self) =>
-                      index === self.findIndex((m) => m.field === meta.field)
-                  )
-                  .map((meta) => (
-                    <tr key={meta.field}>
-                      <td>
-                        <DatabaseZap className="text-gray-800" />
-                      </td>
-                      <td>
-                        <p className="font-bold text-gray-800">{meta.field}</p>
-                      </td>
-                      <td>
-                        <p className="text-gray-500">
-                          {document[meta.field] || "N/A"}
-                        </p>
-                      </td>
-                    </tr>
-                  ))}
-              <tr>
-                <td colSpan={3}>
-                  <p className="text-gray-800 italic text-center">
-                    {document
-                      ? ` Document créé le: ${document.created_at}`
-                      : "Date de création non disponible"}
-                  </p>
-                </td>
-              </tr>
-              {isPieceMode
-                ? // Rendu pour le mode pièce
-                  (() => {
-                    const uniqueFilesByPiece = {};
+      </div>
 
-                    document?.files?.forEach((file) => {
-                      if (!uniqueFilesByPiece[file.pieceName]) {
-                        uniqueFilesByPiece[file.pieceName] = [];
-                      }
-                      // Ajoutez le fichier s'il n'est pas déjà présent
-                      if (
-                        !uniqueFilesByPiece[file.pieceName].some(
-                          (f) => f.filePath === file.filePath
-                        )
-                      ) {
-                        uniqueFilesByPiece[file.pieceName].push(file);
-                      }
-                    });
+      <button
+        onClick={() => setIsPieceMode(!isPieceMode)}
+        className="w-full px-4 py-3 mb-4 text-sm font-medium text-black transition-all duration-300 hover:text-white bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 rounded-lg flex items-center justify-center gap-2 shadow-md"
+      >
+        <ArrowUpDown />
+        {isPieceMode ? "Passer au mode Lot" : "Passer au mode Pièce"}
+      </button>
 
-                    return Object.entries(uniqueFilesByPiece).map(
-                      ([pieceName, files], index) => (
-                        <Accordion
-                          key={index}
-                          sx={{ background: "black", width: "100%" }}
-                          className="w-full "
-                        >
-                          <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls={`panel${index}-content`}
-                            id={`panel${index}-header`}
-                          >
-                            <Typography className="text-gray-800 font-bold">
-                              {pieceName}
-                            </Typography>
-                          </AccordionSummary>
-                          <AccordionDetails className="w-full">
-                            <table className="table w-full">
-                              <tbody>
-                                {files.map((file, fileIndex) => (
-                                  <tr key={fileIndex} className="">
-                                    <td className="hover:bg-cyan-600 cursor-pointer w-full text-gray-800 mt-2 rounded-lg bg-cyan-500 flex items-center justify-center">
-                                      <FileUp
-                                        className="cursor-pointer"
-                                        onClick={() =>
-                                          handleFileClick(file.fileUrl)
-                                        }
-                                      />
-                                    </td>
-                                    <td className="text-gray-800 w-full">
-                                      {file.filePath}
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </AccordionDetails>
-                        </Accordion>
+      <div className="bg-gradient-to-b from-[#3a3a3a] to-[#2a2a2a] rounded-lg p-4 max-h-[60vh] overflow-y-auto shadow-inner border border-gray-700">
+        <table className="w-full table-fixed">
+          <thead className="bg-[#1f1f1f] text-white sticky top-0 z-10">
+            <tr>
+              <th className="w-1/6 p-3 text-left rounded-tl-md">Aperçu</th>
+              <th className="w-2/6 p-3 text-left">Metadonnées</th>
+              <th className="w-3/6 p-3 text-left rounded-tr-md">Valeurs</th>
+            </tr>
+          </thead>
+          <tbody className="text-white">
+            {document &&
+              metadataKeys
+                .filter(
+                  (meta, index, self) =>
+                    index === self.findIndex((m) => m.field === meta.field)
+                )
+                .map((meta, index) => (
+                  <tr
+                    key={meta.field}
+                    className={index % 2 === 0 ? "bg-[#333333]" : ""}
+                  >
+                    <td className="w-1/6 text-white border-b border-gray-600 p-3">
+                      <div className="flex justify-center">
+                        <DatabaseZap className="text-cyan-400" />
+                      </div>
+                    </td>
+                    <td className="w-2/6 text-white border-b border-gray-600 p-3">
+                      <p className="font-bold text-gray-100 truncate">
+                        {meta.field}
+                      </p>
+                    </td>
+                    <td className="w-3/6 p-3 text-white border-b border-gray-600">
+                      <p className="text-gray-100 truncate">
+                        {document[meta.field] || "N/A"}
+                      </p>
+                    </td>
+                  </tr>
+                ))}
+            <tr>
+              <td colSpan={3} className="p-3">
+                <p className="text-gray-100 italic text-center">
+                  {document
+                    ? ` Document créé le: ${document.created_at}`
+                    : "Date de création non disponible"}
+                </p>
+              </td>
+            </tr>
+            {isPieceMode
+              ? // Rendu pour le mode pièce
+                (() => {
+                  const uniqueFilesByPiece = {};
+
+                  document?.files?.forEach((file) => {
+                    if (!uniqueFilesByPiece[file.pieceName]) {
+                      uniqueFilesByPiece[file.pieceName] = [];
+                    }
+                    // Ajoutez le fichier s'il n'est pas déjà présent
+                    if (
+                      !uniqueFilesByPiece[file.pieceName].some(
+                        (f) => f.filePath === file.filePath
                       )
-                    );
-                  })() || (
+                    ) {
+                      uniqueFilesByPiece[file.pieceName].push(file);
+                    }
+                  });
+
+                  return (
                     <tr>
-                      <td colSpan="3" className="text-center">
-                        Aucun fichier disponible
+                      <td colSpan="3" className="p-0">
+                        <div className="grid gap-2 w-full mt-3">
+                          {Object.entries(uniqueFilesByPiece).map(
+                            ([pieceName, files], index) => (
+                              <Accordion
+                                className=""
+                                key={index}
+                                sx={{
+                                  color: "white",
+                                  fontWeight: "bold",
+                                  borderRadius: "8px",
+                                  marginBottom: "8px",
+                                  width: "100%",
+                                  background: "#444",
+                                  boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
+                                  ":hover": { background: "#555" },
+                                }}
+                              >
+                                <AccordionSummary
+                                  sx={{
+                                    width: "100%",
+                                    background:
+                                      "linear-gradient(to right, #444, #333)",
+                                  }}
+                                  expandIcon={
+                                    <ExpandMoreIcon sx={{ color: "white" }} />
+                                  }
+                                  aria-controls={`panel${index}-content`}
+                                  id={`panel${index}-header`}
+                                >
+                                  <Typography className="text-white flex items-center justify-start p-2 rounded-lg font-bold truncate">
+                                    <FileChartColumn className="mr-2 text-cyan-400" />
+                                    {pieceName}
+                                  </Typography>
+                                </AccordionSummary>
+                                <AccordionDetails sx={{ background: "#333" }}>
+                                  <table className="w-full">
+                                    <tbody>
+                                      {files.map((file, fileIndex) => (
+                                        <tr
+                                          key={fileIndex}
+                                          className={
+                                            fileIndex % 2 === 0
+                                              ? "bg-[#3a3a3a]"
+                                              : ""
+                                          }
+                                        >
+                                          <td className="w-1/6 p-2">
+                                            <div className="flex gap-2">
+                                              <div className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 cursor-pointer text-white rounded-lg p-2 flex justify-center transition-all duration-200 shadow-md">
+                                                <FileUp
+                                                  className="cursor-pointer"
+                                                  onClick={() =>
+                                                    handleFileClick(
+                                                      file.fileUrl
+                                                    )
+                                                  }
+                                                />
+                                              </div>
+                                              <div className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 cursor-pointer text-white rounded-lg p-2 flex justify-center transition-all duration-200 shadow-md">
+                                                <Trash2
+                                                  className="cursor-pointer"
+                                                  onClick={() =>
+                                                    handleDeleteFile(
+                                                      file.id,
+                                                      file.filePath,
+                                                      true
+                                                    )
+                                                  }
+                                                  disabled={isDeleting}
+                                                />
+                                              </div>
+                                            </div>
+                                          </td>
+                                          <td className="w-5/6 pl-2">
+                                            <p
+                                              className="text-gray-200 truncate hover:text-cyan-400 transition-colors duration-200 cursor-pointer"
+                                              onClick={() =>
+                                                handleFileClick(file.fileUrl)
+                                              }
+                                            >
+                                              {file.filePath}
+                                            </p>
+                                          </td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
+                                </AccordionDetails>
+                              </Accordion>
+                            )
+                          )}
+                        </div>
                       </td>
                     </tr>
-                  )
-                : // Rendu pour le mode lot
-                  documentLot?.map((lot, index) => {
-                    const uniqueFiles = Array.from(
-                      new Set(lot.files.map((file) => file.filePath))
-                    ).map((filePath) =>
-                      lot.files.find((file) => file.filePath === filePath)
-                    );
+                  );
+                })() || (
+                  <tr>
+                    <td colSpan="3" className="text-center p-4 text-gray-400">
+                      Aucun fichier disponible
+                    </td>
+                  </tr>
+                )
+              : // Rendu pour le mode lot
+                documentLot?.map((lot, index) => {
+                  const uniqueFiles = Array.from(
+                    new Set(lot.files.map((file) => file.filePath))
+                  ).map((filePath) =>
+                    lot.files.find((file) => file.filePath === filePath)
+                  );
 
-                    return uniqueFiles.map((file, fileIndex) => (
-                      <tr key={`${index}-${fileIndex}`}>
-                        <td className="hover:bg-cyan-600 cursor-pointer w-full text-gray-800 mt-2 rounded-lg bg-cyan-500 flex items-center justify-center">
-                          <LayoutPanelTop
-                            className="cursor-pointer"
-                            color="white"
-                            onClick={() => handleFileClick(file.fileUrl)}
-                          />
-                        </td>
-                        <td
-                          className="text-gray-800 w-full hover:text-blue-500 cursor-pointer"
+                  return uniqueFiles.map((file, fileIndex) => (
+                    <tr
+                      key={`${index}-${fileIndex}`}
+                      className={fileIndex % 2 === 0 ? "bg-[#333333]" : ""}
+                    >
+                      <td className="w-1/6 p-2">
+                        <div className="flex gap-2">
+                          <div className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 cursor-pointer text-white rounded-lg p-2 flex justify-center transition-all duration-200 shadow-md">
+                            <LayoutPanelTop
+                              className="cursor-pointer"
+                              onClick={() => handleFileClick(file.fileUrl)}
+                            />
+                          </div>
+                          <div className="bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 cursor-pointer text-white rounded-lg p-2 flex justify-center transition-all duration-200 shadow-md">
+                            <Trash2
+                              className="cursor-pointer"
+                              onClick={() =>
+                                handleDeleteFile(
+                                  file.fileId,
+                                  file.filePath,
+                                  false
+                                )
+                              }
+                              disabled={isDeleting}
+                            />
+                          </div>
+                        </div>
+                      </td>
+                      <td colSpan="2" className="w-5/6 p-2">
+                        <p
+                          className="text-gray-200 truncate hover:text-cyan-400 transition-colors duration-200 cursor-pointer"
                           onClick={() => handleFileClick(file.fileUrl)}
                         >
                           {file.filePath}
-                        </td>
-                      </tr>
-                    ));
-                  }) || (
-                    <tr>
-                      <td colSpan="3" className="text-center">
-                        Aucun lot disponible
+                        </p>
                       </td>
                     </tr>
-                  )}
-            </tbody>
-          </table>
-        </DetailsTable>
+                  ));
+                }) || (
+                  <tr>
+                    <td colSpan="3" className="text-center p-4 text-gray-400">
+                      Aucun lot disponible
+                    </td>
+                  </tr>
+                )}
+          </tbody>
+        </table>
       </div>
+      {isDeleting && (
+        <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
+          <CircularProgress color="info" />
+        </div>
+      )}
     </CenteredModal>
   );
 };
 
-// Nouveau composant pour afficher les fichiers
 const FilePreviewModal = ({ open, onClose, fileUrl }) => (
-  <div
-    className={`modal ${open ? "modal-open" : ""}`}
-    style={{
-      position: "fixed",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      display: open ? "flex" : "none",
-      alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: "rgba(0, 0, 0, 0.8)",
-      zIndex: 1000,
-    }}
-  >
-    <div
-      className="modal-box bg-white shadow-lg rounded-lg p-3"
-      style={{
-        width: "90%", // Largeur spécifique pour cette modale
-        maxWidth: "800px", // Largeur maximale spécifique
-        height: "80vh", // Hauteur spécifique
-        overflowY: "auto",
-      }}
-    >
-      <div className="modal-content" style={{ height: "100%" }}>
-        <iframe src={fileUrl} className="w-full h-full" title="File Preview" />
-      </div>
-      <div className="modal-action">
-        <button
-          className="btn btn-outline border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
-          onClick={onClose}
-        >
-          Fermer
-        </button>
-      </div>
+  <CenteredModal open={open} onClose={onClose}>
+    <div className="flex justify-between items-center mb-4 border-b border-gray-600 pb-3">
+      <h3 className="text-xl font-bold text-white flex items-center">
+        <FileChartColumn className="mr-2 text-cyan-400" />
+        Aperçu du fichier
+      </h3>
+      <button
+        onClick={onClose}
+        className="text-gray-400 hover:text-gray-200 bg-gray-700 hover:bg-gray-600 rounded-full p-2 transition-all duration-200"
+      >
+        <CircleX size={18} />
+      </button>
     </div>
-  </div>
+    <div
+      className="bg-[#3a3a3a] rounded-lg p-4 border border-gray-700 shadow-inner"
+      style={{ height: "70vh" }}
+    >
+      <iframe
+        src={fileUrl}
+        className="w-full h-full rounded-md"
+        title="File Preview"
+      />
+    </div>
+    <div className="flex justify-end mt-4">
+      <button
+        onClick={onClose}
+        className="px-6 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 rounded-lg transition-all duration-200 shadow-md flex items-center gap-2"
+      >
+        <CircleX size={16} />
+        Fermer
+      </button>
+    </div>
+  </CenteredModal>
+);
+
+const CreateEditModal = ({
+  open,
+  onClose,
+  formData,
+  setFormData,
+  handleSubmit,
+  isEditing,
+  metadataKeys,
+  loadingForm,
+}) => (
+  <CenteredModal open={open} onClose={onClose} maxWidth="lg">
+    <div className="flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
+      <div className="flex items-center">
+        {isEditing ? (
+          <div className="bg-white p-3 rounded-full mr-3 shadow-lg">
+            <SquarePen size={24} className="text-black" />
+          </div>
+        ) : (
+          <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded-full mr-3 shadow-lg">
+            <FolderPlusIcon size={24} className="text-white" />
+          </div>
+        )}
+        <h3 className="text-xl font-bold text-white">
+          {isEditing ? "Modifier le document" : "Ajouter un nouveau document"}
+        </h3>
+      </div>
+      <button
+        onClick={onClose}
+        className="text-gray-400 hover:text-gray-200 bg-gray-700 hover:bg-gray-600 rounded-full p-2 transition-all duration-200"
+      >
+        <CircleX size={18} />
+      </button>
+    </div>
+
+    <div className="bg-gradient-to-b from-[#3a3a3a] to-[#2a2a2a] rounded-lg p-5 mb-6 shadow-inner border border-gray-700">
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {metadataKeys.map((meta) => (
+            <div key={meta.field} className="form-group">
+              <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center">
+                <DatabaseZap className="mr-2 text-cyan-400" size={16} />
+                {meta.headerName}
+              </label>
+              <div className="relative">
+                <input
+                  type={meta.metaType || "text"}
+                  value={formData[meta.field] || ""}
+                  onChange={(e) =>
+                    setFormData({ ...formData, [meta.field]: e.target.value })
+                  }
+                  className="w-full px-4 py-3 bg-[#1f1f1f] text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-200 shadow-sm"
+                  placeholder={`Saisir ${meta.headerName.toLowerCase()}...`}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </form>
+    </div>
+
+    <div className="flex justify-end space-x-4 mt-6">
+      <button
+        type="button"
+        onClick={onClose}
+        className="px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 rounded-lg transition-all duration-200 shadow-md flex items-center gap-2"
+      >
+        <CircleX size={16} />
+        Annuler
+      </button>
+      <button
+        type="submit"
+        onClick={handleSubmit}
+        disabled={loadingForm}
+        className={`px-6 py-3 text-sm font-medium  ${
+          isEditing
+            ? "bg-white text-black  "
+            : "bg-gradient-to-r text-white from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600"
+        } rounded-lg transition-all duration-200 shadow-md flex items-center gap-2`}
+      >
+        {loadingForm ? (
+          <CircularProgress size={16} color="inherit" />
+        ) : isEditing ? (
+          <RefreshCcw size={16} />
+        ) : (
+          <Plus size={16} />
+        )}
+        {isEditing ? "Mettre à jour" : "Créer document"}
+      </button>
+    </div>
+  </CenteredModal>
 );
 
 const DocumentListShow = () => {
@@ -347,6 +591,7 @@ const DocumentListShow = () => {
   const [fileModalOpen, setFileModalOpen] = useState(false);
   const [selectedFileUrl, setSelectedFileUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -376,6 +621,7 @@ const DocumentListShow = () => {
 
   useEffect(() => {
     if (selectedService) {
+      sessionStorage.setItem("selectedService", selectedService); // Save selected service ID to local storage
       const fetchDocTypesByService = async () => {
         try {
           const response = await axios.get(
@@ -393,6 +639,7 @@ const DocumentListShow = () => {
 
   useEffect(() => {
     if (selectedDocType) {
+      sessionStorage.setItem("selectedDocType", selectedDocType); // Save selected document type ID to local storage
       const fetchMetadataAndDocuments = async () => {
         try {
           const response = await axios.get(
@@ -455,14 +702,17 @@ const DocumentListShow = () => {
     if (!selectedDocType) return;
 
     try {
+      // Charger les documents et les lots
       const docResponse = await axios.get(
         `http://localhost:3000/documents/type/pieces/${selectedDocType}`
       );
-      console.log("pieces datas", docResponse.data);
 
       if (docResponse.data) {
         setDocuments(docResponse.data);
       }
+
+      // Charger les lots
+      await fetchDocumentLot();
     } catch (error) {
       console.error("Erreur chargement documents:", error);
       toast.error("Échec du chargement des documents");
@@ -575,10 +825,12 @@ const DocumentListShow = () => {
 
   const formattedDocuments = documents
     .filter((doc) => {
+      console.log("doc", doc);
       if (!searchTerm) return true;
       const term = searchTerm.toLowerCase();
       return (
         doc.created_at.toLowerCase().includes(term) ||
+        doc.code_unique?.toLowerCase().includes(term) ||
         metadataKeys.some((key) =>
           (doc.metadata[key.field] || "").toLowerCase().includes(term)
         )
@@ -588,10 +840,12 @@ const DocumentListShow = () => {
       const formattedDoc = {
         id: doc.id,
         created_at: new Date(doc.created_at).toLocaleDateString(),
+        codification: doc.code_unique || "N/A",
       };
       metadataKeys.forEach((column) => {
         formattedDoc[column.field] = doc.metadata[column.field] || "";
       });
+
       return formattedDoc;
     });
 
@@ -600,17 +854,18 @@ const DocumentListShow = () => {
       renderCell: (params) => (
         <Tooltip title="View Details">
           <IconButton
-            color="primary"
+            className="bg-gray-800 p-2"
             onClick={() => handleOpenDetails(params.row)}
           >
-            <Avatar className="bg-gray-500">
-              <FolderCheckIcon style={{ color: "FFF" }} />
+            <Avatar sx={{ borderRadius: "50%", background: "#fff" }}>
+              <FolderCheckIcon style={{ color: "#333" }} />
             </Avatar>
           </IconButton>
         </Tooltip>
       ),
     },
     { field: "created_at", headerName: "Date création", flex: 1 },
+    { field: "codification", headerName: "Codification", flex: 1 },
     ...metadataKeys,
     {
       field: "actions",
@@ -618,36 +873,76 @@ const DocumentListShow = () => {
       flex: 2,
       renderCell: (params) => (
         <ActionContainer>
-          <Tooltip title="View Details">
+          <Tooltip title="Voir détails">
             <IconButton
-              color="primary"
+              sx={{
+                borderRadius: "8px",
+                background: "linear-gradient(to right, #0059b3, #0077e6)",
+                color: "white",
+                padding: "8px",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                ":hover": {
+                  background: "linear-gradient(to right, #004c99, #0066cc)",
+                },
+                transition: "all 0.2s ease",
+              }}
               onClick={() => handleOpenDetails(params.row)}
             >
-              <ScanEye />
+              <ScanEye size={18} />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Edit Document">
+          <Tooltip title="Modifier document">
             <IconButton
-              color="secondary"
+              sx={{
+                borderRadius: "8px",
+                background: "linear-gradient(to right, #862d86, #a13da1)",
+                color: "white",
+                padding: "8px",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                ":hover": {
+                  background: "linear-gradient(to right, #722672, #8f358f)",
+                },
+                transition: "all 0.2s ease",
+              }}
               onClick={() => handleEdit(params.row)}
             >
-              <SquarePen />
+              <SquarePen size={18} />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Select Pieces">
+          <Tooltip title="Sélectionner pièces">
             <IconButton
-              color="primary"
+              sx={{
+                borderRadius: "8px",
+                background: "linear-gradient(to right, #5151f0, #7070ff)",
+                color: "white",
+                padding: "8px",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                ":hover": {
+                  background: "linear-gradient(to right, #4040cc, #5c5cff)",
+                },
+                transition: "all 0.2s ease",
+              }}
               onClick={() => handleOpenPieceDialog(params.row.id)}
             >
-              <Link />
+              <Link size={18} />
             </IconButton>
           </Tooltip>
-          <Tooltip title="Delete Document">
+          <Tooltip title="Supprimer document">
             <IconButton
-              color="error"
+              sx={{
+                borderRadius: "8px",
+                background: "linear-gradient(to right, #d32f2f, #f44336)",
+                color: "white",
+                padding: "8px",
+                boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                ":hover": {
+                  background: "linear-gradient(to right, #b71c1c, #e53935)",
+                },
+                transition: "all 0.2s ease",
+              }}
               onClick={() => handleDelete(params.row.id)}
             >
-              <Trash2 />
+              <Trash2 size={18} />
             </IconButton>
           </Tooltip>
         </ActionContainer>
@@ -749,101 +1044,139 @@ const DocumentListShow = () => {
   }, []);
 
   return (
-    <MainContainer>
+    <div className="flex min-h-screen bg-gray-300">
       <Side_bar isVisible={true} />
-      <ContentContainer>
-        <TopBar />
-        <h4 className=" font-bold text-gray-800 mb-1 text-xl mt-10 text-left w-full">
-          <ArchiveIcon
-            sx={{ fontSize: "32px" }}
-            className="text-gray-800 mr-2 "
-          />
-          Liste des dossiers archivés
-        </h4>
+      <div className="flex-1 flex flex-col">
+        <TopBar position="fixed" title="Documents" />
+        <div className="container w-full mx-auto px-4 py-8 mt-20">
+          <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-white flex items-center">
+                <ArchiveIcon
+                  sx={{ fontSize: "32px" }}
+                  className="text-[#00B7FF] mr-2"
+                />
+                Liste des dossiers archivés par services
+              </h1>
+            </div>
 
-        <StyledBox>
-          <div className="flex justify-between mb-3 gap-2">
-            <div className="form-control w-1/2">
-              <label className="label w-full flex  text-black items-center justify-start">
-                <Building2 className="mr-2 " />
-                Liste des services
-              </label>
-              <select
-                className="select select-bordered text-black bg-gray-200 border-gray-300"
-                value={selectedService}
-                onChange={(e) => handleServiceChange(e)}
-              >
-                <option value="">Sélectionner un service</option>
-                {servicesData.map((directory) => (
-                  <optgroup
-                    className="text-black"
-                    key={directory.directory_id}
-                    label={directory.nom_directory}
+            <div className="bg-[#3a3a3a] rounded-lg p-4 mb-6">
+              <div className="flex gap-4 mb-4">
+                <div className="form-control w-1/2">
+                  <label className="label w-full flex text-white items-center justify-start">
+                    <Building2 className="mr-2" />
+                    Liste des services
+                  </label>
+                  <select
+                    className="select select-bordered text-black bg-gray-200 border-gray-300 w-full"
+                    value={selectedService}
+                    onChange={handleServiceChange}
                   >
-                    {directory.services.map((service) => (
-                      <option key={service.id} value={service.id}>
-                        {service.nom_service}
-                      </option>
+                    <option value="">Sélectionner un service</option>
+                    {servicesData.map((directory) => (
+                      <optgroup
+                        key={directory.directory_id}
+                        label={directory.nom_directory}
+                      >
+                        {directory.services.map((service) => (
+                          <option key={service.id} value={service.id}>
+                            {service.nom_service}
+                          </option>
+                        ))}
+                      </optgroup>
                     ))}
-                  </optgroup>
-                ))}
-              </select>
-            </div>
-            {selectedService && (
-              <div className="form-control w-1/2">
-                <label className="label w-full flex items-center text-black justify-start">
-                  <Layers3 className="mr-2 " />
-                  Liste type de document
-                </label>
-                <select
-                  className="select select-bordered text-black bg-gray-200 border-gray-300"
-                  value={selectedDocType}
-                  onChange={(e) => handleDocTypeChange(e)}
-                >
-                  <option value="">Sélectionner un type de document</option>
-                  {docTypes.map((docType) => (
-                    <option key={docType.id} value={docType.id}>
-                      {docType.name}
-                    </option>
-                  ))}
-                </select>
+                  </select>
+                </div>
+
+                {selectedService && (
+                  <div className="form-control w-1/2">
+                    <label className="label w-full flex text-white items-center justify-start">
+                      <Layers3 className="mr-2" />
+                      Liste type de document
+                    </label>
+                    <select
+                      className="select select-bordered text-black bg-gray-200 border-gray-300 w-full"
+                      value={selectedDocType}
+                      onChange={handleDocTypeChange}
+                    >
+                      <option value="">Sélectionner un type de document</option>
+                      {docTypes.map((docType) => (
+                        <option key={docType.id} value={docType.id}>
+                          {docType.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </StyledBox>
 
-        <StyledBox>
-          <div className="flex justify-between mb-3">
-            <div className="form-control w-1/2">
-              <label className="label w-full flex items-center justify-start">
-                <Search className="mr-2" />
-                Rechercher des documents...
-              </label>
-              <input
-                type="text"
-                placeholder="Rechercher des documents..."
-                className="input input-bordered bg-gray-200 border-gray-300"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
+              <div className="flex justify-between items-center mb-4">
+                <div className="form-control w-1/2">
+                  <label className="label w-full flex text-white items-center justify-start">
+                    <Search className="mr-2" />
+                    Rechercher des documents
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Rechercher des documents..."
+                    className="input input-bordered bg-[#2a2a2a] text-white border-[#4a4a4a] w-full"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+                <div className="flex gap-3 items-center">
+                  <button
+                    className="btn bg-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-5 py-2 rounded-lg flex items-center transition-all duration-300 shadow-md border-none h-12"
+                    onClick={() => setCreateDialogOpen(true)}
+                  >
+                    <Plus className="h-5 w-5 mr-2" />
+                    Nouveau document
+                  </button>
+                  <button
+                    className="btn bg-white hover:to-indigo-600 hover:text-white text-black px-5 py-2 rounded-lg flex items-center transition-all duration-300 shadow-md border-none h-12"
+                    onClick={() => navigate("/docs_dir")}
+                  >
+                    <Building2 className="h-5 w-5 mr-2" />
+                    Mode direction
+                  </button>
+                </div>
+              </div>
+
+              <div className="bg-[#2a2a2a] rounded-lg p-4">
+                <DataGrid
+                  rows={formattedDocuments}
+                  columns={columns}
+                  pageSize={5}
+                  rowsPerPageOptions={[5, 10, 20]}
+                  autoHeight
+                  className="bg-[#2a2a2a] text-white"
+                  sx={{
+                    "& .MuiDataGrid-cell": {
+                      color: "white",
+                      borderColor: "#4a4a4a",
+                    },
+                    "& .MuiDataGrid-columnHeaders": {
+                      backgroundColor: "#1f1f1f",
+                      color: "black",
+                      borderColor: "#4a4a4a",
+                    },
+                    "& .MuiDataGrid-footerContainer": {
+                      backgroundColor: "#1f1f1f",
+                      color: "white",
+                      borderColor: "#4a4a4a",
+                    },
+                    "& .MuiTablePagination-root": {
+                      color: "white",
+                    },
+                    "& .MuiIconButton-root": {
+                      color: "white",
+                    },
+                  }}
+                />
+              </div>
             </div>
-            <button
-              className="btn btn-primary bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded"
-              onClick={() => setCreateDialogOpen(true)}
-            >
-              <Plus />
-              Nouveau
-            </button>
           </div>
-
-          <DataGrid
-            rows={formattedDocuments}
-            columns={columns}
-            pageSize={5}
-            rowsPerPageOptions={[5, 10, 20]}
-            autoHeight
-          />
-        </StyledBox>
+        </div>
 
         <DetailsDialog
           open={dialogOpen}
@@ -852,50 +1185,26 @@ const DocumentListShow = () => {
           metadataKeys={metadataKeys}
           documentLot={documentLot}
           refreshDocuments={refreshDocuments}
-          handleFileClick={handleFileClick} // Pass the function here
+          handleFileClick={handleFileClick}
+          selectedDocType={selectedDocType}
+          setDocuments={setDocuments}
+          setDocumentLot={setDocumentLot}
         />
 
         <CenteredModal
           open={createDialogOpen}
           onClose={handleCloseCreateDialog}
         >
-          <div className="flex gap-2 justify-center items-center">
-            <div className="avatar bg-gray-500 p-2 rounded-full">
-              <FolderPlusIcon size="35px" color="white" />
-            </div>
-            <h5 className="font-bold text-gray-800 text-lg">
-              Création d'un nouveau document
-            </h5>
-          </div>
-          <div className="modal-content">
-            <div className="grid grid-cols-1 gap-4 text-black">
-              {metadataKeys.map((meta) => (
-                <div key={meta.field} className="text-black">
-                  <label className="label text-black">
-                    <span className="label-text">{meta.headerName}</span>
-                  </label>
-                  <input
-                    type={meta.metaType}
-                    className="input input-bordered w-full bg-gray-400 hover:shadow- border-gray-300"
-                    value={formData[meta.field] || ""}
-                    onChange={(e) =>
-                      setFormData({ ...formData, [meta.field]: e.target.value })
-                    }
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="modal-action">
-            <button
-              className="btn btn-outline border-2 w-full justify-center border-gray-400 text-gray-800 hover:bg-gray-400 hover:text-white"
-              onClick={handleCreateDocument}
-              disabled={loadingForm}
-            >
-              <Plus />{" "}
-              {loadingForm ? <CircularProgress size={24} /> : "Créer document"}
-            </button>
-          </div>
+          <CreateEditModal
+            open={createDialogOpen}
+            onClose={handleCloseCreateDialog}
+            formData={formData}
+            setFormData={setFormData}
+            handleSubmit={handleCreateDocument}
+            isEditing={false}
+            metadataKeys={metadataKeys}
+            loadingForm={loadingForm}
+          />
         </CenteredModal>
 
         <PieceSelectionDialog
@@ -908,50 +1217,16 @@ const DocumentListShow = () => {
         />
 
         <CenteredModal open={editDialogOpen} onClose={handleCloseEditDialog}>
-          <div className="flex gap-2 justify-center items-center">
-            <div className="avatar bg-gray-500 p-2 rounded-full">
-              <SquarePen size="35px" color="white" />
-            </div>
-            <h5 className="font-bold text-gray-800 text-lg">
-              Modifier le document
-            </h5>
-          </div>
-          <div className="modal-content">
-            <div className="grid grid-cols-1 gap-4 text-black">
-              {metadataKeys.map((meta) => (
-                <div key={meta.field} className="text-black">
-                  <label className="label text-black">
-                    <span className="label-text">{meta.headerName}</span>
-                  </label>
-                  <input
-                    type={meta.metaType}
-                    className="input input-bordered w-full bg-gray-400 hover:shadow- border-gray-300"
-                    value={editFormData[meta.field] || ""}
-                    onChange={(e) =>
-                      setEditFormData({
-                        ...editFormData,
-                        [meta.field]: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="modal-action">
-            <button
-              className="btn  btn-outline border-2 w-full justify-center border-gray-400 text-gray-800 hover:bg-gray-400 hover:text-white"
-              onClick={handleUpdateDocument}
-              disabled={loadingForm}
-            >
-              <RefreshCcw />{" "}
-              {loadingForm ? (
-                <CircularProgress size={24} />
-              ) : (
-                "Mettre à jour le document"
-              )}
-            </button>
-          </div>
+          <CreateEditModal
+            open={editDialogOpen}
+            onClose={handleCloseEditDialog}
+            formData={editFormData}
+            setFormData={setEditFormData}
+            handleSubmit={handleUpdateDocument}
+            isEditing={true}
+            metadataKeys={metadataKeys}
+            loadingForm={loadingForm}
+          />
         </CenteredModal>
 
         <FilePreviewModal
@@ -959,14 +1234,14 @@ const DocumentListShow = () => {
           onClose={() => setFileModalOpen(false)}
           fileUrl={selectedFileUrl}
         />
-      </ContentContainer>
+      </div>
 
       {isLoading && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-30">
           <CircularProgress />
         </div>
       )}
-    </MainContainer>
+    </div>
   );
 };
 

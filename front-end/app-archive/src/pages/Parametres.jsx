@@ -19,7 +19,7 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-800 flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-6">
       <h1 className="text-4xl text-white mb-8 flex items-center">
         <Settings size="40px" className="mr-2" />
         Paramétrages
@@ -86,7 +86,10 @@ const SettingsPage = () => {
           </div>
         </div>
       </div>
-      <button className="btn btn-primary mt-8" onClick={() => navigate(-1)}>
+      <button
+        className="btn btn-outline text-white hover:text-black mt-8"
+        onClick={() => navigate(-1)}
+      >
         <CircleArrowLeft className="mr-2" />
         Retour
       </button>

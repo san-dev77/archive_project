@@ -10,6 +10,7 @@ import {
   PackageCheck,
   Landmark,
   Box,
+  FolderCog,
 } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,11 +20,12 @@ import TopBar from "../../../Components/Top_bar";
 import Loader_component from "../../../Components/Loader";
 import Swal from "sweetalert2";
 import { showDeleteConfirmation } from "../../../utils/alerts";
+import DocumentListModal from "../../../Components/DocTypeListAgence";
 
 export default function ShowCaisse() {
   const [caisses, setCaisses] = useState([]);
   const [agenciesData, setAgenciesData] = useState([]);
-  const [showRelatedDocuments, setShowRelatedDocuments] = useState(false);
+  // const [showRelatedDocuments, setShowRelatedDocuments] = useState(false);
   const [newCaisse, setNewCaisse] = useState({
     code_caisse: "",
     nom_caisse: "",
@@ -35,6 +37,8 @@ export default function ShowCaisse() {
   const [error, setError] = useState(null);
   const [expandedAgency, setExpandedAgency] = useState(null);
   const [relatedDocuments, setRelatedDocuments] = useState([]);
+  const [documentTypes, setDocumentTypes] = useState([]);
+  const [showDocumentModal, setShowDocumentModal] = useState(false);
 
   useEffect(() => {
     fetchCaisses();
@@ -78,7 +82,6 @@ export default function ShowCaisse() {
   const handleCaisseCreated = async (event) => {
     event.preventDefault();
 
-    // Validate input fields
     if (!newCaisse.code_caisse || !newCaisse.agence_id) {
       toast.error("Tous les champs doivent être remplis.");
       return;
@@ -90,7 +93,6 @@ export default function ShowCaisse() {
         newCaisse
       );
 
-      // Check response data for success/failure message
       if (response.code === "ERR_BAD_REQUEST") {
         if (response.data?.message) {
           toast.error(response.data.message);
@@ -100,7 +102,6 @@ export default function ShowCaisse() {
         return;
       }
 
-      // Success case
       setNewCaisse({ code_caisse: "", nom_caisse: "", agence_id: "" });
       fetchCaisses();
       toast.success("Nouvelle caisse créée avec succès !");
@@ -181,7 +182,7 @@ export default function ShowCaisse() {
   };
 
   const handleDeleteCaisse = async (caisseId) => {
-    const confirm = showDeleteConfirmation();
+    const confirm = await showDeleteConfirmation();
     if (confirm) {
       try {
         const response = await axios.delete(
@@ -211,6 +212,7 @@ export default function ShowCaisse() {
       }
     }
   };
+
   const handleCaisseUpdated = async (event) => {
     event.preventDefault();
     try {
@@ -222,7 +224,7 @@ export default function ShowCaisse() {
         id: newCaisse.id,
       });
       setNewCaisse({ code_caisse: "", nom_caisse: "", agence_id: "" });
-      fetchCaisses(); // Refresh the list of caisses after update
+      fetchCaisses();
       toast.success("Caisse mise à jour avec succès !");
       setOpenModal(false);
     } catch (error) {
@@ -258,26 +260,42 @@ export default function ShowCaisse() {
     }
   };
 
-  const handleFetchRelatedDocuments = async () => {
+  const handleShowDocuments = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/relations/caisse`
+        `http://localhost:3000/agence/document-type/relations-caisse`
       );
-      if (response.data && Array.isArray(response.data)) {
-        setRelatedDocuments(response.data);
-        setShowRelatedDocuments(!showRelatedDocuments);
-      } else {
-        console.error(
-          "Invalid data format for related documents:",
-          response.data
-        );
-        setError("Invalid data format for related documents");
-      }
+      console.log(response);
+
+      setDocumentTypes(response.data);
+      setShowDocumentModal(true);
     } catch (error) {
-      console.error("Error fetching related documents:", error);
-      setError("Failed to fetch related documents");
+      console.error("Error fetching document types:", error);
+      toast.error("Échec de la récupération des types de documents.");
     }
   };
+
+  // const handleFetchRelatedDocuments = async () => {
+  //   try {
+  //     const response = await axios.get(
+  //       `http://localhost:3000/relations/caisse`
+  //     );
+  //     if (response.data && Array.isArray(response.data)) {
+  //       handleShowDocuments();
+  //       setRelatedDocuments(response.data);
+  //       setShowRelatedDocuments(!showRelatedDocuments);
+  //     } else {
+  //       console.error(
+  //         "Invalid data format for related documents:",
+  //         response.data
+  //       );
+  //       setError("Invalid data format for related documents");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error fetching related documents:", error);
+  //     setError("Failed to fetch related documents");
+  //   }
+  // };
 
   if (loading)
     return (
@@ -292,139 +310,147 @@ export default function ShowCaisse() {
       <SideBar_agence isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar position="fixed" title="Caisses" />
-        <div className="container w-[90%] mx-auto mt-28 bg-white rounded-xl shadow-2xl flex flex-col min-h-screen">
-          <div className="bg-white w-full rounded-lg shadow-md p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h1 className="text-2xl font-extrabold text-gray-800 flex justify-start w-full">
-                <PackageCheck size="28px" className="mr-3 ml-2 text-red-600" />
-                Caisses
+        <div className="container w-full mx-auto px-4 py-8 mt-20">
+          <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-white flex items-center">
+                <PackageCheck className="h-8 w-8 text-[#00B7FF] mr-2" />
+                Gestion des Caisses
               </h1>
+              <button
+                onClick={handleOpenModal}
+                className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
+              >
+                <Plus className="h-5 w-5 mr-2" />
+                Nouvelle Caisse
+              </button>
 
               <button
-                className="btn btn-primary ml-auto mb-4 bg-gray-600 text-white hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
-                onClick={handleOpenModal}
+                onClick={handleShowDocuments}
+                className="bg-white  gap-2 hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
               >
-                <Plus size={20} className="mr-2" />
-                Nouveau
+                <FolderCog />
+                Dossiers
               </button>
             </div>
 
-            <div className="flex flex-col md:flex-row justify-between items-start mb-4 w-full">
-              <div className="flex items-start flex-col w-1/2">
-                <h2 className="text-lg font-bold text-gray-800 mr-4 w-full">
-                  Rechercher :
-                </h2>
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={handleSearchChange}
-                  placeholder="Rechercher..."
-                  className="input w-full input-bordered border-2 border-gray-300 bg-white text-black rounded-lg p-2"
-                />
+            <div className="mb-6">
+              <div className="flex items-center space-x-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-white mb-1">
+                    Rechercher une caisse
+                  </label>
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={handleSearchChange}
+                    placeholder="Rechercher par code ou nom..."
+                    className="w-full px-4 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                  />
+                </div>
               </div>
             </div>
-            <div className="overflow-x-auto">
-              <div className="h-[600px] bg-gray-600 py-2 rounded-lg px-4 overflow-y-auto">
-                {Object.keys(groupedCaisses).length === 0 ? (
-                  <div className="text-center text-gray-900 mt-4">
-                    <ServerOff className="text-red-500 mr-2" size={30} />
-                    Aucune caisse disponible.
-                  </div>
-                ) : (
-                  <ul className="list-none w-full">
-                    {Object.entries(groupedCaisses).map(
-                      ([agencyId, agency]) => (
-                        <li key={agencyId} className="w-full">
-                          <button
-                            className="btn bg-gray-600 text-black hover:bg-gray-400 transition duration-300 rounded-lg shadow-md w-full text-left flex justify-between items-center"
-                            onClick={() => toggleAgency(agencyId)}
-                          >
-                            <div className="flex text-black items-center p-2 rounded-full bg-white">
-                              <Landmark className="mr-2" />
-                              {agency.nom_agence}
-                            </div>
-                            {expandedAgency === agencyId ? (
-                              <ChevronUp />
-                            ) : (
-                              <ChevronDown />
-                            )}
-                          </button>
-                          {expandedAgency === agencyId && (
-                            <ul className="list-none w-full mt-2 ml-1 border-l-2 border-gray-300 pl-4">
-                              {agency.caisses.map((caisse) => (
-                                <li
-                                  key={caisse.id}
-                                  className="w-full flex flex-col justify-between items-start"
-                                >
-                                  <div
-                                    className="flex text-black w-full items-center justify-between p-2 rounded-lg shadow-md bg-white cursor-pointer hover:bg-gray-200 transition duration-300"
-                                    onClick={() => {
-                                      handleFetchRelatedDocuments(caisse.id);
-                                    }}
-                                  >
-                                    <span className="flex items-center">
-                                      <Box className="mr-2" />
-                                      {caisse.code_caisse}
-                                    </span>
 
-                                    <div className="flex">
+            <div className="bg-[#3a3a3a] rounded-lg p-4">
+              {Object.keys(groupedCaisses).length === 0 ? (
+                <div className="text-center py-8">
+                  <ServerOff className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-300">Aucune caisse disponible</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {Object.entries(groupedCaisses).map(([agencyId, agency]) => (
+                    <div
+                      key={agencyId}
+                      className="border border-[#4a4a4a] rounded-lg overflow-hidden"
+                    >
+                      <button
+                        onClick={() => toggleAgency(agencyId)}
+                        className="w-full bg-[#2a2a2a] hover:bg-[#404040] px-4 py-3 flex justify-between items-center transition-colors duration-200"
+                      >
+                        <div className="flex items-center">
+                          <Landmark className="h-5 w-5 text-[#00B7FF] mr-2" />
+                          <span className="font-medium text-white">
+                            {agency.nom_agence}
+                          </span>
+                        </div>
+                        {expandedAgency === agencyId ? (
+                          <ChevronUp className="h-5 w-5 text-gray-300" />
+                        ) : (
+                          <ChevronDown className="h-5 w-5 text-gray-300" />
+                        )}
+                      </button>
+
+                      {expandedAgency === agencyId && (
+                        <div className="p-4 space-y-2">
+                          {agency.caisses.map((caisse) => (
+                            <div
+                              key={caisse.id}
+                              className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-4 hover:shadow-md transition-shadow duration-200"
+                            >
+                              <div className="flex justify-between items-center">
+                                <div className="flex items-center">
+                                  <Box className="h-5 w-5 text-[#00B7FF] mr-2" />
+                                  <span className="font-medium text-white">
+                                    {caisse.code_caisse}
+                                  </span>
+                                  {caisse.nom_caisse && (
+                                    <span className="text-gray-400 ml-2">
+                                      ({caisse.nom_caisse})
+                                    </span>
+                                  )}
+                                </div>
+                                <div className="flex space-x-2">
+                                  <button
+                                    onClick={() => handleEditCaisse(caisse)}
+                                    className="p-2 text-[#00B7FF] hover:bg-[#404040] rounded-lg transition-colors duration-200"
+                                  >
+                                    <SquarePen className="h-5 w-5" />
+                                  </button>
+                                  <button
+                                    onClick={() =>
+                                      handleDeleteCaisse(caisse.id)
+                                    }
+                                    className="p-2 text-red-500 hover:bg-[#404040] rounded-lg transition-colors duration-200"
+                                  >
+                                    <Trash2 className="h-5 w-5" />
+                                  </button>
+                                </div>
+                              </div>
+
+                              {relatedDocuments.length > 0 && (
+                                <div className="mt-4 pl-6 border-l-2 border-[#4a4a4a]">
+                                  {relatedDocuments.map((doc) => (
+                                    <div
+                                      key={doc.id}
+                                      className="flex justify-between items-center py-2"
+                                    >
+                                      <div className="flex items-center">
+                                        <PackageCheck className="h-4 w-4 text-[#00B7FF] mr-2" />
+                                        <span className="text-sm text-gray-300">
+                                          {doc.nom_document_type}
+                                        </span>
+                                      </div>
                                       <button
-                                        className="btn btn-outline bg-gray-600 text-white hover:bg-blue-600 transition duration-300 rounded-md"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleEditCaisse(caisse);
-                                        }}
+                                        onClick={() =>
+                                          handleUnlinkCaisse(doc.id)
+                                        }
+                                        className="text-red-500 hover:text-red-400"
                                       >
-                                        <SquarePen className="mr-1" />
-                                      </button>
-                                      <button
-                                        className="btn btn-outline bg-gray-600 text-white hover:bg-red-600 transition duration-300 rounded-md"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleDeleteCaisse(caisse.id);
-                                        }}
-                                      >
-                                        <Trash2 className="mr-1" />
+                                        <Trash2 className="h-4 w-4" />
                                       </button>
                                     </div>
-                                  </div>
-                                  {relatedDocuments.length > 0 && (
-                                    <ul className="list-none w-full mt-2 ml-1 border-l-2 border-gray-300 pl-4">
-                                      {relatedDocuments.map((doc) => (
-                                        <li
-                                          key={doc.id}
-                                          className="text-black w-full "
-                                        >
-                                          <div className="flex items-center justify-between w-full p-1 bg-gray-200 rounded-md shadow-sm">
-                                            <span className="flex items-center">
-                                              <PackageCheck className="mr-2 text-green-600" />
-                                              {doc.nom_document_type}
-                                            </span>
-
-                                            <button
-                                              className="btn btn-outline btn-error btn-sm"
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleUnlinkCaisse(doc.id);
-                                              }}
-                                            >
-                                              <Trash2 />
-                                            </button>
-                                          </div>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  )}
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                        </li>
-                      )
-                    )}
-                  </ul>
-                )}
-              </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -432,93 +458,125 @@ export default function ShowCaisse() {
 
       {openModal && (
         <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: 100,
-          }}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
           onClick={handleCloseModal}
         >
           <div
-            className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg w-full mx-4"
+            className="bg-[#2a2a2a] rounded-lg shadow-xl p-6 w-full max-w-lg mx-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              className="btn btn-sm btn-circle absolute right-2 top-2"
-              onClick={handleCloseModal}
-            >
-              ✕
-            </button>
-            <h3 className="font-bold text-lg">
-              {newCaisse.id
-                ? "Modifier la caisse"
-                : "Ajouter une nouvelle caisse"}
-            </h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-bold text-white">
+                {newCaisse.id
+                  ? "Modifier la caisse"
+                  : "Ajouter une nouvelle caisse"}
+              </h3>
+              <button
+                onClick={handleCloseModal}
+                className="text-gray-400 hover:text-gray-200"
+              >
+                ✕
+              </button>
+            </div>
+
             <form
               onSubmit={
                 newCaisse.id ? handleCaisseUpdated : handleCaisseCreated
               }
             >
-              {newCaisse.id ? null : (
-                <div className="form-control">
-                  <label className="label">Sélectionner une agence</label>
+              {!newCaisse.id && (
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-white mb-1">
+                    Agence
+                  </label>
                   <Select
                     value={agencyOptions.find(
                       (option) => option.value === newCaisse.agence_id
                     )}
                     onChange={handleAgencyChange}
                     options={agencyOptions}
-                    className="mb-2"
-                    placeholder="Choisir une agence"
-                    isClearable
+                    placeholder="Sélectionner une agence"
+                    className="text-sm"
+                    styles={{
+                      control: (base) => ({
+                        ...base,
+                        backgroundColor: "#3a3a3a",
+                        borderColor: "#4a4a4a",
+                        color: "white",
+                      }),
+                      menu: (base) => ({
+                        ...base,
+                        backgroundColor: "#3a3a3a",
+                      }),
+                      option: (base, state) => ({
+                        ...base,
+                        backgroundColor: state.isFocused
+                          ? "#4a4a4a"
+                          : "#3a3a3a",
+                        color: "white",
+                      }),
+                      singleValue: (base) => ({
+                        ...base,
+                        color: "white",
+                      }),
+                    }}
                   />
                 </div>
               )}
-              <div className="form-control mt-4">
-                <label className="label">Code de la caisse</label>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-white mb-1">
+                  Code de la caisse
+                </label>
                 <input
                   type="text"
                   value={newCaisse.code_caisse}
                   onChange={(e) =>
                     setNewCaisse({ ...newCaisse, code_caisse: e.target.value })
                   }
-                  className="input input-bordered border-2 border-gray-300 bg-white text-black"
+                  className="w-full px-3 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
                   required
                 />
               </div>
-              <div className="form-control mt-4">
-                <label className="label">Nom de la caisse (facultatif)</label>
+
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-white mb-1">
+                  Nom de la caisse (facultatif)
+                </label>
                 <input
                   type="text"
                   value={newCaisse.nom_caisse}
                   onChange={(e) =>
                     setNewCaisse({ ...newCaisse, nom_caisse: e.target.value })
                   }
-                  className="input input-bordered border-2 border-gray-300 bg-white text-black"
+                  className="w-full px-3 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
                 />
               </div>
-              <div className="modal-action flex justify-center items-center">
-                <button
-                  type="submit"
-                  className="btn border-t-neutral-700 w-[40%] bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg"
-                >
-                  {newCaisse.id ? "Mettre à jour" : "Ajouter"}
-                </button>
+
+              <div className="flex justify-end space-x-4">
                 <button
                   type="button"
-                  className="btn btn-outline btn-error w-[40%] mt-2"
                   onClick={handleCloseModal}
+                  className="px-4 py-2 text-sm font-medium text-white bg-[#4a4a4a] rounded-lg hover:bg-[#5a5a5a] focus:outline-none focus:ring-2 focus:ring-[#6a6a6a]"
                 >
                   Annuler
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 text-sm font-medium text-white bg-[#00B7FF] rounded-lg hover:bg-[#0096FF] focus:outline-none focus:ring-2 focus:ring-[#00B7FF]"
+                >
+                  {newCaisse.id ? "Mettre à jour" : "Ajouter"}
                 </button>
               </div>
             </form>
           </div>
         </div>
+      )}
+      {showDocumentModal && (
+        <DocumentListModal
+          documentTypes={documentTypes}
+          onClose={() => setShowDocumentModal(false)}
+        />
       )}
 
       <ToastContainer />

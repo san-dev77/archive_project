@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "daisyui/dist/full.css";
 import SideBar from "../Components/Side_bar";
 import TopBar from "../Components/Top_bar"; // Assurez-vous que ce composant existe
-import { LayoutList, Plus, ShieldCheck, SquarePen, Trash2 } from "lucide-react";
+import { Plus, ShieldCheck, SquarePen, Trash2 } from "lucide-react";
+import { showDeleteConfirmation } from "../utils/alerts";
 
 const UserRoles = () => {
   const [roles, setRoles] = useState([]);
@@ -61,13 +62,17 @@ const UserRoles = () => {
   };
 
   const handleDeleteRole = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3000/roles/${id}`);
-      setRoles(roles.filter((role) => role.id !== id));
-      toast.success("Rôle supprimé avec succès!");
-    } catch (error) {
-      console.error("Erreur lors de la suppression du rôle:", error);
-      toast.error("Erreur lors de la suppression du rôle.");
+    const confirm = await showDeleteConfirmation();
+    alert(id);
+    if (confirm) {
+      try {
+        await axios.delete(`http://localhost:3000/roles/${id}`);
+        setRoles(roles.filter((role) => role.id !== id));
+        toast.success("Rôle supprimé avec succès!");
+      } catch (error) {
+        console.error("Erreur lors de la suppression du rôle:", error);
+        toast.error("Erreur lors de la suppression du rôle.");
+      }
     }
   };
 
@@ -113,85 +118,71 @@ const UserRoles = () => {
   return (
     <div className="flex min-h-screen bg-gray-300">
       <SideBar isVisible={true} />
-      <div className="flex-1  flex flex-col">
-        <TopBar title="Gestion des Rôles" />{" "}
-        {/* Assurez-vous que TopBar accepte un titre */}
-        <div className="container w-[90%] mx-auto mt-24 bg-white rounded-xl shadow-2xl flex flex-col h-screen">
-          <h1 className="text-2xl mt-4 font-extrabold text-gray-800 flex justify-start w-full">
-            <LayoutList size="28px" className="mr-3 text-gray-800" />
-            Liste des Rôles
-          </h1>
-          <div className="bg-white h-full w-full rounded-lg shadow-md p-6 mb-6">
-            <div className="flex gap-4 mb-6 justify-between">
-              <div className="flex items-center justify-start gap-2 text-black">
-                <h4 className="font-bold w-[160px]">Nouveau rôle : </h4>
-                <input
-                  type="text"
-                  placeholder="Quel est sa fonction..."
-                  value={newRole}
-                  onChange={(e) => setNewRole(e.target.value)}
-                  className="input input-bordered w-full max-w-xs bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                />
-              </div>
+      <div className="flex-1 flex flex-col">
+        <TopBar title="Gestion des Rôles" />
+        <div className="container w-full mx-auto px-4 py-8 mt-20">
+          <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-white flex items-center">
+                <ShieldCheck className="h-8 w-8 text-[#00B7FF] mr-2" />
+                Liste des Rôles
+              </h1>
               <button
-                className="btn btn-primary bg-gray-500 text-white hover:bg-gray-800 transition duration-300 rounded-lg shadow-md"
-                onClick={handleAddRole}
+                onClick={() => setOpen(true)}
+                className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
               >
-                <Plus size={20} className="mr-2" />
-                Ajouter
-              </button>
-
-              <button
-                onClick={() => {
-                  window.location.href = "/Users";
-                }}
-                className="btn btn-outline btn-default flex items-center justify-center text-black"
-              >
-                <LayoutList /> Voir la liste des agents
+                <Plus className="h-5 w-5 mr-2" />
+                Nouveau Rôle
               </button>
             </div>
-            <div className="overflow-x-auto h-full ">
-              <div className="max-h-96 overflow-y-auto">
-                <table className="table w-full border-collapse">
-                  <thead className="sticky top-0 rounded-lg bg-gray-700 text-white">
-                    <tr>
-                      <th className="text-lg p-4">
-                        <ShieldCheck />
+
+            <div className="bg-[#3a3a3a] rounded-lg p-4">
+              <div className="overflow-hidden rounded-lg">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-[#2a2a2a]">
+                      <th className="p-5 text-left w-16"></th>
+                      <th className="p-5 text-left text-sm font-medium text-white">
+                        Nom du rôle
                       </th>
-                      <th className="text-lg p-4">Nom du rôle</th>
-                      <th className="text-lg p-4 text-right">Actions</th>
+                      <th className="p-5 text-right text-sm font-medium text-white">
+                        Actions
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {roles.map((role, index) => (
                       <tr
                         key={role.id}
-                        className={`hover:bg-gray-300 transition duration-200 ${
-                          index % 2 === 0 ? "bg-gray-300" : "bg-white"
-                        }`}
+                        className="border-t border-[#4a4a4a] hover:bg-[#2a2a2a] transition-colors duration-200"
                       >
-                        <td className=" text-white">
-                          <ShieldCheck
-                            size={40}
-                            className="rounded-full bg-slate-800 text-white p-2"
-                          />
+                        <td className="p-5">
+                          <div className="bg-[#00B7FF] rounded-lg p-2 w-fit">
+                            <ShieldCheck size={20} className="text-white" />
+                          </div>
                         </td>
-                        <td className="p-4 text-base text-gray-800">
+                        <td className="p-5 text-white font-medium">
                           {role.nom_role}
                         </td>
-                        <td className="text-right p-4 text-base text-gray-800">
-                          <button
-                            className="btn btn-outline bg-gray-600 btn-md  mr-2 hover:bg-indigo-500 text-white transition duration-300 rounded-md"
-                            onClick={() => handleEditRole(role)}
-                          >
-                            <SquarePen className="mr-1" />
-                          </button>
-                          <button
-                            className="btn btn-outline bg-gray-600 btn-md  hover:bg-red-500 text-white transition duration-300 rounded-md"
-                            onClick={() => handleDeleteRole(role.id)}
-                          >
-                            <Trash2 className="mr-1" />
-                          </button>
+                        <td className="p-5">
+                          <div className="flex justify-end space-x-2">
+                            {index >= 2 && (
+                              <>
+                                <button
+                                  onClick={() => handleEditRole(role)}
+                                  className="p-2 text-[#00B7FF] hover:bg-[#404040] rounded-lg transition-colors duration-200"
+                                >
+                                  <SquarePen className="h-5 w-5" />
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteRole(role.id)}
+                                  className="p-2 text-red-500 hover:bg-[#404040] rounded-lg transition-colors duration-200"
+                                >
+                                  <Trash2 className="h-5 w-5" />
+                                </button>
+                              </>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     ))}
@@ -201,68 +192,62 @@ const UserRoles = () => {
             </div>
           </div>
         </div>
-      </div>
 
-      {open && (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
-          onClick={() => setOpen(false)}
-        >
-          <div
-            className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg w-full flex flex-col justify-center items-center"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              className="btn btn-sm btn-circle absolute right-2 top-2"
-              onClick={() => setOpen(false)}
-            >
-              ✕
-            </button>
-            <h2 className="text-2xl font-bold mb-4">
-              {editRoleId ? "Modifier le rôle" : "Créer un nouveau rôle"}
-            </h2>
-
-            <form
-              onSubmit={editRoleId ? handleUpdateRole : handleAddRole}
-              className="w-full"
-            >
-              <div className="form-control w-full">
-                <label className="label">Nom du rôle</label>
-                <input
-                  type="text"
-                  placeholder="Nom du rôle"
-                  value={editRoleId ? editRoleName : newRole}
-                  onChange={(e) =>
-                    editRoleId
-                      ? setEditRoleName(e.target.value)
-                      : setNewRole(e.target.value)
-                  }
-                  required
-                  className="input input-bordered w-full mb-4 bg-gray-100 text-gray-800 border border-gray-300 rounded-md focus:ring-2 focus:ring-gray-500"
-                />
-              </div>
-              <div className="modal-action flex justify-center items-center">
+        {open && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-[#2a2a2a] rounded-lg shadow-xl p-6 w-full max-w-lg mx-4">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-white">
+                  {editRoleId ? "Modifier le rôle" : "Ajouter un nouveau rôle"}
+                </h3>
                 <button
-                  type="submit"
-                  className="btn flex justify-center items-center btn-primary w-[50%] bg-indigo-600 text-white hover:bg-indigo-700 transition duration-300 rounded-lg"
-                >
-                  <Plus className="mr-2" />
-                  {editRoleId ? "Mettre à jour" : "Créer"}
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-outline btn-error w-[40%] mt-2"
                   onClick={() => setOpen(false)}
+                  className="text-gray-400 hover:text-gray-200"
                 >
-                  Annuler
+                  ✕
                 </button>
               </div>
-            </form>
-          </div>
-        </div>
-      )}
 
-      <ToastContainer />
+              <form onSubmit={editRoleId ? handleUpdateRole : handleAddRole}>
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-white mb-1">
+                    Nom du rôle
+                  </label>
+                  <input
+                    type="text"
+                    value={editRoleId ? editRoleName : newRole}
+                    onChange={(e) =>
+                      editRoleId
+                        ? setEditRoleName(e.target.value)
+                        : setNewRole(e.target.value)
+                    }
+                    className="w-full px-3 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                    required
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-4">
+                  <button
+                    type="button"
+                    onClick={() => setOpen(false)}
+                    className="px-4 py-2 text-sm font-medium text-white bg-[#4a4a4a] rounded-lg hover:bg-[#5a5a5a] focus:outline-none focus:ring-2 focus:ring-[#6a6a6a]"
+                  >
+                    Annuler
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-2 text-sm font-medium text-white bg-[#00B7FF] rounded-lg hover:bg-[#0096FF] focus:outline-none focus:ring-2 focus:ring-[#00B7FF]"
+                  >
+                    {editRoleId ? "Mettre à jour" : "Ajouter"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        <ToastContainer />
+      </div>
     </div>
   );
 };

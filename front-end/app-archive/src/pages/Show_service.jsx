@@ -13,8 +13,6 @@ import {
   ChevronUp,
   ChevronDown,
   Network,
-  Download,
-  ArrowUpToLine,
   Cog,
 } from "lucide-react";
 import { Tooltip } from "@mui/material";
@@ -269,46 +267,48 @@ export default function ShowDirection() {
     return (
       <ul className="list-none w-full">
         {filteredDirectories.map((directory) => (
-          <li key={directory.directory_id} className="w-full">
+          <li
+            key={directory.directory_id}
+            className="w-full overflow-visible bg-white"
+          >
             <button
-              className="btn relative btn-outline border-t-cyan-800 w-full text-left flex justify-between items-center"
+              className="btn relative w-full text-left flex justify-between items-center bg-black/30 hover:bg-black/40 text-white border-none rounded-lg p-3 transition-all duration-300 overflow-visible"
               onClick={() => toggleDirectory(directory.directory_id)}
             >
-              <div className="absolute -top-2 -left-2 bg-gray-900 rounded-full px-2 py-1">
-                <p className="text-[10px] z-[5] text-white">{directory.code}</p>
+              <div className="absolute -top-2 -left-2 bg-orange-500 rounded-full px-2 py-0.5">
+                <p className="text-xs font-bold">{directory.code}</p>
               </div>
-              <div className="flex items-center p-2 rounded-full bg-white">
-                <Network className="mr-2 text-gray-800" />
-                <span
-                  className="text-sm text-gray-800 overflow-hidden whitespace-nowrap text-ellipsis"
-                  style={{ maxWidth: "600px" }} // Adjust the maxWidth as needed
-                >
+              <div className="flex items-center pl-6">
+                <Network className="mr-2 text-orange-300" size={20} />
+                <span className="text-base font-semibold">
                   {directory.nom_directory}
                 </span>
               </div>
-              <div className="flex items-center space-x-2">
-                {expandedDirectory === directory.directory_id ? (
+              <div className="flex items-center space-x-1">
+                {expandedDirectory === directory.directory_id && (
                   <>
                     <Tooltip title="Modifier la direction">
                       <button
-                        className="btn btn-md bg-gray-600 text-white hover:bg-indigo-500"
+                        className="btn btn-sm btn-circle bg-blue-500 border-0 text-white hover:bg-blue-600"
                         onClick={() => handleEditDirectory(directory)}
                       >
-                        <SquarePen className="mr-1" />
+                        <SquarePen size={16} />
                       </button>
                     </Tooltip>
                     <Tooltip title="Supprimer la direction">
                       <button
-                        className="btn btn-md bg-gray-600 text-white hover:bg-red-500"
+                        className="btn btn-sm btn-circle bg-red-500 border-0 text-white hover:bg-red-600"
                         onClick={() => handleDeleteDirectory(directory)}
                       >
-                        <Trash2 className="mr-1" />
+                        <Trash2 size={16} />
                       </button>
                     </Tooltip>
-                    <ChevronUp />
                   </>
+                )}
+                {expandedDirectory === directory.directory_id ? (
+                  <ChevronUp size={20} />
                 ) : (
-                  <ChevronDown />
+                  <ChevronDown size={20} />
                 )}
               </div>
             </button>
@@ -326,64 +326,66 @@ export default function ShowDirection() {
       .map((service) => JSON.parse(service));
 
     return (
-      <table className="table w-full mt-2 ">
-        <thead className="sticky top-0 rounded-lg bg-gray-800  text-white">
-          <tr>
-            <th className="text-lg p-4">Code service</th>
-            <th className="text-lg p-4">Nom service</th>
-            <th className="text-lg p-4 text-right">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {parsedServices.filter(
-            (service) => service.code || service.nom_service
-          ).length === 0 ? (
+      <div className="mt-2 bg-black/20 rounded-lg p-3">
+        <table className="table w-full">
+          <thead className="bg-black/30 text-white">
             <tr>
-              <td colSpan="3" className="text-center p-4 text-gray-500">
-                Aucun service disponible pour ce répertoire.
-              </td>
+              <th className="text-base p-3">Code service</th>
+              <th className="text-base p-3">Nom service</th>
+              <th className="text-base p-3 text-right">Actions</th>
             </tr>
-          ) : (
-            parsedServices.map(
-              (service) =>
-                (service.code || service.nom_service) && (
-                  <tr
-                    key={service.id}
-                    className="hover:bg-gray-200 rounded-lg bg-gray-100 transition duration-200"
-                  >
-                    <td className="flex items-center p-4 text-base text-gray-800">
-                      <Cog className="mr-2" />
-                      {service.code}
-                    </td>
-                    <td className="p-4 text-base text-gray-800">
-                      {service.nom_service}
-                    </td>
-                    <td className="text-right p-4 text-base text-gray-800">
-                      <div className="flex flex-col sm:flex-row justify-end items-center space-y-2 sm:space-y-0 sm:space-x-2">
-                        <Tooltip title="Modifier">
-                          <button
-                            className="btn  btn-primary btn-md bg-gray-600 text-white mr-2 hover:bg-indigo-400 transition duration-300 rounded-md"
-                            onClick={() => handleEdit(service)}
-                          >
-                            <SquarePen className="mr-1" />
-                          </button>
-                        </Tooltip>
-                        <Tooltip title="Supprimer">
-                          <button
-                            className="btn btn-md bg-gray-600 text-white hover:bg-red-500 transition duration-300 rounded-md"
-                            onClick={() => handleDelete(service.id)}
-                          >
-                            <Trash2 className="mr-1" />
-                          </button>
-                        </Tooltip>
-                      </div>
-                    </td>
-                  </tr>
-                )
-            )
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {parsedServices.filter(
+              (service) => service.code || service.nom_service
+            ).length === 0 ? (
+              <tr>
+                <td colSpan="3" className="text-center p-4 text-gray-500">
+                  Aucun service disponible pour ce répertoire.
+                </td>
+              </tr>
+            ) : (
+              parsedServices.map(
+                (service) =>
+                  (service.code || service.nom_service) && (
+                    <tr
+                      key={service.id}
+                      className="hover:bg-gray-200 rounded-lg bg-gray-100 transition duration-200"
+                    >
+                      <td className="flex items-center p-4 text-base text-gray-800">
+                        <Cog className="mr-2" />
+                        {service.code}
+                      </td>
+                      <td className="p-4 text-base text-gray-800">
+                        {service.nom_service}
+                      </td>
+                      <td className="text-right p-4 text-base text-gray-800">
+                        <div className="flex flex-col sm:flex-row justify-end items-center space-y-2 sm:space-y-0 sm:space-x-2">
+                          <Tooltip title="Modifier">
+                            <button
+                              className="btn  btn-primary btn-circle bg-gray-600 text-white  hover:bg-indigo-400 transition duration-300 "
+                              onClick={() => handleEdit(service)}
+                            >
+                              <SquarePen className="" />
+                            </button>
+                          </Tooltip>
+                          <Tooltip title="Supprimer">
+                            <button
+                              className="btn btn-circle bg-gray-600 text-white hover:bg-red-500 transition duration-300 "
+                              onClick={() => handleDelete(service.id)}
+                            >
+                              <Trash2 className="" />
+                            </button>
+                          </Tooltip>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+              )
+            )}
+          </tbody>
+        </table>
+      </div>
     );
   };
 
@@ -393,76 +395,147 @@ export default function ShowDirection() {
   }));
 
   return (
-    <div className="flex h-full  bg-gray-300 to-gray-900">
+    <div className="flex min-h-screen bg-gray-300">
       <Side_bar isVisible={true} />
-      <div className="flex-1 flex flex-col ">
+      <div className="flex-1 flex flex-col">
         <TopBar position="fixed" title="Services" />
-
-        <div className="container w-[90%] mx-auto mt-28 bg-white rounded-xl shadow-2xl flex flex-col h-auto">
-          <div className="bg-white w-full rounded-lg shadow-md p-6 ">
-            <div className="flex justify-between items-center mb-4">
-              <h1 className="text-2xl font-extrabold text-gray-800 flex justify-start w-full">
-                <LayoutList size="28px" className="mr-3 ml-2 text-red-600" />
-                Directions
+        <div className="container w-full mx-auto px-4 py-8 mt-20">
+          <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold text-white flex items-center">
+                <LayoutList className="h-8 w-8 text-[#00B7FF] mr-2" />
+                Liste des Directions
               </h1>
-            </div>
-
-            <div className="flex flex-row-reverse w-full justify-between rounded-lg border-2 p-4 border-gray-300 space-x-2 mb-4">
               <button
-                className="btn btn-primary bg-gray-400  text-black hover:bg-gray-500 transition duration-300 shadow-md"
+                className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
                 onClick={() => setOpenModal(true)}
               >
-                <Plus size={20} className="mr-2" />
+                <Plus className="h-5 w-5 mr-2" />
                 Nouveau
               </button>
-              <div className="flex items-center space-x-2">
-                <button
-                  className="btn btn-secondary bg-gray-600 text-white hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
-                  onClick={() => {
-                    /* Logic for import */
-                  }}
-                >
-                  <Download size={20} className="mr-2" />
-                  Importer
-                </button>
-                <button
-                  className="btn btn-secondary bg-gray-500 text-gray-100 hover:bg-gray-400 transition duration-300 rounded-lg shadow-md"
-                  onClick={() => {
-                    /* Logic for export */
-                  }}
-                >
-                  <ArrowUpToLine size={20} className="mr-2" />
-                  Exporter
-                </button>
-              </div>
             </div>
-            <div className="border-t border-gray-700 my-4"></div>
 
-            <div className="flex justify-start mb-4">
-              <div
-                className="w-full flex flex-col justify-start items-start gap-2
-              "
-              >
-                <h2 className="text-lg font-bold text-gray-800">Rechercher</h2>
-                <input
-                  type="text"
-                  placeholder="Rechercher une direction ou un service..."
-                  className="input input-bordered w-full max-w-lg bg-white text-black border-2 border-gray-300 rounded-lg shadow-md"
-                  onChange={(e) => setSearchText(e.target.value)}
-                />
+            <div className="mb-6">
+              <div className="flex items-center space-x-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-white mb-1">
+                    Rechercher une direction ou un service
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Rechercher..."
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    className="w-full px-4 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="flex justify-start items-center mb-4">
-              <h2 className="text-lg font-bold flex text-gray-800">
-                <LayoutList size="28px" className="mr-3 ml-2 text-red-600" />
-                Liste des directions et services
-              </h2>
-            </div>
+            <div className="bg-[#3a3a3a] rounded-lg p-4">
+              <div className="space-y-4">
+                {filteredDirectories.map((directory) => (
+                  <div
+                    key={directory.directory_id}
+                    className="border border-[#4a4a4a] rounded-lg "
+                  >
+                    <button
+                      className="btn relative w-full text-left flex justify-between items-center bg-[#2a2a2a] hover:bg-[#404040] text-white border-none rounded-lg p-3 transition-all duration-300"
+                      onClick={() => toggleDirectory(directory.directory_id)}
+                    >
+                      <div className="absolute -top-2 -left-2 bg-[#2185ac] rounded-full px-2 py-0.5">
+                        <p className="text-xs font-bold">{directory.code}</p>
+                      </div>
+                      <div className="flex items-center pl-6">
+                        <Network className="mr-2 text-[#00B7FF]" size={20} />
+                        <span className="text-base font-semibold">
+                          {directory.nom_directory}
+                        </span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {expandedDirectory === directory.directory_id && (
+                          <>
+                            <button
+                              className="p-2 text-[#00B7FF] hover:bg-[#404040] rounded-lg transition-colors duration-200"
+                              onClick={() => handleEditDirectory(directory)}
+                            >
+                              <SquarePen size={16} />
+                            </button>
+                            <button
+                              className="p-2 text-red-500 hover:bg-[#404040] rounded-lg transition-colors duration-200"
+                              onClick={() => handleDeleteDirectory(directory)}
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </>
+                        )}
+                        {expandedDirectory === directory.directory_id ? (
+                          <ChevronUp size={20} />
+                        ) : (
+                          <ChevronDown size={20} />
+                        )}
+                      </div>
+                    </button>
 
-            <div className="overflow-x-auto">
-              <div className="h-[600px] py-4 rounded-lg bg-gray-500 px-10 overflow-y-auto">
-                {renderDirectoryList()}
+                    {expandedDirectory === directory.directory_id && (
+                      <div className="p-4">
+                        <table className="w-full">
+                          <thead className="bg-[#2a2a2a] text-white">
+                            <tr>
+                              <th className="text-left p-3 rounded-l-lg">
+                                Code service
+                              </th>
+                              <th className="text-left p-3">Nom service</th>
+                              <th className="text-right p-3 rounded-r-lg">
+                                Actions
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {directory.services
+                              .split("|")
+                              .map((service) => JSON.parse(service))
+                              .map(
+                                (service) =>
+                                  (service.code || service.nom_service) && (
+                                    <tr
+                                      key={service.id}
+                                      className="hover:bg-[#404040] bg-[#2a2a2a] transition duration-200"
+                                    >
+                                      <td className="flex items-center p-4 text-base text-white">
+                                        <Cog className="mr-2 text-[#00B7FF]" />
+                                        {service.code}
+                                      </td>
+                                      <td className="p-4 text-base text-white">
+                                        {service.nom_service}
+                                      </td>
+                                      <td className="text-right p-4">
+                                        <div className="flex justify-end space-x-2">
+                                          <button
+                                            className="p-2 text-[#00B7FF] hover:bg-[#505050] rounded-lg transition-colors duration-200"
+                                            onClick={() => handleEdit(service)}
+                                          >
+                                            <SquarePen size={16} />
+                                          </button>
+                                          <button
+                                            className="p-2 text-red-500 hover:bg-[#505050] rounded-lg transition-colors duration-200"
+                                            onClick={() =>
+                                              handleDelete(service.id)
+                                            }
+                                          >
+                                            <Trash2 size={16} />
+                                          </button>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  )
+                              )}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -471,19 +544,11 @@ export default function ShowDirection() {
 
       {openModal && (
         <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: 100,
-          }}
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
           onClick={() => setOpenModal(false)}
         >
           <div
-            className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg w-full mx-4"
+            className="bg-gray-700 rounded-lg shadow-xl p-6 w-full max-w-lg mx-4"
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -492,9 +557,11 @@ export default function ShowDirection() {
             >
               ✕
             </button>
-            <h3 className="font-bold text-lg">Créer un nouveau</h3>
+            <h3 className="font-bold text-white text-lg">Créer un nouveau</h3>
             <div className="form-control">
-              <label className="label">Que voulez-vous créer ?</label>
+              <label className="label text-white">
+                Que voulez-vous créer ?
+              </label>
               <select
                 value={creationType}
                 onChange={(e) => handleCreationTypeChange(e.target.value)}
@@ -511,7 +578,7 @@ export default function ShowDirection() {
               {creationType === "service" && (
                 <>
                   <div className="form-control">
-                    <label className="label">Répertoires</label>
+                    <label className="label">Directions</label>
                     <Select
                       options={directoryOptions}
                       onChange={(selectedOption) =>
@@ -520,7 +587,7 @@ export default function ShowDirection() {
                           directory_id: selectedOption.value,
                         })
                       }
-                      className="mb-2"
+                      className="mb-2 text-black"
                     />
                   </div>
                   <div className="form-control mt-4">
