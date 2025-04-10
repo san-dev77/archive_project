@@ -191,22 +191,22 @@ const SpeedMenuBtn = () => {
     <div className="relative z-[100]">
       <button
         onClick={() => setIsOpen(true)}
-        className="p-4 rounded-lg bg-gray-800 text-white shadow-lg hover:bg-gray-700 transition-colors"
+        className="p-4 rounded-lg bg-green-600 text-white shadow-lg hover:bg-green-700 transition-colors"
       >
         <Menu size={24} />
       </button>
 
       {isOpen && (
         <div className="fixed ml-64 inset-0 bg-black/50 flex items-center justify-center z-[150]">
-          <div className="bg-gray-800 rounded-lg shadow-xl p-8 w-[90%] max-w-4xl max-h-[90vh] overflow-y-auto relative">
+          <div className="bg-white rounded-xl shadow-xl p-8 w-[90%] max-w-4xl max-h-[90vh] overflow-y-auto relative border border-green-200">
             <button
               onClick={handleClose}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-200 transition-colors"
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
             >
               <X size={24} />
             </button>
 
-            <h2 className="text-2xl font-bold mb-6 text-white">
+            <h2 className="text-2xl font-bold mb-6 text-green-800">
               {selectedSection ? selectedSection : "Menu Rapide"}
             </h2>
 
@@ -216,24 +216,28 @@ const SpeedMenuBtn = () => {
                   <div
                     key={index}
                     onClick={() => handleSectionSelect(item.title)}
-                    className="bg-[#2a2a2a] border border-[#4a4a4a] p-6 rounded-lg shadow-lg hover:shadow-xl transition-all cursor-pointer hover:bg-[#404040]"
+                    className="bg-white border border-green-200 p-6 rounded-xl shadow-md hover:shadow-xl transition-all cursor-pointer hover:bg-green-50"
                   >
                     <div
-                      className={`${item.color} w-12 h-12 rounded-lg flex items-center justify-center text-white mb-4`}
+                      className={`${
+                        item.color === "bg-blue-600"
+                          ? "bg-green-600"
+                          : item.color
+                      } w-12 h-12 rounded-full flex items-center justify-center text-white mb-4`}
                     >
                       {item.icon}
                     </div>
-                    <h3 className="text-xl font-semibold mb-2 text-white">
+                    <h3 className="text-xl font-semibold mb-2 text-green-800">
                       {item.title}
                     </h3>
-                    <p className="text-gray-400">{item.description}</p>
+                    <p className="text-gray-600">{item.description}</p>
                   </div>
                 ))
               ) : (
                 <div className="col-span-2">
                   <button
                     onClick={() => setSelectedSection(null)}
-                    className="mb-4 text-gray-400 hover:text-gray-200 flex items-center gap-2 transition-colors"
+                    className="mb-4 text-green-600 hover:text-green-700 flex items-center gap-2 transition-colors"
                   >
                     ← Retour
                   </button>
@@ -248,17 +252,25 @@ const SpeedMenuBtn = () => {
                           navigate(item.path);
                           handleClose();
                         }}
-                        className="bg-[#2a2a2a] border border-[#4a4a4a] p-6 rounded-lg shadow-lg hover:shadow-xl transition-all cursor-pointer hover:bg-[#404040]"
+                        className="bg-white border border-green-200 p-6 rounded-xl shadow-md hover:shadow-xl transition-all cursor-pointer hover:bg-green-50"
                       >
                         <div
-                          className={`${item.color} w-12 h-12 rounded-lg flex items-center justify-center text-white mb-4`}
+                          className={`${
+                            selectedSection === "Archives"
+                              ? item.color === "bg-blue-600"
+                                ? "bg-green-600"
+                                : item.color === "bg-blue-800"
+                                ? "bg-green-700"
+                                : item.color
+                              : item.color
+                          } w-12 h-12 rounded-full flex items-center justify-center text-white mb-4`}
                         >
                           {item.icon}
                         </div>
-                        <h3 className="text-xl font-semibold mb-2 text-white">
+                        <h3 className="text-xl font-semibold mb-2 text-green-800">
                           {item.title}
                         </h3>
-                        <p className="text-gray-400">{item.description}</p>
+                        <p className="text-gray-600">{item.description}</p>
                       </div>
                     ))}
                   </div>

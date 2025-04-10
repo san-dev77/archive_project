@@ -64,6 +64,7 @@ import useLogoutHandler from "./hooks/useLogoutHandler";
 import usePageViewTracker from "./hooks/usePageViewTracker";
 import Repports from "./pages/Repports";
 import Follow_up from "./pages/Follow_up";
+import Piece_up from "./pages/agent up/pages/Piece_up";
 
 export default function App() {
   const [hasError, setHasError] = useState(false);
@@ -107,6 +108,20 @@ export default function App() {
   useEffect(() => {
     const handleError = (event) => {
       console.error("Erreur détectée:", event);
+      // Forcer l'affichage de la page d'erreur pour toutes les erreurs React DOM
+      if (
+        (event.message && event.message.includes("insertBefore")) ||
+        event.message.includes("Node")
+      ) {
+        setHasError(true);
+        setErrorInfo({
+          message: "Erreur d'affichage de l'interface",
+          details:
+            "Un problème est survenu lors du rendu de la page. Veuillez rafraîchir la page ou vous reconnecter.",
+        });
+        return;
+      }
+
       setHasError(true);
       setErrorInfo({
         message: event.message || "Une erreur inattendue s'est produite",
@@ -160,7 +175,7 @@ export default function App() {
           element={token ? <Show_service /> : <Navigate to="/" />}
         ></Route>
         <Route
-          path="/agents"
+          path="/agents_UI"
           element={token ? <Dashboard /> : <Navigate to="/" />}
         ></Route>
         <Route
@@ -282,7 +297,7 @@ export default function App() {
         ></Route>
         <Route
           path="/piece_up"
-          element={token ? <Service_up /> : <Navigate to="/" />}
+          element={token ? <Piece_up /> : <Navigate to="/" />}
         ></Route>
         <Route
           path="/profil_up"

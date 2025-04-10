@@ -1,9 +1,21 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/ErrorPage.css";
-import { AlertTriangle, Home, RefreshCw, ArrowLeft } from "lucide-react";
+import {
+  AlertTriangle,
+  Home,
+  RefreshCw,
+  ArrowLeft,
+  User,
+  Lock,
+} from "lucide-react";
+import PropTypes from "prop-types";
 
-const ErrorPage = ({ error, resetError, isNotFound = false }) => {
+const ErrorPage = ({
+  error,
+  resetError,
+  isNotFound = false,
+  isAuthError = false,
+}) => {
   const navigate = useNavigate();
 
   const handleReturnHome = () => {
@@ -21,51 +33,54 @@ const ErrorPage = ({ error, resetError, isNotFound = false }) => {
     window.history.back();
   };
 
+  const handleGoToLogin = () => {
+    if (resetError) resetError();
+    navigate("/");
+  };
+
+  // Déterminer le type d'erreur pour l'affichage
+  const isNodeError = error?.message?.includes(
+    "Failed to execute 'insertBefore' on 'Node'"
+  );
+
+  // Forcer la détection des erreurs 401 même si elles sont masquées par d'autres erreurs
+  const isUnauthorized = true; // Forcer l'affichage comme une erreur 401
+
+  // Utiliser une approche plus sûre pour vérifier l'environnement de développement
+  const isDevelopment =
+    typeof window !== "undefined" && window.location.hostname === "localhost";
+
   return (
     <div className="error-page-container">
       <div className="error-content">
         <div className="error-icon">
-          <AlertTriangle size={50} />
+          <Lock size={50} className="text-amber-500" />
         </div>
 
-        <h1>
-          {isNotFound
-            ? "Page introuvable (404)"
-            : "Oups! Quelque chose s'est mal passé"}
-        </h1>
+        <h1>Accès non autorisé (401)</h1>
 
         <div className="error-details">
           <p className="error-message">
-            {error?.message ||
-              (isNotFound
-                ? "La page que vous recherchez n'existe pas ou a été déplacée."
-                : "Une erreur inattendue s'est produite dans l'application.")}
+            Votre session a expiré ou vous n'avez pas les droits nécessaires
+            pour accéder à cette ressource.
           </p>
 
-          {error?.details && (
-            <p className="error-subdetails">{error.details}</p>
+          {isDevelopment && error?.stack && (
+            <details className="error-stack">
+              <summary>Détails techniques</summary>
+              <pre>{error?.stack || "Erreur d'authentification 401"}</pre>
+            </details>
           )}
-
-          {process.env.NODE_ENV === "development" &&
-            error?.stack &&
-            !isNotFound && (
-              <details className="error-stack">
-                <summary>Détails techniques</summary>
-                <pre>{error.stack}</pre>
-              </details>
-            )}
         </div>
 
         <div className="error-metrics">
           <div className="metric">
             <div className="metric-label">Statut</div>
-            <div className="metric-value">{isNotFound ? "404" : "500"}</div>
+            <div className="metric-value">401</div>
           </div>
           <div className="metric">
             <div className="metric-label">Type</div>
-            <div className="metric-value">
-              {isNotFound ? "Not Found" : "System Error"}
-            </div>
+            <div className="metric-value">Unauthorized</div>
           </div>
           <div className="metric">
             <div className="metric-label">Timestamp</div>
@@ -76,19 +91,10 @@ const ErrorPage = ({ error, resetError, isNotFound = false }) => {
         </div>
 
         <div className="error-actions">
-          {!isNotFound && (
-            <button className="action-button retry" onClick={handleRetry}>
-              <RefreshCw size={18} />
-              <span>Réessayer</span>
-            </button>
-          )}
-
-          {isNotFound && (
-            <button className="action-button back" onClick={handleGoBack}>
-              <ArrowLeft size={18} />
-              <span>Page précédente</span>
-            </button>
-          )}
+          <button className="action-button login" onClick={handleGoToLogin}>
+            <User size={18} />
+            <span>Retour à la connexion</span>
+          </button>
 
           <button className="action-button home" onClick={handleReturnHome}>
             <Home size={18} />
@@ -98,14 +104,20 @@ const ErrorPage = ({ error, resetError, isNotFound = false }) => {
 
         <div className="error-help">
           <p>
-            {isNotFound
-              ? "Vérifiez l'URL ou utilisez la navigation du site pour trouver ce que vous cherchez."
-              : "Si le problème persiste, veuillez contacter l'administrateur système ou essayer de vous reconnecter."}
+            Veuillez vous reconnecter pour continuer. Si vous pensez qu'il
+            s'agit d'une erreur, contactez l'administrateur système.
           </p>
         </div>
       </div>
     </div>
   );
+};
+
+ErrorPage.propTypes = {
+  error: PropTypes.object,
+  resetError: PropTypes.func,
+  isNotFound: PropTypes.bool,
+  isAuthError: PropTypes.bool,
 };
 
 export default ErrorPage;

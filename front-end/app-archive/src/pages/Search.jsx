@@ -287,23 +287,23 @@ export default function Search() {
   };
 
   return (
-    <div className="flex w-full min-h-screen bg-gray-300">
+    <div className="flex w-full min-h-screen bg-slate-100">
       {loading && <Loader_component />}
       <SideBar isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar />
         <div className="w-full px-4 py-8 mt-20">
-          <div className="bg-gray-800 rounded-lg shadow-lg p-6">
+          <div className="bg-white rounded-lg shadow-lg p-6">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold text-white flex items-center">
-                <CircleHelp className="h-8 w-8 text-[#00B7FF] mr-2" />
+              <h1 className="text-2xl font-bold text-gray-800 flex items-center">
+                <CircleHelp className="h-8 w-8 text-green-600 mr-2" />
                 Que recherchez-vous ?
               </h1>
 
               <div className="flex gap-2">
                 {hasConfig && (
                   <button
-                    className="bg-gray-600 border-2 shadow-2xl border-white text-white p-2 rounded-lg hover:bg-blue-400 transition flex items-center gap-2"
+                    className="bg-green-50 border-2 shadow-md border-green-200 text-green-700 p-2 rounded-lg hover:bg-green-100 transition flex items-center gap-2"
                     onClick={() => setShowConfigModal(true)}
                   >
                     <DatabaseZap size={20} />
@@ -311,7 +311,7 @@ export default function Search() {
                   </button>
                 )}
                 <button
-                  className="bg-[#2a2a2a] hover:bg-[#404040] text-white p-2 rounded-lg shadow-lg transition flex items-center gap-2"
+                  className="bg-gray-50 hover:bg-gray-100 text-gray-700 p-2 rounded-lg shadow-md transition flex items-center gap-2"
                   onClick={() => navigate("/search-config")}
                 >
                   <Settings size={20} />
@@ -320,16 +320,16 @@ export default function Search() {
               </div>
             </div>
 
-            <div className="bg-[#3a3a3a] rounded-lg p-4">
+            <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
               <div className="space-y-4">
                 {/* Service Selection */}
                 <div className="mb-4 w-full">
-                  <label className="flex font-bold items-start justify-start gap-2 mb-2 text-white">
-                    <Building2 size={20} className="text-[#00B7FF]" />
+                  <label className="flex font-bold items-start justify-start gap-2 mb-2 text-gray-700">
+                    <Building2 size={20} className="text-green-600" />
                     Sélectionnez un service:
                   </label>
                   <select
-                    className="w-full px-4 py-2 bg-[#2a2a2a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                    className="w-full px-4 py-2 bg-white text-gray-700 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     onChange={(e) => {
                       const service = servicesData
                         .flatMap((directory) => directory.services)
@@ -359,12 +359,12 @@ export default function Search() {
                 {/* Document Type Selection */}
                 {selectedService && (
                   <div className="mb-4 w-full">
-                    <label className="flex font-bold items-start justify-start gap-2 mb-2 text-white">
-                      <Layers2 size={20} className="text-[#00B7FF]" />
+                    <label className="flex font-bold items-start justify-start gap-2 mb-2 text-gray-700">
+                      <Layers2 size={20} className="text-green-600" />
                       Sélectionnez un type de document:
                     </label>
                     <select
-                      className="w-full px-4 py-2 bg-[#2a2a2a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                      className="w-full px-4 py-2 bg-white text-gray-700 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       onChange={(e) =>
                         setSelectedDocumentType(
                           documentTypes.find(
@@ -387,11 +387,11 @@ export default function Search() {
                 {/* Metadata Selection */}
                 {selectedDocumentType && (
                   <div className="mb-4 w-full">
-                    <label className="flex font-bold items-start justify-start gap-2 text-2x mb-2 text-white">
-                      <DatabaseZap size={25} className="text-[#00B7FF]" />
+                    <label className="flex font-bold items-start justify-start gap-2 text-2x mb-2 text-gray-700">
+                      <DatabaseZap size={25} className="text-green-600" />
                       Sélectionnez un ou plusieurs critères de recherche:
                     </label>
-                    <div className="grid bg-[#2a2a2a] p-4 rounded-lg grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="grid bg-white p-4 rounded-lg border border-slate-200 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                       {metadata &&
                         metadata.map((meta) => (
                           <div
@@ -402,7 +402,7 @@ export default function Search() {
                               <input
                                 type="checkbox"
                                 id={`meta-${meta.id}`}
-                                className="mr-2 checkbox checkbox-info"
+                                className="mr-2 checkbox checkbox-success"
                                 onChange={(e) =>
                                   handleMetadataChange(
                                     meta.id,
@@ -412,7 +412,7 @@ export default function Search() {
                               />
                               <label
                                 htmlFor={`meta-${meta.id}`}
-                                className="font-bold text-white cursor-pointer"
+                                className="font-bold text-gray-700 cursor-pointer"
                               >
                                 {meta.name}
                               </label>
@@ -421,7 +421,7 @@ export default function Search() {
                               <input
                                 type="text"
                                 name={`meta-${meta.id}`}
-                                className="w-full px-3 py-2 mt-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                                className="w-full px-3 py-2 mt-2 bg-white text-gray-700 border border-slate-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                 placeholder={`Entrez la valeur pour ${meta.name}`}
                                 value={metadataValues[meta.id]}
                                 onChange={(e) =>
@@ -437,7 +437,7 @@ export default function Search() {
 
                 {/* Search Button */}
                 <button
-                  className="w-full px-4 py-2 text-white bg-[#00B7FF] rounded-lg hover:bg-[#0096FF] focus:outline-none focus:ring-2 focus:ring-[#00B7FF] flex items-center justify-center gap-2"
+                  className="w-full px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 flex items-center justify-center gap-2"
                   onClick={handleSearch}
                 >
                   <span>Lancer la recherche</span>
@@ -448,35 +448,35 @@ export default function Search() {
                 {searchPerformed && (
                   <div className="mt-8">
                     {groupedResults.length > 0 ? (
-                      <div className="bg-[#2a2a2a] p-6 rounded-xl shadow-lg">
+                      <div className="bg-white p-6 rounded-xl shadow-lg border border-slate-200">
                         <div className="flex items-center gap-4 mb-6">
-                          <SearchCheck size={24} className="text-[#00B7FF]" />
-                          <h4 className="text-2xl font-bold text-white">
+                          <SearchCheck size={24} className="text-green-600" />
+                          <h4 className="text-2xl font-bold text-gray-800">
                             Résultats de la recherche
                           </h4>
                         </div>
                         <div className="overflow-x-auto">
                           <table className="w-full border-collapse rounded-lg overflow-hidden">
                             <thead>
-                              <tr className="bg-[#3a3a3a]">
+                              <tr className="bg-green-50">
                                 {columnNames.map((column) => (
                                   <th
                                     key={column.id}
-                                    className="px-6 py-4 text-left text-white font-semibold text-sm uppercase tracking-wider"
+                                    className="px-6 py-4 text-left text-gray-700 font-semibold text-sm uppercase tracking-wider"
                                   >
                                     {column.meta_key}
                                   </th>
                                 ))}
-                                <th className="px-6 py-4 text-left text-white font-semibold text-sm uppercase tracking-wider">
+                                <th className="px-6 py-4 text-left text-gray-700 font-semibold text-sm uppercase tracking-wider">
                                   Fichiers chargés
                                 </th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-[#3a3a3a]">
+                            <tbody className="divide-y divide-slate-200">
                               {groupedResults.map((result, index) => (
                                 <tr
                                   key={index}
-                                  className="bg-[#2a2a2a] hover:bg-[#333333] transition-colors"
+                                  className="bg-white hover:bg-green-50 transition-colors"
                                 >
                                   {columnNames.map((column) => {
                                     const value =
@@ -484,15 +484,15 @@ export default function Search() {
                                     return (
                                       <td
                                         key={column.id}
-                                        className="px-6 py-4 bg-gray-100 text-gray-900"
+                                        className="px-6 py-4 text-gray-700"
                                       >
                                         {value}
                                       </td>
                                     );
                                   })}
-                                  <td className="px-6 bg-gray-100 py-4">
+                                  <td className="px-6 py-4">
                                     <button
-                                      className="px-4 py-2 bg-[#00B7FF] text-white rounded-lg hover:bg-[#0096FF] transition-colors flex items-center gap-2"
+                                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2"
                                       onClick={() => setShowFilesModal(true)}
                                     >
                                       <FileUp size={16} />
@@ -506,12 +506,12 @@ export default function Search() {
                         </div>
                       </div>
                     ) : (
-                      <div className="flex flex-col items-center justify-center p-12 bg-[#2a2a2a] rounded-xl shadow-lg">
+                      <div className="flex flex-col items-center justify-center p-12 bg-white rounded-xl shadow-lg border border-slate-200">
                         <FolderX size={80} className="text-red-500 mb-4" />
-                        <h4 className="text-2xl font-bold text-white mb-2">
+                        <h4 className="text-2xl font-bold text-gray-800 mb-2">
                           Aucun résultat trouvé
                         </h4>
-                        <p className="text-gray-400 text-center">
+                        <p className="text-gray-600 text-center">
                           Essayez de modifier vos critères de recherche ou
                           vérifiez les informations saisies.
                         </p>
@@ -525,19 +525,19 @@ export default function Search() {
         </div>
       </div>
       {showConfigModal && configDetails && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-8 rounded-xl max-w-3xl w-full mx-4 shadow-2xl border border-gray-700">
+        <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white p-8 rounded-xl max-w-3xl w-full mx-4 shadow-xl border border-slate-200">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-3xl text-white font-bold flex items-center gap-3">
-                <Building2 className="text-[#00B7FF]" size={32} />
+              <h3 className="text-3xl text-gray-800 font-bold flex items-center gap-3">
+                <Building2 className="text-green-600" size={32} />
                 Configuration : {selectedDocumentType.name}
               </h3>
               <button
-                className="p-2 hover:bg-gray-700 rounded-full transition-colors"
+                className="p-2 hover:bg-slate-100 rounded-full transition-colors"
                 onClick={() => setShowConfigModal(false)}
               >
                 <svg
-                  className="w-6 h-6 text-gray-400"
+                  className="w-6 h-6 text-gray-500"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -553,27 +553,27 @@ export default function Search() {
             </div>
 
             <div className="space-y-6">
-              <div className="bg-gray-700/50 p-6 rounded-xl shadow-lg border border-gray-600">
+              <div className="bg-green-50 p-6 rounded-xl shadow-md border border-green-100">
                 <div className="flex items-center gap-3 mb-4">
-                  <DatabaseZap className="text-[#00B7FF]" size={24} />
-                  <h4 className="text-xl font-semibold text-white">
+                  <DatabaseZap className="text-green-600" size={24} />
+                  <h4 className="text-xl font-semibold text-gray-800">
                     Critères de Recherche
                   </h4>
                 </div>
 
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
-                    <CircleHelp className="text-gray-400 mt-1" size={20} />
-                    <p className="text-gray-300">
+                    <CircleHelp className="text-gray-500 mt-1" size={20} />
+                    <p className="text-gray-600">
                       Les critères suivants sont configurés pour optimiser vos
                       recherches et l'extraction des données :
                     </p>
                   </div>
 
-                  <div className="bg-gray-800/50 rounded-lg p-4 space-y-3">
+                  <div className="bg-white rounded-lg p-4 space-y-3 border border-green-100">
                     <div className="flex items-center gap-2">
-                      <SearchCheck className="text-[#00B7FF]" size={20} />
-                      <span className="text-gray-200 font-medium">
+                      <SearchCheck className="text-green-600" size={20} />
+                      <span className="text-gray-700 font-medium">
                         Champs de recherche configurés :
                       </span>
                     </div>
@@ -581,7 +581,7 @@ export default function Search() {
                       {config_meta.map((meta, index) => (
                         <div
                           key={index}
-                          className="bg-gray-700 px-4 py-2 rounded-lg text-gray-300 flex items-center gap-2"
+                          className="bg-green-50 px-4 py-2 rounded-lg text-gray-700 flex items-center gap-2 border border-green-100"
                         >
                           <Layers2 size={16} />
                           {meta}
@@ -610,24 +610,24 @@ export default function Search() {
           onClick={() => setShowFilesModal(false)}
         >
           <div
-            className="bg-gray-900 overflow-y-auto max-h-[80vh] p-6 rounded-xl w-full max-w-4xl mx-4 shadow-2xl"
+            className="bg-white overflow-y-auto max-h-[80vh] p-6 rounded-xl w-full max-w-4xl mx-4 shadow-xl border border-slate-200"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-2xl text-white font-bold flex items-center gap-3">
-                <FileUp className="text-[#00B7FF]" />
+              <h3 className="text-2xl text-gray-800 font-bold flex items-center gap-3">
+                <FileUp className="text-green-600" />
                 Documents associés
               </h3>
               <button
                 onClick={() => setShowFilesModal(false)}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-500 hover:text-gray-700 transition-colors"
               >
                 <X size={24} />
               </button>
             </div>
 
             {!files.pieces || Object.keys(files.pieces).length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+              <div className="flex flex-col items-center justify-center py-12 text-gray-500">
                 <FolderX size={48} className="mb-4" />
                 <p className="text-lg">
                   Aucun fichier disponible pour ce document
@@ -638,10 +638,10 @@ export default function Search() {
                 {Object.entries(files.pieces).map(([key, fileArray]) => (
                   <div
                     key={key}
-                    className="bg-gray-800 rounded-lg overflow-hidden"
+                    className="bg-white rounded-lg overflow-hidden border border-slate-200"
                   >
-                    <h4 className="font-medium flex items-center gap-2 text-white p-3 bg-gray-700">
-                      <Layers2 className="text-[#00B7FF]" size={20} />
+                    <h4 className="font-medium flex items-center gap-2 text-gray-700 p-3 bg-green-50 border-b border-green-100">
+                      <Layers2 className="text-green-600" size={20} />
                       {key}
                     </h4>
 
@@ -649,7 +649,7 @@ export default function Search() {
                       {fileArray.map((fileName, index) => (
                         <div
                           key={index}
-                          className="bg-gray-700/50 rounded-lg overflow-hidden"
+                          className="bg-green-50 rounded-lg overflow-hidden border border-green-100"
                         >
                           <object
                             data={`http://localhost:3000/uploads/pieces/${fileName}`}
@@ -659,12 +659,12 @@ export default function Search() {
                             className="border-0"
                           >
                             <div className="p-4 text-center">
-                              <p className="text-gray-300 mb-2">
+                              <p className="text-gray-600 mb-2">
                                 Aperçu PDF non disponible
                               </p>
                               <a
                                 href={`http://localhost:3000/uploads/pieces/${fileName}`}
-                                className="text-[#00B7FF] hover:underline inline-flex items-center gap-2"
+                                className="text-green-600 hover:underline inline-flex items-center gap-2"
                                 target="_blank"
                                 rel="noopener noreferrer"
                               >

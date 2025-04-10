@@ -1,8 +1,6 @@
-import React from "react";
 import SideBar_UI from "./components_UI/Sidebar_UI";
 import TopBar_UI from "./components_UI/Top_bar_UI";
 import {
-  Wifi,
   Activity,
   Users,
   FolderOpen,
@@ -22,21 +20,50 @@ export default function Home() {
   const service = localStorage.getItem("service");
 
   return (
-    <div className="flex min-h-screen bg-gray-300">
+    <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <SideBar_UI isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar_UI />
         <div className="container w-full mx-auto px-4 py-8 mt-20">
-          <div className="bg-[#232b3e] rounded-xl shadow-xl p-6">
+          <div className="bg-white rounded-xl shadow-xl p-6 border border-green-100">
             {/* Welcome Card */}
-            <div className="bg-gradient-to-r from-[#2e374a] to-[#2c3242] rounded-xl p-6 mb-8 border border-[#3d4659]">
-              <h1 className="text-2xl font-semibold text-gray-100">
-                Tableau de bord agent
-              </h1>
-              <p className="text-gray-400 flex items-center gap-2 mt-2">
-                <Shield size={18} className="text-[#00B7FF]" />
-                {role} • {service} • {firstName} {lastName}
-              </p>
+            <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl p-6 mb-8 border border-green-200">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h1 className="text-2xl font-semibold text-green-800">
+                    Tableau de bord agent
+                  </h1>
+                  <div className="mt-4 flex items-center">
+                    <Shield size={22} className="text-green-600 mr-3" />
+                    <div>
+                      <span className="text-xl font-bold text-gray-800">
+                        {firstName} {lastName}
+                      </span>
+                      <div className="flex items-center mt-1">
+                        <span className="text-green-600 font-medium">
+                          {role}
+                        </span>
+                        <span className="mx-2 text-gray-500">•</span>
+                        <span className="text-gray-600">{service}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-4 md:mt-0 bg-white px-4 py-3 rounded-lg border border-green-200 shadow-md">
+                  <p className="text-gray-500 text-sm">Connecté en tant que</p>
+                  <p className="text-xl font-bold text-gray-800">
+                    {firstName} {lastName}
+                  </p>
+                  <div className="flex items-center mt-1">
+                    <span className="px-2 py-1 bg-green-100 rounded-md text-xs font-medium text-green-700">
+                      {role}
+                    </span>
+                    <span className="ml-2 text-xs text-gray-500">
+                      {service}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Quick Stats Grid */}
@@ -46,7 +73,7 @@ export default function Home() {
                 title="Utilisateurs actifs"
                 value="24"
                 trend="+12% cette semaine"
-                trendColor="text-blue-400"
+                trendColor="text-green-600"
                 detail="Stable"
               />
               <QuickStatCard
@@ -54,7 +81,7 @@ export default function Home() {
                 title="Dossiers en cours"
                 value="156"
                 trend="32 nouveaux"
-                trendColor="text-emerald-400"
+                trendColor="text-green-600"
                 detail="En progression"
               />
               <QuickStatCard
@@ -62,7 +89,7 @@ export default function Home() {
                 title="Temps moyen"
                 value="2.4h"
                 trend="-30min vs hier"
-                trendColor="text-emerald-400"
+                trendColor="text-green-600"
                 detail="Efficacité"
               />
               <QuickStatCard
@@ -70,7 +97,7 @@ export default function Home() {
                 title="Notifications"
                 value="12"
                 trend="3 non lues"
-                trendColor="text-amber-400"
+                trendColor="text-amber-500"
                 detail="À consulter"
               />
             </div>
@@ -78,8 +105,8 @@ export default function Home() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Actions rapides */}
               <div className="lg:col-span-2 space-y-6">
-                <div className="bg-[#2a324a] rounded-xl p-6">
-                  <h2 className="text-lg font-semibold text-gray-100 mb-4">
+                <div className="bg-white rounded-xl p-6 border border-green-200 shadow-md">
+                  <h2 className="text-lg font-semibold text-green-800 mb-4">
                     Actions rapides
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -109,8 +136,8 @@ export default function Home() {
 
               {/* Notifications récentes */}
               <div className="space-y-6">
-                <div className="bg-[#2a324a] rounded-xl p-6">
-                  <h2 className="text-lg font-semibold text-gray-100 mb-4">
+                <div className="bg-white rounded-xl p-6 border border-green-200 shadow-md">
+                  <h2 className="text-lg font-semibold text-green-800 mb-4">
                     Notifications récentes
                   </h2>
                   <div className="space-y-3">
@@ -142,14 +169,14 @@ export default function Home() {
 
 // Composants auxiliaires
 const QuickStatCard = ({ icon, title, value, trend, trendColor, detail }) => (
-  <div className="bg-[#2a324a] rounded-xl p-6 border border-[#3d4659]">
+  <div className="bg-white rounded-xl p-6 border border-green-200 shadow-md">
     <div className="flex items-center justify-between">
-      <div className="p-2 bg-[#3d4659] rounded-lg">
-        <div className="text-gray-100">{icon}</div>
+      <div className="p-2 bg-green-100 rounded-lg">
+        <div className="text-green-600">{icon}</div>
       </div>
     </div>
-    <h3 className="text-gray-400 mt-4">{title}</h3>
-    <p className="text-2xl font-bold text-gray-100 mt-2">{value}</p>
+    <h3 className="text-gray-500 mt-4">{title}</h3>
+    <p className="text-2xl font-bold text-gray-800 mt-2">{value}</p>
     <div className="flex justify-between mt-2">
       <p className={`text-sm ${trendColor}`}>{trend}</p>
       <p className="text-sm text-gray-500">{detail}</p>
@@ -158,30 +185,38 @@ const QuickStatCard = ({ icon, title, value, trend, trendColor, detail }) => (
 );
 
 const ActionCard = ({ icon, title, description }) => (
-  <div className="flex items-center justify-between p-3 bg-[#1f2537] rounded-lg hover:bg-[#283045] transition-all duration-300 cursor-pointer group">
+  <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg hover:bg-green-100 transition-all duration-300 cursor-pointer group border border-green-100">
     <div className="flex items-center gap-3">
-      <div className="p-2 bg-[#3d4659] rounded-lg text-gray-100">{icon}</div>
+      <div className="p-2 bg-green-200 rounded-lg text-green-600">{icon}</div>
       <div>
-        <h3 className="text-gray-100 font-medium">{title}</h3>
-        <p className="text-sm text-gray-400">{description}</p>
+        <h3 className="text-gray-800 font-medium">{title}</h3>
+        <p className="text-sm text-gray-500">{description}</p>
       </div>
     </div>
-    <ArrowRight className="text-gray-500 group-hover:text-[#00B7FF] transition-colors" />
+    <ArrowRight className="text-gray-400 group-hover:text-green-600 transition-colors" />
   </div>
 );
 
 const NotificationItem = ({ title, time, priority }) => {
   const priorityColors = {
-    high: "text-rose-400",
-    medium: "text-amber-400",
-    low: "text-emerald-400",
+    high: "bg-red-100 border-red-300 text-red-800",
+    medium: "bg-amber-100 border-amber-300 text-amber-800",
+    low: "bg-green-100 border-green-300 text-green-800",
+  };
+
+  const dotColors = {
+    high: "bg-red-500",
+    medium: "bg-amber-500",
+    low: "bg-green-500",
   };
 
   return (
-    <div className="flex items-center gap-3 p-3 bg-[#1f2537] rounded-lg">
-      <div className={`w-2 h-2 rounded-full ${priorityColors[priority]}`} />
+    <div
+      className={`flex items-center gap-3 p-3 ${priorityColors[priority]} rounded-lg border`}
+    >
+      <div className={`w-2 h-2 rounded-full ${dotColors[priority]}`} />
       <div className="flex-1">
-        <h4 className="text-gray-300 text-sm">{title}</h4>
+        <h4 className="text-gray-800 text-sm font-medium">{title}</h4>
         <p className="text-gray-500 text-xs">{time}</p>
       </div>
     </div>

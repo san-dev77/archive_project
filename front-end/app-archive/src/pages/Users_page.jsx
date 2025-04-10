@@ -311,34 +311,31 @@ const AgentsPage = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-200 to-gray-300">
+    <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <SideBar isVisible={true} className="w-64" />
       <div className="flex-1 w-[70%] flex flex-col">
         <TopBar position="fixed" title="Agents" />
 
-        {/* Nouvelle carte d'information */}
-
-        <div className="container h-full w-full mx-auto  bg-white/90 backdrop-blur-sm rounded-xl shadow-2xl flex flex-col">
+        <div className="container h-full w-full mx-auto bg-white w-full rounded-xl shadow-xl p-6 border border-green-100 flex flex-col">
           <div className="mx-auto w-[95%] mt-24 mb-6">
-            <div className="bg-gradient-to-r from-gray-800 to-gray-900 rounded-2xl shadow-2xl p-6 border border-gray-700 relative ">
+            <div className="bg-gradient-to-r from-green-600 to-emerald-700 rounded-2xl shadow-2xl p-6 border border-green-400/30 relative">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
-                    <Settings2Icon className="text-green-500" />
+                    <Settings2Icon className="text-green-300" />
                     Attribution des Actions
                   </h2>
-                  <p className="text-gray-300 mb-4">
+                  <p className="text-green-100 mb-4">
                     Pour permettre aux agents d&apos;interagir avec le système,
                     vous devez leur attribuer des actions spécifiques. Chaque
                     agent peut avoir différents niveaux d&apos;accès et de
                     permissions selon son rôle.
                   </p>
                   <div className="flex gap-4 items-center">
-                    <div className="flex items-center gap-2 bg-gray-700/50 px-4 py-2 rounded-lg">
-                      <span className="text-yellow-500">⚠️</span>
-                      <span className="text-gray-300 text-sm">
-                        <span className="text-blue-800 p-1 rounded-full bg-white font-bold text-2x1">
-                          {" "}
+                    <div className="flex items-center gap-2 bg-green-700/50 px-4 py-2 rounded-lg">
+                      <span className="text-yellow-300">⚠️</span>
+                      <span className="text-green-100 text-sm">
+                        <span className="text-green-800 p-1 rounded-full bg-white font-bold text-2x1">
                           {AgentNoProfil.count}
                         </span>{" "}
                         agents nécessitent un profil avec au moins une
@@ -347,7 +344,7 @@ const AgentsPage = () => {
                     </div>
                     <button
                       onClick={() => (window.location.href = "/profil")}
-                      className="btn bg-gradient-to-r from-blue-500 to-blue-800 hover:from-blue-500 hover:to-blue-700 text-gray-100 font-semibold px-6 py-2 rounded-lg transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg flex items-center gap-2"
+                      className="btn bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg flex items-center gap-2"
                     >
                       <ShieldCheck className="w-5 h-5" />
                       Configurer les profils
@@ -356,11 +353,11 @@ const AgentsPage = () => {
                 </div>
                 <div className="hidden lg:block">
                   <div className="w-48 h-48 relative">
-                    <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-blue-600/20 rounded-full animate-pulse"></div>
-                    <div className="absolute inset-4 bg-gradient-to-tr from-blue-500/40 to-blue-600/40 rounded-full animate-pulse delay-75"></div>
-                    <div className="absolute inset-8 bg-gradient-to-tr from-blue-500/60 to-blue-600/60 rounded-full animate-pulse delay-150"></div>
+                    <div className="absolute inset-0 bg-gradient-to-tr from-green-500/20 to-emerald-600/20 rounded-full animate-pulse"></div>
+                    <div className="absolute inset-4 bg-gradient-to-tr from-green-500/40 to-emerald-600/40 rounded-full animate-pulse delay-75"></div>
+                    <div className="absolute inset-8 bg-gradient-to-tr from-green-500/60 to-emerald-600/60 rounded-full animate-pulse delay-150"></div>
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <Settings2Icon className="w-16 h-16 text-blue-100" />
+                      <Settings2Icon className="w-16 h-16 text-white" />
                     </div>
                   </div>
                 </div>
@@ -368,12 +365,12 @@ const AgentsPage = () => {
             </div>
           </div>
 
-          <h4 className="text-2xl w-full font-extrabold mt-2 text-gray-800 mb-4 flex items-center p-6 border-b border-gray-400">
-            <LayoutList size="32px" className="mr-2 text-indigo-600" />
+          <h4 className="text-2xl w-full font-extrabold mt-2 text-green-800 mb-4 flex items-center p-6 border-b border-green-100">
+            <LayoutList size="32px" className="mr-2 text-green-600" />
             Gestion des Agents
           </h4>
 
-          <div className="bg-white/50 h-full w-full rounded-lg shadow-md p-6 mb-6">
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 shadow-inner w-full mb-6">
             <div className="flex gap-4 mb-6">
               <div className="relative flex-1">
                 <input
@@ -381,21 +378,21 @@ const AgentsPage = () => {
                   placeholder="Rechercher un agent..."
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
-                  className="input input-bordered w-full pl-10 bg-white/80 text-gray-800 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition duration-300"
+                  className="w-full px-4 py-2.5 pl-10 bg-white text-gray-800 border border-green-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm transition-all duration-200"
                 />
                 <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
                   🔍
                 </span>
               </div>
               <button
-                className="btn btn-primary bg-blue-700 hover:bg-white hover:text-black text-white transition duration-300 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-5 py-2.5 rounded-lg flex items-center transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1"
                 onClick={handleOpenModal}
               >
                 <Plus size={20} className="mr-2" />
                 Nouveau
               </button>
               <button
-                className="btn btn-secondary bg-blue-400 hover:bg-gray-800 text-white transition duration-300 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 text-white px-5 py-2.5 rounded-lg flex items-center transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1"
                 onClick={handleOpenRoleOptionsModal}
               >
                 <Plus size={20} className="mr-2" />
@@ -403,15 +400,15 @@ const AgentsPage = () => {
               </button>
             </div>
 
-            <div className="grid   grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredAgents.map((agent, index) => (
                 <div
                   key={agent.id}
-                  className="bg-gradient-to-br from-gray-800 to-gray-900 border-2 border-gray-700 text-white rounded-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 p-6 w-full min-w-[320px]"
+                  className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-green-500 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                 >
                   <div className="flex items-center gap-5 justify-between mb-4">
                     <div className="flex items-center gap-4">
-                      <div className="avatar bg-gradient-to-r from-blue-500 to-blue-800 p-2 rounded-xl">
+                      <div className="avatar bg-gradient-to-r from-green-400 to-teal-500 p-2 rounded-xl">
                         <div className="mask mask-squircle h-16 w-16">
                           <img
                             src={user_icone}
@@ -421,10 +418,10 @@ const AgentsPage = () => {
                         </div>
                       </div>
                       <div>
-                        <h3 className="font-bold text-[16px] ">
+                        <h3 className="font-bold text-[16px] text-gray-800">
                           {agent.prenom}
                         </h3>
-                        <p className="text-gray-300">{agent.nom}</p>
+                        <p className="text-gray-600">{agent.nom}</p>
                       </div>
                     </div>
                     {index !== 0 && (
@@ -432,17 +429,17 @@ const AgentsPage = () => {
                         <Tooltip title="Modifier">
                           <button
                             onClick={() => handleEdit(agent)}
-                            className="btn btn-circle bg-blue-600 hover:bg-indigo-700 transition duration-300 shadow-lg"
+                            className="p-2 bg-green-100 text-green-700 hover:bg-green-200 rounded-lg transition-colors duration-200"
                           >
-                            <SquarePenIcon className="text-white" />
+                            <SquarePenIcon className="h-5 w-5" />
                           </button>
                         </Tooltip>
                         <Tooltip title="Supprimer">
                           <button
                             onClick={() => handleDelete(agent.id)}
-                            className="btn btn-circle bg-red-600 hover:bg-red-700 transition duration-300 shadow-lg"
+                            className="p-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors duration-200"
                           >
-                            <Trash2Icon className="text-white" />
+                            <Trash2Icon className="h-5 w-5" />
                           </button>
                         </Tooltip>
                       </div>
@@ -451,67 +448,67 @@ const AgentsPage = () => {
 
                   <div className="space-y-3">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-gray-400">
+                      <span className="font-semibold text-gray-500">
                         Fonction:
                       </span>
-                      <span className="bg-blue-700 px-3 py-1 rounded-full text-sm">
+                      <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
                         {agent.nom_role}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-gray-400">
+                      <span className="font-semibold text-gray-500">
                         Profil:
                       </span>
-                      <span className="bg-blue-700 px-3 py-1 rounded-full text-sm">
-                        {agent.nom_profil}
+                      <span className="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-sm">
+                        {agent.nom_profil || "Non défini"}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-gray-400">
+                      <span className="font-semibold text-gray-500">
                         Service:
                       </span>
-                      <span className="bg-blue-700 px-3 py-1 rounded-full text-[10px]">
-                        {agent.nom_service}
+                      <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                        {agent.nom_service || "Non affecté"}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-gray-400">
+                      <span className="font-semibold text-gray-500">
                         Téléphone:
                       </span>
-                      <span>{agent.tel_number}</span>
+                      <span className="text-gray-700">{agent.tel_number}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-gray-400">
+                      <span className="font-semibold text-gray-500">
                         Email:
                       </span>
-                      <span className="text-blue-400">{agent.mail}</span>
+                      <span className="text-blue-600">{agent.mail}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-gray-400">
+                      <span className="font-semibold text-gray-500">
                         Identifiant:
                       </span>
-                      <span className="bg-blue-700 px-2 py-1 rounded-lg">
+                      <span className="bg-gray-100 px-2 py-1 rounded-lg text-gray-800">
                         {agent.login}
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-gray-400">
+                      <span className="font-semibold text-gray-500">
                         Mot de passe:
                       </span>
                       <div className="flex items-center gap-1">
-                        <span className="font-mono">
+                        <span className="font-mono text-gray-700">
                           {passwordVisibility[agent.id]
                             ? agent.password
                             : "••••••••"}
                         </span>
                         <button
                           onClick={() => togglePasswordVisibility(agent.id)}
-                          className="btn btn-ghost btn-xs hover:bg-gray-700"
+                          className="p-1 hover:bg-gray-100 rounded-full"
                         >
                           {passwordVisibility[agent.id] ? (
-                            <VisibilityOff className="text-gray-300" />
+                            <VisibilityOff className="text-gray-500 h-4 w-4" />
                           ) : (
-                            <Visibility className="text-gray-300" />
+                            <Visibility className="text-gray-500 h-4 w-4" />
                           )}
                         </button>
                       </div>
@@ -522,29 +519,30 @@ const AgentsPage = () => {
             </div>
           </div>
 
-          {/* Modal for creating agents */}
           <div
-            className={`fixed inset-0 mt-20 z-[99999] overflow-y-auto ${
+            className={`fixed inset-0 z-[99999] overflow-y-auto ${
               openModal ? "visible" : "invisible"
             }`}
           >
             <div
-              className="fixed inset-0 bg-black/50 backdrop-blur-sm"
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm"
               onClick={handleCloseModal}
             ></div>
             <div className="relative min-h-screen flex items-center justify-center p-4">
               <div className="relative z-50 w-full max-w-2xl bg-white rounded-xl shadow-2xl">
-                <div className="p-6 max-h-[90vh] overflow-y-auto text-black">
+                <div className="sticky top-0 bg-white p-6 pb-2 z-10 flex justify-between items-center border-b border-green-100">
+                  <h2 className="text-2xl font-bold text-green-800">
+                    Créer un nouvel agent
+                  </h2>
                   <button
                     onClick={handleCloseModal}
-                    className="absolute p-2 rounded-full bg-gray-900 text-white  right-4 top-4  hover:bg-gray-100 hover:text-black  transition-colors"
+                    className="text-gray-500 hover:text-gray-700 transition-colors rounded-full p-2 hover:bg-gray-100"
                   >
                     ✕
                   </button>
-                  <h2 className="text-2xl text-black font-bold mb-6">
-                    Créer un nouvel agent
-                  </h2>
-                  <form className="overflow-y-auto" onSubmit={handleAddAgent}>
+                </div>
+                <div className="p-6 max-h-[70vh] overflow-y-auto">
+                  <form className="space-y-4" onSubmit={handleAddAgent}>
                     <div className="form-control w-full">
                       <label className="label">Prénom</label>
                       <input
@@ -660,17 +658,17 @@ const AgentsPage = () => {
                         ))}
                       </select>
                     </div>
-                    <div className="modal-action flex justify-center items-center">
+                    <div className="modal-action flex justify-center items-center space-x-4 sticky bottom-0 pt-4 bg-white border-t border-green-100">
                       <button
                         type="submit"
-                        className="btn flex justify-center items-center btn-primary w-[50%] bg-gray-600 text-white hover:bg-gray-100 hover:text-black transition duration-300 rounded-lg"
+                        className="btn px-6 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                       >
                         <PlusCircle className="mr-2" />
                         Créer
                       </button>
                       <button
                         type="button"
-                        className="btn btn-outline btn-error w-[40%] mt-2"
+                        className="btn px-6 py-2.5 bg-white border border-red-500 text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-300"
                         onClick={handleCloseModal}
                       >
                         Annuler
@@ -682,7 +680,6 @@ const AgentsPage = () => {
             </div>
           </div>
 
-          {/* Modal for role options */}
           <div
             className={`fixed inset-0 z-50 w-full h-screen flex items-center justify-center ${
               showRoleOptionsModal ? "visible" : "invisible"
@@ -743,7 +740,6 @@ const AgentsPage = () => {
             </div>
           </div>
 
-          {/* Modal for creating roles */}
           <div
             className={`fixed inset-0 z-50 overflow-y-auto ${
               showRoleModal ? "visible" : "invisible"
@@ -798,7 +794,6 @@ const AgentsPage = () => {
             </div>
           </div>
 
-          {/* Modal for editing agents */}
           <div
             className={`fixed mt-20 inset-0 z-[99999] overflow-y-auto ${
               openEditModal ? "visible" : "invisible"

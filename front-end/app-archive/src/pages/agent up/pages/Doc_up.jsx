@@ -59,13 +59,13 @@ const CenteredModal = ({ open, onClose, children, maxWidth = "lg" }) => {
 
   return (
     <div
-      className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 ${
+      className={`fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm flex items-center justify-center z-50 ${
         open ? "" : "hidden"
       }`}
       onClick={onClose}
     >
       <div
-        className={`bg-[#2a2a2a] rounded-lg shadow-xl p-6 w-full ${maxWidthClasses[maxWidth]} mx-4`}
+        className={`bg-white rounded-xl shadow-xl p-6 w-full border border-green-200 ${maxWidthClasses[maxWidth]} mx-4`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}
@@ -213,13 +213,13 @@ const Doc_up = () => {
       headerName: "",
       width: 70,
       renderCell: (params) => (
-        <Tooltip title="View Details">
+        <Tooltip title="Voir détails">
           <IconButton
-            className="bg-gray-800 p-2"
+            className="bg-green-100 p-2"
             onClick={() => handleOpenDetails(params.row)}
           >
             <Avatar sx={{ borderRadius: "50%", background: "#fff" }}>
-              <FolderCheckIcon style={{ color: "#333" }} />
+              <FolderCheckIcon style={{ color: "#15803d" }} />
             </Avatar>
           </IconButton>
         </Tooltip>
@@ -232,7 +232,7 @@ const Doc_up = () => {
       headerName: key.headerName,
       flex: 1,
       renderCell: (params) => (
-        <div className="text-white">
+        <div className="text-gray-800">
           {params.row.metadata?.[key.field] || "N/A"}
         </div>
       ),
@@ -247,12 +247,12 @@ const Doc_up = () => {
             <IconButton
               sx={{
                 borderRadius: "8px",
-                background: "linear-gradient(to right, #00B7FF, #3b82f6)",
+                background: "linear-gradient(to right, #22c55e, #15803d)",
                 color: "white",
                 padding: "8px",
                 boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
                 ":hover": {
-                  background: "linear-gradient(to right, #0091cc, #2563eb)",
+                  background: "linear-gradient(to right, #16a34a, #166534)",
                 },
                 transition: "all 0.2s ease",
               }}
@@ -288,7 +288,6 @@ const Doc_up = () => {
         metadata: doc.metadata || {},
       };
 
-      // Ajouter les métadonnées comme propriétés directes
       metadataKeys.forEach((key) => {
         formattedDoc[key.field] = doc.metadata?.[key.field] || "";
       });
@@ -322,16 +321,16 @@ const Doc_up = () => {
 
     return (
       <CenteredModal open={open} onClose={onClose} maxWidth="lg">
-        <div className="flex justify-between items-center mb-4 border-b border-gray-600 pb-3">
+        <div className="flex justify-between items-center mb-4 border-b border-green-200 pb-3">
           <div className="flex items-center">
-            <InfoOutlined className="text-[#00B7FF] mr-2" />
-            <h3 className="text-xl font-bold text-white">
+            <InfoOutlined className="text-green-600 mr-2" />
+            <h3 className="text-xl font-bold text-green-800">
               Détails du document
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-200 bg-gray-700 hover:bg-gray-600 rounded-full p-2 transition-all duration-200"
+            className="text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full p-2 transition-all duration-200"
           >
             <CircleX size={18} />
           </button>
@@ -339,22 +338,22 @@ const Doc_up = () => {
 
         <button
           onClick={() => setIsPieceMode(!isPieceMode)}
-          className="w-full px-4 py-3 mb-4 text-sm font-medium text-black transition-all duration-300 hover:text-white bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 rounded-lg flex items-center justify-center gap-2 shadow-md"
+          className="w-full px-4 py-3 mb-4 text-sm font-medium text-white transition-all duration-300 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 rounded-lg flex items-center justify-center gap-2 shadow-md"
         >
           <ArrowUpDown />
           {isPieceMode ? "Passer au mode Lot" : "Passer au mode Pièce"}
         </button>
 
-        <div className="bg-gradient-to-b from-[#3a3a3a] to-[#2a2a2a] rounded-lg p-4 max-h-[60vh] overflow-y-auto shadow-inner border border-gray-700">
+        <div className="bg-gradient-to-b from-green-50 to-green-100 rounded-lg p-4 max-h-[60vh] overflow-y-auto shadow-inner border border-green-200">
           <table className="w-full table-fixed">
-            <thead className="bg-[#1f1f1f] text-white sticky top-0 z-10">
+            <thead className="bg-green-600 text-white sticky top-0 z-10">
               <tr>
                 <th className="w-1/6 p-3 text-left rounded-tl-md">Aperçu</th>
                 <th className="w-2/6 p-3 text-left">Metadonnées</th>
                 <th className="w-3/6 p-3 text-left rounded-tr-md">Valeurs</th>
               </tr>
             </thead>
-            <tbody className="text-white">
+            <tbody>
               {document &&
                 metadataKeys
                   .filter(
@@ -364,20 +363,20 @@ const Doc_up = () => {
                   .map((meta, index) => (
                     <tr
                       key={meta.field}
-                      className={index % 2 === 0 ? "bg-[#333333]" : ""}
+                      className={index % 2 === 0 ? "bg-green-50" : "bg-white"}
                     >
-                      <td className="w-1/6 text-white border-b border-gray-600 p-3">
+                      <td className="w-1/6 text-gray-800 border-b border-green-200 p-3">
                         <div className="flex justify-center">
-                          <DatabaseZap className="text-cyan-400" />
+                          <DatabaseZap className="text-green-600" />
                         </div>
                       </td>
-                      <td className="w-2/6 text-white border-b border-gray-600 p-3">
-                        <p className="font-bold text-gray-100 truncate">
+                      <td className="w-2/6 text-gray-800 border-b border-green-200 p-3">
+                        <p className="font-bold text-green-800 truncate">
                           {meta.field}
                         </p>
                       </td>
-                      <td className="w-3/6 p-3 text-white border-b border-gray-600">
-                        <p className="text-gray-100 truncate">
+                      <td className="w-3/6 p-3 text-gray-800 border-b border-green-200">
+                        <p className="text-gray-700 truncate">
                           {document.metadata?.[meta.field] || "N/A"}
                         </p>
                       </td>
@@ -396,31 +395,31 @@ const Doc_up = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-300">
+    <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <SideBar_up isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar_up position="fixed" title="Documents" />
         <div className="container w-full mx-auto px-4 py-8 mt-20">
-          <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+          <div className="bg-white w-full rounded-xl shadow-xl p-6 border border-green-100">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold text-white flex items-center">
+              <h1 className="text-2xl font-bold text-green-800 flex items-center">
                 <ArchiveIcon
                   sx={{ fontSize: "32px" }}
-                  className="text-[#00B7FF] mr-2"
+                  className="text-green-600 mr-2"
                 />
                 Liste des dossiers archivés par services
               </h1>
             </div>
 
-            <div className="bg-[#3a3a3a] rounded-lg p-4 mb-6">
+            <div className="bg-green-50 rounded-lg p-4 mb-6 border border-green-200">
               <div className="flex gap-4 mb-4">
                 <div className="form-control w-1/2">
-                  <label className="label w-full flex text-white items-center justify-start">
-                    <Building2 className="mr-2" />
+                  <label className="label w-full flex text-green-800 items-center justify-start">
+                    <Building2 className="mr-2 text-green-600" />
                     Liste des services
                   </label>
                   <select
-                    className="select select-bordered text-black bg-gray-200 border-gray-300 w-full"
+                    className="select select-bordered text-gray-800 bg-white border border-green-200 w-full focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     value={selectedService}
                     onChange={handleServiceChange}
                   >
@@ -442,12 +441,12 @@ const Doc_up = () => {
 
                 {selectedService && (
                   <div className="form-control w-1/2">
-                    <label className="label w-full flex text-white items-center justify-start">
-                      <Layers3 className="mr-2" />
+                    <label className="label w-full flex text-green-800 items-center justify-start">
+                      <Layers3 className="mr-2 text-green-600" />
                       Liste type de document
                     </label>
                     <select
-                      className="select select-bordered text-black bg-gray-200 border-gray-300 w-full"
+                      className="select select-bordered text-gray-800 bg-white border border-green-200 w-full focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       value={selectedDocType}
                       onChange={handleDocTypeChange}
                     >
@@ -464,48 +463,48 @@ const Doc_up = () => {
 
               <div className="flex justify-between items-center mb-4">
                 <div className="form-control w-1/2">
-                  <label className="label w-full flex text-white items-center justify-start">
-                    <Search className="mr-2" />
+                  <label className="label w-full flex text-green-800 items-center justify-start">
+                    <Search className="mr-2 text-green-600" />
                     Rechercher des documents
                   </label>
                   <input
                     type="text"
                     placeholder="Rechercher des documents..."
-                    className="input input-bordered bg-[#2a2a2a] text-white border-[#4a4a4a] w-full"
+                    className="input input-bordered bg-white text-gray-800 border border-green-200 w-full focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
               </div>
 
-              <div className="bg-[#2a2a2a] rounded-lg p-4">
+              <div className="bg-white rounded-lg p-4 border border-green-200">
                 <DataGrid
                   rows={formattedDocuments}
                   columns={columns}
                   pageSize={5}
                   rowsPerPageOptions={[5, 10, 20]}
                   autoHeight
-                  className="bg-[#2a2a2a] text-white"
+                  className="bg-white text-gray-800"
                   sx={{
                     "& .MuiDataGrid-cell": {
-                      color: "white",
-                      borderColor: "#4a4a4a",
+                      color: "#1f2937",
+                      borderColor: "#d1fae5",
                     },
                     "& .MuiDataGrid-columnHeaders": {
-                      backgroundColor: "#1f1f1f",
-                      color: "black",
-                      borderColor: "#4a4a4a",
+                      backgroundColor: "#10b981",
+                      color: "white",
+                      borderColor: "#d1fae5",
                     },
                     "& .MuiDataGrid-footerContainer": {
-                      backgroundColor: "#1f1f1f",
-                      color: "white",
-                      borderColor: "#4a4a4a",
+                      backgroundColor: "#ecfdf5",
+                      color: "#1f2937",
+                      borderColor: "#d1fae5",
                     },
                     "& .MuiTablePagination-root": {
-                      color: "white",
+                      color: "#1f2937",
                     },
                     "& .MuiIconButton-root": {
-                      color: "white",
+                      color: "#1f2937",
                     },
                   }}
                 />
@@ -516,7 +515,7 @@ const Doc_up = () => {
 
         {isLoading && (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-30">
-            <CircularProgress />
+            <CircularProgress sx={{ color: "#10b981" }} />
           </div>
         )}
       </div>

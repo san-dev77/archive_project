@@ -205,15 +205,15 @@ const Agents_page = () => {
 
     return (
       <div className="flex justify-center mt-6">
-        <div className="flex space-x-2 bg-gray-100 p-2 rounded-lg shadow">
+        <div className="flex space-x-2 bg-green-50 p-2 rounded-lg shadow">
           {pageNumbers.map((number) => (
             <button
               key={number}
               onClick={() => paginate(number)}
               className={`px-4 py-2 rounded-md transition-all duration-300 ${
                 currentPage === number
-                  ? "bg-blue-600 text-white shadow-md transform scale-105"
-                  : "bg-white text-gray-700 hover:bg-gray-200"
+                  ? "bg-green-600 text-white shadow-md transform scale-105"
+                  : "bg-white text-gray-700 hover:bg-green-100"
               }`}
             >
               {number}
@@ -227,32 +227,32 @@ const Agents_page = () => {
   // Fonction pour obtenir une couleur aléatoire pour les avatars
   const getRandomGradient = (id) => {
     const gradients = [
-      "from-blue-600 to-violet-500",
-      "from-emerald-300 to-cyan-300",
-      "from-indigo-500 to-purple-700",
-      "from-sky-300 to-blue-300",
-      "from-teal-600 to-emerald-500",
-      "from-violet-300 to-indigo-300",
-      "from-cyan-500 to-sky-800",
-      "from-purple-600 to-fuchsia-800",
-      "from-slate-500 to-gray-700",
-      "from-zinc-300 to-neutral-300",
-      "from-stone-600 to-slate-600",
-      "from-red-300 to-orange-300",
+      "from-green-600 to-emerald-500",
+      "from-emerald-400 to-green-300",
+      "from-green-500 to-teal-700",
+      "from-teal-400 to-green-300",
+      "from-emerald-600 to-green-500",
+      "from-green-400 to-teal-300",
+      "from-teal-500 to-green-800",
+      "from-emerald-600 to-green-800",
+      "from-green-700 to-emerald-900",
+      "from-teal-300 to-green-300",
+      "from-green-600 to-teal-600",
+      "from-emerald-300 to-green-400",
     ];
     return gradients[id % gradients.length];
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
+    <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <TopBar_up position="fixed" title="Gestion des Agents" />
         <div className="container mx-auto px-4 py-8 mt-20">
-          <div className="bg-white shadow-xl rounded-xl p-6 border border-gray-100">
+          <div className="bg-white shadow-xl rounded-xl p-6 border border-green-100">
             <div className="flex justify-between items-center mb-8">
               <div>
-                <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                <h1 className="text-3xl font-bold text-green-800 mb-2">
                   Agents de la Direction
                 </h1>
                 <p className="text-gray-500">
@@ -264,7 +264,7 @@ const Agents_page = () => {
                   <input
                     type="text"
                     placeholder="Rechercher un agent..."
-                    className="px-4 py-3 pl-12 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-80 shadow-sm"
+                    className="px-4 py-3 pl-12 border border-green-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 w-80 shadow-sm"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -288,7 +288,7 @@ const Agents_page = () => {
                     onClick={() => setViewMode("grid")}
                     className={`p-2 rounded-lg ${
                       viewMode === "grid"
-                        ? "bg-blue-100 text-blue-600"
+                        ? "bg-green-100 text-green-600"
                         : "bg-gray-100 text-gray-600"
                     }`}
                   >
@@ -311,7 +311,7 @@ const Agents_page = () => {
                     onClick={() => setViewMode("list")}
                     className={`p-2 rounded-lg ${
                       viewMode === "list"
-                        ? "bg-blue-100 text-blue-600"
+                        ? "bg-green-100 text-green-600"
                         : "bg-gray-100 text-gray-600"
                     }`}
                   >
@@ -333,7 +333,7 @@ const Agents_page = () => {
                 </div>
                 <button
                   onClick={handleOpenModal}
-                  className="btn bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white px-6 py-3 rounded-xl flex items-center shadow-lg transform transition-transform hover:scale-105"
+                  className="btn bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-6 py-3 rounded-xl flex items-center shadow-lg transform transition-transform hover:scale-105"
                 >
                   <FaPlus className="mr-2" />
                   Ajouter un agent
@@ -343,7 +343,7 @@ const Agents_page = () => {
 
             {loading ? (
               <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-green-600"></div>
               </div>
             ) : viewMode === "grid" ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -351,7 +351,7 @@ const Agents_page = () => {
                   currentAgents.map((agent) => (
                     <div
                       key={agent.id}
-                      className="bg-gradient-to-br from-gray-800 to-gray-900 text-white rounded-xl shadow-xl p-6 transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                      className="bg-gradient-to-br from-green-700 to-emerald-800 text-white rounded-xl shadow-xl p-6 transform transition-all duration-300 hover:scale-105 hover:shadow-2xl"
                     >
                       <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-4">
@@ -372,7 +372,7 @@ const Agents_page = () => {
                             <h3 className="font-bold text-xl">
                               {agent.prenom}
                             </h3>
-                            <p className="text-gray-300 font-medium">
+                            <p className="text-green-100 font-medium">
                               {agent.nom}
                             </p>
                           </div>
@@ -381,7 +381,7 @@ const Agents_page = () => {
                           <Tooltip title="Modifier" arrow placement="left">
                             <button
                               onClick={() => handleEdit(agent)}
-                              className="btn btn-circle bg-blue-600 hover:bg-indigo-700 transition duration-300 shadow-lg"
+                              className="btn btn-circle bg-green-500 hover:bg-green-600 transition duration-300 shadow-lg"
                             >
                               <FaEdit className="text-white" />
                             </button>
@@ -399,45 +399,45 @@ const Agents_page = () => {
 
                       <div className="space-y-4 mt-4">
                         <div className="flex items-center gap-3">
-                          <FaUserTie className="text-blue-400" />
-                          <span className="font-semibold text-gray-400">
+                          <FaUserTie className="text-green-300" />
+                          <span className="font-semibold text-green-200">
                             Fonction:
                           </span>
-                          <span className="bg-gradient-to-r from-blue-600 to-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                          <span className="bg-gradient-to-r from-emerald-600 to-green-700 px-3 py-1 rounded-full text-sm font-medium">
                             {agent.nom_role || "Non assigné"}
                           </span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <FaBuilding className="text-blue-400" />
-                          <span className="font-semibold text-gray-400">
+                          <FaBuilding className="text-green-300" />
+                          <span className="font-semibold text-green-200">
                             Service:
                           </span>
-                          <span className="bg-gradient-to-r from-indigo-600 to-indigo-800 px-3 py-1 rounded-full text-sm font-medium">
+                          <span className="bg-gradient-to-r from-green-600 to-emerald-700 px-3 py-1 rounded-full text-sm font-medium">
                             {agent.nom_service || "Non assigné"}
                           </span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <FaPhoneAlt className="text-blue-400" />
-                          <span className="font-semibold text-gray-400">
+                          <FaPhoneAlt className="text-green-300" />
+                          <span className="font-semibold text-green-200">
                             Téléphone:
                           </span>
                           <span>{agent.tel_number || "Non renseigné"}</span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <FaEnvelope className="text-blue-400" />
-                          <span className="font-semibold text-gray-400">
+                          <FaEnvelope className="text-green-300" />
+                          <span className="font-semibold text-green-200">
                             Email:
                           </span>
-                          <span className="text-blue-400 underline">
+                          <span className="text-emerald-300 underline">
                             {agent.mail}
                           </span>
                         </div>
                         <div className="flex items-center gap-3">
-                          <FaIdCard className="text-blue-400" />
-                          <span className="font-semibold text-gray-400">
+                          <FaIdCard className="text-green-300" />
+                          <span className="font-semibold text-green-200">
                             Identifiant:
                           </span>
-                          <span className="bg-gradient-to-r from-gray-600 to-gray-700 px-3 py-1 rounded-lg font-mono">
+                          <span className="bg-gradient-to-r from-green-800 to-emerald-900 px-3 py-1 rounded-lg font-mono">
                             {agent.login}
                           </span>
                         </div>
@@ -445,10 +445,10 @@ const Agents_page = () => {
                     </div>
                   ))
                 ) : (
-                  <div className="col-span-3 text-center py-16 bg-gray-50 rounded-xl border border-dashed border-gray-300">
+                  <div className="col-span-3 text-center py-16 bg-green-50 rounded-xl border border-dashed border-green-300">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      className="h-16 w-16 mx-auto text-gray-400 mb-4"
+                      className="h-16 w-16 mx-auto text-green-400 mb-4"
                       fill="none"
                       viewBox="0 0 24 24"
                       stroke="currentColor"
@@ -470,7 +470,7 @@ const Agents_page = () => {
             ) : (
               <div className="overflow-x-auto">
                 <table className="min-w-full bg-white rounded-xl overflow-hidden shadow-md">
-                  <thead className="bg-gray-800 text-white">
+                  <thead className="bg-green-700 text-white">
                     <tr>
                       <th className="py-3 px-4 text-left">Agent</th>
                       <th className="py-3 px-4 text-left">Fonction</th>
@@ -479,12 +479,12 @@ const Agents_page = () => {
                       <th className="py-3 px-4 text-center">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200">
+                  <tbody className="divide-y divide-green-100">
                     {currentAgents.length > 0 ? (
                       currentAgents.map((agent) => (
                         <tr
                           key={agent.id}
-                          className="hover:bg-gray-50 transition-colors"
+                          className="hover:bg-green-50 transition-colors"
                         >
                           <td className="py-4 px-4">
                             <div className="flex items-center gap-3">
@@ -508,23 +508,23 @@ const Agents_page = () => {
                             </div>
                           </td>
                           <td className="py-4 px-4">
-                            <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-medium">
+                            <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
                               {agent.nom_role || "Non assigné"}
                             </span>
                           </td>
                           <td className="py-4 px-4">
-                            <span className="bg-indigo-100 text-indigo-800 px-2 py-1 rounded-lg text-[10px] truncate max-w-xs">
+                            <span className="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-lg text-[10px] truncate max-w-xs">
                               {agent.nom_service || "Non assigné"}
                             </span>
                           </td>
                           <td className="py-4 px-4">
                             <div>
-                              <p className="text-sm  text-gray-700 flex items-center">
-                                <FaEnvelope className="mr-2 text-gray-700" />{" "}
+                              <p className="text-sm text-gray-700 flex items-center">
+                                <FaEnvelope className="mr-2 text-green-700" />{" "}
                                 {agent.mail}
                               </p>
-                              <p className="text-sm  text-gray-700 flex items-center">
-                                <FaPhoneAlt className="mr-2 text-gray-700" />{" "}
+                              <p className="text-sm text-gray-700 flex items-center">
+                                <FaPhoneAlt className="mr-2 text-green-700" />{" "}
                                 {agent.tel_number || "Non renseigné"}
                               </p>
                             </div>
@@ -534,7 +534,7 @@ const Agents_page = () => {
                               <Tooltip title="Modifier" arrow>
                                 <button
                                   onClick={() => handleEdit(agent)}
-                                  className="p-2 bg-blue-100 text-blue-600 rounded-lg hover:bg-blue-200 transition-colors"
+                                  className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition-colors"
                                 >
                                   <FaEdit />
                                 </button>
@@ -587,21 +587,23 @@ const Agents_page = () => {
           onClick={handleCloseEditModal}
         ></div>
         <div className="flex items-center justify-center min-h-screen p-4">
-          <div className="relative z-50 w-full max-w-2xl bg-white rounded-xl shadow-2xl">
+          <div className="relative z-50 w-full max-w-2xl bg-white rounded-xl shadow-2xl border border-green-200">
             <div className="p-8 max-h-[90vh] overflow-y-auto">
               <button
                 onClick={handleCloseEditModal}
-                className="absolute right-4 text-black top-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="absolute right-4 text-black top-4 p-2 hover:bg-green-100 rounded-full transition-colors"
               >
                 ✕
               </button>
-              <h2 className="text-2xl text-black font-bold mb-6 border-b pb-4">
+              <h2 className="text-2xl text-green-800 font-bold mb-6 border-b pb-4 border-green-200">
                 Modifier l&apos;agent
               </h2>
               <form className="overflow-y-auto" onSubmit={handleUpdateAgent}>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="form-control w-full">
-                    <label className="label font-medium">Prénom</label>
+                    <label className="label font-medium text-gray-700">
+                      Prénom
+                    </label>
                     <input
                       type="text"
                       placeholder="Prénom"
@@ -613,12 +615,14 @@ const Agents_page = () => {
                           prenom: e.target.value,
                         })
                       }
-                      className="input input-bordered w-full mb-4 bg-gray-50 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                      className="input input-bordered w-full mb-4 bg-green-50 text-gray-800 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                       required
                     />
                   </div>
                   <div className="form-control w-full">
-                    <label className="label font-medium">Nom</label>
+                    <label className="label font-medium text-gray-700">
+                      Nom
+                    </label>
                     <input
                       type="text"
                       placeholder="Nom"
@@ -630,13 +634,15 @@ const Agents_page = () => {
                           nom: e.target.value,
                         })
                       }
-                      className="input input-bordered w-full mb-4 bg-gray-50 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                      className="input input-bordered w-full mb-4 bg-green-50 text-gray-800 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                       required
                     />
                   </div>
                 </div>
                 <div className="form-control w-full">
-                  <label className="label font-medium">Email</label>
+                  <label className="label font-medium text-gray-700">
+                    Email
+                  </label>
                   <input
                     type="email"
                     placeholder="Email"
@@ -648,12 +654,14 @@ const Agents_page = () => {
                         mail: e.target.value,
                       })
                     }
-                    className="input input-bordered w-full mb-4 bg-gray-50 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    className="input input-bordered w-full mb-4 bg-green-50 text-gray-800 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                     required
                   />
                 </div>
                 <div className="form-control w-full">
-                  <label className="label font-medium">Téléphone</label>
+                  <label className="label font-medium text-gray-700">
+                    Téléphone
+                  </label>
                   <input
                     type="text"
                     placeholder="Téléphone"
@@ -665,13 +673,13 @@ const Agents_page = () => {
                         tel_number: e.target.value,
                       })
                     }
-                    className="input input-bordered w-full mb-4 bg-gray-50 text-gray-800 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    className="input input-bordered w-full mb-4 bg-green-50 text-gray-800 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                   />
                 </div>
                 <div className="modal-action flex justify-center items-center gap-4 mt-8">
                   <button
                     type="submit"
-                    className="btn flex justify-center items-center btn-primary w-[50%] bg-gradient-to-r from-blue-600 to-indigo-700 text-white hover:from-blue-700 hover:to-indigo-800 transition duration-300 rounded-lg py-3"
+                    className="btn flex justify-center items-center btn-primary w-[50%] bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800 transition duration-300 rounded-lg py-3"
                   >
                     <FaEdit className="mr-2" />
                     Mettre à jour
@@ -679,7 +687,6 @@ const Agents_page = () => {
                   <button
                     type="button"
                     className="btn btn-outline border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white w-[40%] transition-all duration-300 rounded-lg py-3"
-                    onClick={handleCloseEditModal}
                   >
                     Annuler
                   </button>
@@ -690,7 +697,7 @@ const Agents_page = () => {
         </div>
       </div>
 
-      {/* Modal pour créer un agent */}
+      {/* Modal pour ajouter un agent */}
       <div
         className={`fixed inset-0 z-50 overflow-y-auto ${
           openModal ? "visible" : "invisible"
@@ -700,136 +707,147 @@ const Agents_page = () => {
           className="fixed inset-0 bg-black/50 backdrop-blur-sm"
           onClick={handleCloseModal}
         ></div>
-        <div className="relative min-h-screen flex items-center justify-center p-4">
-          <div className="relative z-50 w-full max-w-2xl bg-white rounded-xl shadow-2xl">
-            <div className="p-6 max-h-[90vh] overflow-y-auto text-black">
+        <div className="flex items-center justify-center min-h-screen p-4">
+          <div className="relative bg-white rounded-xl w-full max-w-2xl shadow-2xl border border-green-200">
+            <div className="p-8">
               <button
                 onClick={handleCloseModal}
-                className="absolute p-2 rounded-full bg-gray-900 text-white right-4 top-4 hover:bg-gray-100 hover:text-black transition-colors"
+                className="absolute right-4 top-4 p-2 hover:bg-green-100 rounded-full transition-colors"
               >
                 ✕
               </button>
-              <h2 className="text-2xl text-black font-bold mb-6">
-                Créer un nouvel agent
+              <h2 className="text-2xl font-bold text-green-800 mb-6 border-b pb-4 border-green-200">
+                Ajouter un nouvel agent
               </h2>
-              <form className="overflow-y-auto" onSubmit={handleAddAgent}>
+              <form onSubmit={handleAddAgent} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="form-control w-full">
-                    <label className="label font-medium">Prénom</label>
+                    <label className="label font-medium text-gray-700">
+                      Prénom
+                    </label>
                     <input
                       type="text"
                       placeholder="Prénom"
+                      name="prenom"
                       value={newAgent.prenom}
                       onChange={(e) =>
                         setNewAgent({ ...newAgent, prenom: e.target.value })
                       }
-                      className="input input-bordered w-full mb-4 bg-gray-50 text-gray-800"
+                      className="input input-bordered w-full bg-green-50 text-gray-800 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                       required
                     />
                   </div>
                   <div className="form-control w-full">
-                    <label className="label font-medium">Nom</label>
+                    <label className="label font-medium text-gray-700">
+                      Nom
+                    </label>
                     <input
                       type="text"
                       placeholder="Nom"
+                      name="nom"
                       value={newAgent.nom}
                       onChange={(e) =>
                         setNewAgent({ ...newAgent, nom: e.target.value })
                       }
-                      className="input input-bordered w-full mb-4 bg-gray-50 text-gray-800"
+                      className="input input-bordered w-full bg-green-50 text-gray-800 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                       required
                     />
                   </div>
                 </div>
                 <div className="form-control w-full">
-                  <label className="label font-medium">Email</label>
+                  <label className="label font-medium text-gray-700">
+                    Email
+                  </label>
                   <input
                     type="email"
                     placeholder="Email"
+                    name="mail"
                     value={newAgent.mail}
                     onChange={(e) =>
                       setNewAgent({ ...newAgent, mail: e.target.value })
                     }
-                    className="input input-bordered w-full mb-4 bg-gray-50 text-gray-800"
+                    className="input input-bordered w-full bg-green-50 text-gray-800 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                     required
                   />
                 </div>
                 <div className="form-control w-full">
-                  <label className="label font-medium">Téléphone</label>
+                  <label className="label font-medium text-gray-700">
+                    Téléphone
+                  </label>
                   <input
                     type="text"
                     placeholder="Téléphone"
+                    name="tel_number"
                     value={newAgent.tel_number}
                     onChange={(e) =>
                       setNewAgent({ ...newAgent, tel_number: e.target.value })
                     }
-                    className="input input-bordered w-full mb-4 bg-gray-50 text-gray-800"
+                    className="input input-bordered w-full bg-green-50 text-gray-800 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
+                    required
                   />
                 </div>
                 <div className="form-control w-full">
-                  <label className="label font-medium">Login</label>
+                  <label className="label font-medium text-gray-700">
+                    Login
+                  </label>
                   <input
                     type="text"
                     placeholder="Login"
+                    name="login"
                     value={newAgent.login}
                     onChange={(e) =>
                       setNewAgent({ ...newAgent, login: e.target.value })
                     }
-                    className="input input-bordered w-full mb-4 bg-gray-50 text-gray-800"
+                    className="input input-bordered w-full bg-green-50 text-gray-800 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                     required
                   />
                 </div>
                 <div className="form-control w-full">
-                  <label className="label font-medium">Mot de passe</label>
+                  <label className="label font-medium text-gray-700">
+                    Mot de passe
+                  </label>
                   <input
                     type="password"
                     placeholder="Mot de passe"
+                    name="password"
                     value={newAgent.password}
                     onChange={(e) =>
                       setNewAgent({ ...newAgent, password: e.target.value })
                     }
-                    className="input input-bordered w-full mb-4 bg-gray-50 text-gray-800"
+                    className="input input-bordered w-full bg-green-50 text-gray-800 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                     required
                   />
                 </div>
                 <div className="form-control w-full">
-                  <label className="label font-medium">Service</label>
-                  <input
-                    type="text"
-                    placeholder="Service"
-                    value={newAgent.service}
-                    onChange={(e) =>
-                      setNewAgent({ ...newAgent, service: e.target.value })
-                    }
-                    className="input input-bordered w-full mb-4 bg-gray-50 text-gray-800"
-                    required
-                  />
-                </div>
-                <div className="form-control w-full">
-                  <label className="label font-medium">Fonction</label>
-                  <input
-                    type="text"
-                    placeholder="Fonction"
+                  <label className="label font-medium text-gray-700">
+                    Fonction
+                  </label>
+                  <select
+                    name="fonction_id"
                     value={newAgent.fonction_id}
                     onChange={(e) =>
                       setNewAgent({ ...newAgent, fonction_id: e.target.value })
                     }
-                    className="input input-bordered w-full mb-4 bg-gray-50 text-gray-800"
+                    className="select select-bordered w-full bg-green-50 text-gray-800 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                     required
-                  />
+                  >
+                    <option value="" disabled>
+                      Sélectionner une fonction
+                    </option>
+                    {/* Options pour les fonctions */}
+                  </select>
                 </div>
-                <div className="modal-action flex justify-center items-center gap-4">
+                <div className="modal-action mt-8 flex justify-center space-x-4">
                   <button
                     type="submit"
-                    className="btn flex justify-center items-center btn-primary w-[50%] bg-gradient-to-r from-blue-600 to-indigo-700 text-white"
+                    className="w-1/2 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white py-3 rounded-lg flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-300"
                   >
-                    <FaPlus className="mr-2" />
-                    Créer
+                    <FaPlus className="mr-2" /> Créer l&apos;agent
                   </button>
                   <button
                     type="button"
-                    className="btn btn-outline btn-error w-[40%]"
                     onClick={handleCloseModal}
+                    className="w-1/3 border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white py-3 rounded-lg transition-all duration-300"
                   >
                     Annuler
                   </button>
@@ -840,7 +858,7 @@ const Agents_page = () => {
         </div>
       </div>
 
-      <ToastContainer position="top-right" />
+      <ToastContainer position="bottom-right" />
     </div>
   );
 };

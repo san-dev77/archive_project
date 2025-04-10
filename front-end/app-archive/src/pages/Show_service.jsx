@@ -395,19 +395,19 @@ export default function ShowDirection() {
   }));
 
   return (
-    <div className="flex min-h-screen bg-gray-300">
+    <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <Side_bar isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar position="fixed" title="Services" />
         <div className="container w-full mx-auto px-4 py-8 mt-20">
-          <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+          <div className="bg-white w-full rounded-xl shadow-xl p-6 border border-green-100">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold text-white flex items-center">
-                <LayoutList className="h-8 w-8 text-[#00B7FF] mr-2" />
+              <h1 className="text-2xl font-bold text-green-800 flex items-center">
+                <LayoutList className="h-8 w-8 text-green-600 mr-2" />
                 Liste des Directions
               </h1>
               <button
-                className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
+                className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-5 py-2.5 rounded-lg flex items-center transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1"
                 onClick={() => setOpenModal(true)}
               >
                 <Plus className="h-5 w-5 mr-2" />
@@ -418,7 +418,7 @@ export default function ShowDirection() {
             <div className="mb-6">
               <div className="flex items-center space-x-4">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-white mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Rechercher une direction ou un service
                   </label>
                   <input
@@ -426,28 +426,30 @@ export default function ShowDirection() {
                     placeholder="Rechercher..."
                     value={searchText}
                     onChange={(e) => setSearchText(e.target.value)}
-                    className="w-full px-4 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                    className="w-full px-4 py-2.5 bg-white text-gray-800 border border-green-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm transition-all duration-200"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="bg-[#3a3a3a] rounded-lg p-4">
+            <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 shadow-inner">
               <div className="space-y-4">
                 {filteredDirectories.map((directory) => (
                   <div
                     key={directory.directory_id}
-                    className="border border-[#4a4a4a] rounded-lg "
+                    className="border border-green-100 rounded-xl shadow-sm "
                   >
                     <button
-                      className="btn relative w-full text-left flex justify-between items-center bg-[#2a2a2a] hover:bg-[#404040] text-white border-none rounded-lg p-3 transition-all duration-300"
+                      className="btn relative w-full text-left flex justify-between items-center bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white border-none rounded-t-xl p-4 transition-all duration-300"
                       onClick={() => toggleDirectory(directory.directory_id)}
                     >
-                      <div className="absolute -top-2 -left-2 bg-[#2185ac] rounded-full px-2 py-0.5">
-                        <p className="text-xs font-bold">{directory.code}</p>
+                      <div className="absolute -top-2 -left-2 bg-gradient-to-r from-green-400 to-teal-500 rounded-full px-3 py-1 shadow-md">
+                        <p className="text-xs font-bold text-white">
+                          {directory.code}
+                        </p>
                       </div>
                       <div className="flex items-center pl-6">
-                        <Network className="mr-2 text-[#00B7FF]" size={20} />
+                        <Network className="mr-3 text-green-300" size={22} />
                         <span className="text-base font-semibold">
                           {directory.nom_directory}
                         </span>
@@ -456,37 +458,45 @@ export default function ShowDirection() {
                         {expandedDirectory === directory.directory_id && (
                           <>
                             <button
-                              className="p-2 text-[#00B7FF] hover:bg-[#404040] rounded-lg transition-colors duration-200"
-                              onClick={() => handleEditDirectory(directory)}
+                              className="p-2 bg-green-500/30 text-white hover:bg-green-500/50 rounded-lg transition-colors duration-200"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditDirectory(directory);
+                              }}
                             >
-                              <SquarePen size={16} />
+                              <SquarePen size={18} />
                             </button>
                             <button
-                              className="p-2 text-red-500 hover:bg-[#404040] rounded-lg transition-colors duration-200"
-                              onClick={() => handleDeleteDirectory(directory)}
+                              className="p-2 bg-red-500/30 text-white hover:bg-red-500/50 rounded-lg transition-colors duration-200"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteDirectory(directory);
+                              }}
                             >
-                              <Trash2 size={16} />
+                              <Trash2 size={18} />
                             </button>
                           </>
                         )}
                         {expandedDirectory === directory.directory_id ? (
-                          <ChevronUp size={20} />
+                          <ChevronUp size={22} className="text-green-300" />
                         ) : (
-                          <ChevronDown size={20} />
+                          <ChevronDown size={22} className="text-green-300" />
                         )}
                       </div>
                     </button>
 
                     {expandedDirectory === directory.directory_id && (
-                      <div className="p-4">
-                        <table className="w-full">
-                          <thead className="bg-[#2a2a2a] text-white">
+                      <div className="p-4 bg-white">
+                        <table className="w-full border-collapse">
+                          <thead className="bg-gradient-to-r from-green-100 to-emerald-100 text-green-800">
                             <tr>
-                              <th className="text-left p-3 rounded-l-lg">
+                              <th className="text-left p-3 rounded-tl-lg font-semibold">
                                 Code service
                               </th>
-                              <th className="text-left p-3">Nom service</th>
-                              <th className="text-right p-3 rounded-r-lg">
+                              <th className="text-left p-3 font-semibold">
+                                Nom service
+                              </th>
+                              <th className="text-right p-3 rounded-tr-lg font-semibold">
                                 Actions
                               </th>
                             </tr>
@@ -495,41 +505,61 @@ export default function ShowDirection() {
                             {directory.services
                               .split("|")
                               .map((service) => JSON.parse(service))
-                              .map(
-                                (service) =>
-                                  (service.code || service.nom_service) && (
-                                    <tr
-                                      key={service.id}
-                                      className="hover:bg-[#404040] bg-[#2a2a2a] transition duration-200"
-                                    >
-                                      <td className="flex items-center p-4 text-base text-white">
-                                        <Cog className="mr-2 text-[#00B7FF]" />
-                                        {service.code}
-                                      </td>
-                                      <td className="p-4 text-base text-white">
-                                        {service.nom_service}
-                                      </td>
-                                      <td className="text-right p-4">
-                                        <div className="flex justify-end space-x-2">
-                                          <button
-                                            className="p-2 text-[#00B7FF] hover:bg-[#505050] rounded-lg transition-colors duration-200"
-                                            onClick={() => handleEdit(service)}
-                                          >
-                                            <SquarePen size={16} />
-                                          </button>
-                                          <button
-                                            className="p-2 text-red-500 hover:bg-[#505050] rounded-lg transition-colors duration-200"
-                                            onClick={() =>
-                                              handleDelete(service.id)
-                                            }
-                                          >
-                                            <Trash2 size={16} />
-                                          </button>
-                                        </div>
-                                      </td>
-                                    </tr>
-                                  )
-                              )}
+                              .filter(
+                                (service) => service.code || service.nom_service
+                              ).length === 0 ? (
+                              <tr>
+                                <td
+                                  colSpan="3"
+                                  className="text-center p-5 text-gray-500 italic"
+                                >
+                                  Aucun service disponible pour cette direction.
+                                </td>
+                              </tr>
+                            ) : (
+                              directory.services
+                                .split("|")
+                                .map((service) => JSON.parse(service))
+                                .map(
+                                  (service) =>
+                                    (service.code || service.nom_service) && (
+                                      <tr
+                                        key={service.id}
+                                        className="border-b border-green-50 hover:bg-green-50/50 transition-colors duration-200"
+                                      >
+                                        <td className="flex items-center p-4 text-base text-gray-800">
+                                          <Cog className="mr-2 text-green-500" />
+                                          <span className="font-medium">
+                                            {service.code}
+                                          </span>
+                                        </td>
+                                        <td className="p-4 text-base text-gray-800">
+                                          {service.nom_service}
+                                        </td>
+                                        <td className="text-right p-4">
+                                          <div className="flex justify-end space-x-2">
+                                            <button
+                                              className="p-2 bg-green-100 text-green-700 hover:bg-green-200 rounded-lg transition-colors duration-200"
+                                              onClick={() =>
+                                                handleEdit(service)
+                                              }
+                                            >
+                                              <SquarePen size={18} />
+                                            </button>
+                                            <button
+                                              className="p-2 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors duration-200"
+                                              onClick={() =>
+                                                handleDelete(service.id)
+                                              }
+                                            >
+                                              <Trash2 size={18} />
+                                            </button>
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    )
+                                )
+                            )}
                           </tbody>
                         </table>
                       </div>
@@ -544,28 +574,30 @@ export default function ShowDirection() {
 
       {openModal && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
           onClick={() => setOpenModal(false)}
         >
           <div
-            className="bg-gray-700 rounded-lg shadow-xl p-6 w-full max-w-lg mx-4"
+            className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-lg mx-4 transform transition-all duration-300 scale-100"
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              className="btn btn-sm btn-circle absolute right-2 top-2"
+              className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 transition-colors"
               onClick={() => setOpenModal(false)}
             >
               ✕
             </button>
-            <h3 className="font-bold text-white text-lg">Créer un nouveau</h3>
+            <h3 className="font-bold text-green-800 text-xl mb-4">
+              Créer un nouveau
+            </h3>
             <div className="form-control">
-              <label className="label text-white">
+              <label className="label text-gray-700 font-medium">
                 Que voulez-vous créer ?
               </label>
               <select
                 value={creationType}
                 onChange={(e) => handleCreationTypeChange(e.target.value)}
-                className="input w-full input-bordered mb-2 border-2 border-gray-300 max-w-lg bg-white text-black"
+                className="select w-full border-2 border-green-200 rounded-lg py-2.5 px-4 mb-4 bg-white text-gray-800 focus:border-green-500 focus:ring focus:ring-green-200 transition-all duration-200"
               >
                 <option value="" disabled>
                   Choisir une option
@@ -578,7 +610,9 @@ export default function ShowDirection() {
               {creationType === "service" && (
                 <>
                   <div className="form-control">
-                    <label className="label">Directions</label>
+                    <label className="label text-gray-700 font-medium">
+                      Directions
+                    </label>
                     <Select
                       options={directoryOptions}
                       onChange={(selectedOption) =>
@@ -587,11 +621,21 @@ export default function ShowDirection() {
                           directory_id: selectedOption.value,
                         })
                       }
-                      className="mb-2 text-black"
+                      className="mb-4 text-gray-800"
+                      theme={(theme) => ({
+                        ...theme,
+                        colors: {
+                          ...theme.colors,
+                          primary: "#10b981",
+                          primary25: "#ecfdf5",
+                        },
+                      })}
                     />
                   </div>
-                  <div className="form-control mt-4">
-                    <label className="label">Code du service</label>
+                  <div className="form-control mt-2">
+                    <label className="label text-gray-700 font-medium">
+                      Code du service
+                    </label>
                     <input
                       type="text"
                       value={currentService.code}
@@ -601,12 +645,14 @@ export default function ShowDirection() {
                           code: e.target.value,
                         })
                       }
-                      className="input input-bordered border-2 border-gray-300 bg-white text-black"
+                      className="input py-2.5 px-4 border-2 border-green-200 rounded-lg bg-white text-gray-800 focus:border-green-500 focus:ring focus:ring-green-200 transition-all duration-200"
                       required
                     />
                   </div>
                   <div className="form-control mt-4">
-                    <label className="label">Nom du service</label>
+                    <label className="label text-gray-700 font-medium">
+                      Nom du service
+                    </label>
                     <input
                       type="text"
                       value={currentService.nom_service}
@@ -616,7 +662,7 @@ export default function ShowDirection() {
                           nom_service: e.target.value,
                         })
                       }
-                      className="input input-bordered border-2 border-gray-300 bg-white text-black"
+                      className="input py-2.5 px-4 border-2 border-green-200 rounded-lg bg-white text-gray-800 focus:border-green-500 focus:ring focus:ring-green-200 transition-all duration-200"
                       required
                     />
                   </div>
@@ -624,8 +670,10 @@ export default function ShowDirection() {
               )}
               {creationType === "direction" && (
                 <>
-                  <div className="form-control mt-4">
-                    <label className="label">Code de la direction</label>
+                  <div className="form-control mt-2">
+                    <label className="label text-gray-700 font-medium">
+                      Code de la direction
+                    </label>
                     <input
                       type="text"
                       value={currentService.code}
@@ -635,12 +683,14 @@ export default function ShowDirection() {
                           code: e.target.value,
                         })
                       }
-                      className="input input-bordered border-2 border-gray-300 bg-white text-black"
+                      className="input py-2.5 px-4 border-2 border-green-200 rounded-lg bg-white text-gray-800 focus:border-green-500 focus:ring focus:ring-green-200 transition-all duration-200"
                       required
                     />
                   </div>
                   <div className="form-control mt-4">
-                    <label className="label">Nom de la direction</label>
+                    <label className="label text-gray-700 font-medium">
+                      Nom de la direction
+                    </label>
                     <input
                       type="text"
                       value={currentService.nom_service}
@@ -650,22 +700,22 @@ export default function ShowDirection() {
                           nom_service: e.target.value,
                         })
                       }
-                      className="input input-bordered border-2 border-gray-300 bg-white text-black"
+                      className="input py-2.5 px-4 border-2 border-green-200 rounded-lg bg-white text-gray-800 focus:border-green-500 focus:ring focus:ring-green-200 transition-all duration-200"
                       required
                     />
                   </div>
                 </>
               )}
-              <div className="modal-action flex justify-center items-center">
+              <div className="modal-action flex justify-center items-center mt-6 space-x-4">
                 <button
                   type="submit"
-                  className="btn border-t-neutral-700 w-[40%] bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg"
+                  className="btn px-6 py-2.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
                 >
                   Ajouter
                 </button>
                 <button
                   type="button"
-                  className="btn btn-outline btn-error w-[40%] mt-2"
+                  className="btn px-6 py-2.5 bg-white border border-red-500 text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-300"
                   onClick={() => setOpenModal(false)}
                 >
                   Annuler
@@ -678,56 +728,27 @@ export default function ShowDirection() {
 
       {editModalOpen && (
         <div
-          style={{
-            position: "fixed",
-            inset: 0,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            zIndex: 100,
-          }}
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
           onClick={() => setEditModalOpen(false)}
         >
           <div
-            className="modal-box bg-white text-black rounded-lg shadow-lg transform transition-all duration-300 max-w-lg w-full mx-4"
+            className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-lg mx-4 transform transition-all duration-300 scale-100"
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              className="btn btn-sm btn-circle absolute right-2 top-2"
+              className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 transition-colors"
               onClick={() => setEditModalOpen(false)}
             >
               ✕
             </button>
-            <h3 className="font-bold text-lg">Modifier le service</h3>
+            <h3 className="font-bold text-green-800 text-xl mb-4">
+              Modifier le service
+            </h3>
             <form onSubmit={handleUpdate}>
-              {/* <div className="form-control">
-                <label className="label">Répertoires</label>
-                <select
-                  value={currentService.directory_id}
-                  onChange={(e) =>
-                    setCurrentService({
-                      ...currentService,
-                      directory_id: e.target.value,
-                    })
-                  }
-                  className="input w-full input-bordered mb-2 border-2 border-gray-300 max-w-lg bg-white text-black"
-                >
-                  <option value="" disabled>
-                    Choisir un répertoire
-                  </option>
-                  {directories.map((directory) => (
-                    <option
-                      key={directory.directory_id}
-                      value={directory.directory_id}
-                    >
-                      {directory.nom_directory}
-                    </option>
-                  ))}
-                </select>
-              </div> */}
-              <div className="form-control mt-4">
-                <label className="label">Code du service</label>
+              <div className="form-control mt-2">
+                <label className="label text-gray-700 font-medium">
+                  Code du service
+                </label>
                 <input
                   type="text"
                   value={currentService.code}
@@ -737,12 +758,14 @@ export default function ShowDirection() {
                       code: e.target.value,
                     })
                   }
-                  className="input input-bordered border-2 border-gray-300 bg-white text-black"
+                  className="input py-2.5 px-4 border-2 border-green-200 rounded-lg bg-white text-gray-800 focus:border-green-500 focus:ring focus:ring-green-200 transition-all duration-200"
                   required
                 />
               </div>
               <div className="form-control mt-4">
-                <label className="label">Nom du service</label>
+                <label className="label text-gray-700 font-medium">
+                  Nom du service
+                </label>
                 <input
                   type="text"
                   value={currentService.nom_service}

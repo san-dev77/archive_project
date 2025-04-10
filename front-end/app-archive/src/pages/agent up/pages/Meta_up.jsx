@@ -26,12 +26,12 @@ export default function MetaUp() {
   const [selectedServiceId, setSelectedServiceId] = useState("");
   const [selectedDocumentTypeId, setSelectedDocumentTypeId] = useState("");
   const [selectedDocumentTypeName, setSelectedDocumentTypeName] = useState("");
-  const [setLoading] = useState(true);
-  const [, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
-  const [, setEditMetadataId] = useState(null);
+  const [editMetadataId, setEditMetadataId] = useState(null);
   const [metadataFields, setMetadataFields] = useState([
     { key: "", metaType: "text", required: false },
   ]);
@@ -204,22 +204,22 @@ export default function MetaUp() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-b from-gray-300 to-gray-400">
+    <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <Side_bar isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar_up />
         <div className="container w-full mx-auto px-4 py-8 mt-20">
-          <div className="bg-gray-800 w-full rounded-lg shadow-xl p-6 border-l-4 border-[#00B7FF]">
+          <div className="bg-white w-full rounded-xl shadow-xl p-6 border border-green-100">
             {/* Header section */}
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold text-white flex items-center">
-                <LayoutList className="h-8 w-8 text-[#00B7FF] mr-2" />
+              <h1 className="text-2xl font-bold text-green-800 flex items-center">
+                <LayoutList className="h-8 w-8 text-green-600 mr-2" />
                 Gestion des Métadonnées de la Direction
               </h1>
             </div>
 
             {/* Service and Document Type Selection */}
-            <div className="bg-[#3a3a3a] rounded-lg p-6 shadow-inner">
+            <div className="bg-green-50 rounded-lg p-6 shadow-inner border border-green-200">
               <div className="flex flex-col md:flex-row gap-6 mb-8 justify-between items-center"></div>
 
               <div className="flex flex-col md:flex-row gap-6 mb-8">
@@ -233,7 +233,6 @@ export default function MetaUp() {
                       label: service.nom_service,
                     }))}
                     onChange={(option) => handleServiceSelect(option.value)}
-                    // ... rest of the Select styling props
                   />
                 </div>
 
@@ -250,7 +249,6 @@ export default function MetaUp() {
                     onChange={(option) =>
                       handleDocumentTypeSelect(option.value, option.label)
                     }
-                    // ... rest of the Select styling props
                   />
                 </div>
               </div>
@@ -259,7 +257,7 @@ export default function MetaUp() {
                   <input
                     type="text"
                     placeholder="Rechercher une métadonnée..."
-                    className="px-4 py-3 bg-[#2a2a2a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent w-full pl-10"
+                    className="px-4 py-3 bg-white text-gray-800 border border-green-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent w-full pl-10"
                     onChange={(e) => {
                       const searchTerm = e.target.value.toLowerCase();
                       const filteredMetadata = metadata.filter((meta) =>
@@ -296,7 +294,7 @@ export default function MetaUp() {
                 </div>
                 {selectedDocumentTypeId && (
                   <button
-                    className="bg-white hover:bg-gray-200 text-black hover:text-black px-6 py-3 rounded-lg flex items-center transition-colors duration-200 shadow-md w-full md:w-auto justify-center"
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg flex items-center transition-colors duration-200 shadow-md w-full md:w-auto justify-center"
                     onClick={handleCreateNew}
                   >
                     <Plus className="h-5 w-5 mr-2" />
@@ -307,24 +305,24 @@ export default function MetaUp() {
 
               {/* Metadata Display Section */}
               {selectedDocumentTypeId && (
-                <div className="bg-[#2a2a2a] p-4 rounded-lg mb-6 border-l-2 border-[#00B7FF]">
-                  <h3 className="text-white text-lg font-medium mb-2 flex items-center">
-                    <Layers3 className="h-5 w-5 mr-2 text-[#00B7FF]" />
+                <div className="bg-white p-4 rounded-lg mb-6 border border-green-200">
+                  <h3 className="text-green-800 text-lg font-medium mb-2 flex items-center">
+                    <DatabaseZap className="h-5 w-5 mr-2 text-green-600" />
                     Informations sur le type de document
                   </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-300">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
                     <div>
-                      <p>
+                      <p className="text-gray-800">
                         <span className="font-medium">Type de document:</span>{" "}
                         {selectedDocumentTypeName}
                       </p>
                     </div>
                     <div>
-                      <p>
+                      <p className="text-gray-800">
                         <span className="font-medium">
                           Nombre de métadonnées:
                         </span>{" "}
-                        {metadata.length}
+                        {metadata?.length}
                       </p>
                     </div>
                   </div>
@@ -332,9 +330,9 @@ export default function MetaUp() {
               )}
 
               {selectedDocumentTypeId && metadata.length === 0 ? (
-                <div className="bg-[#2a2a2a] rounded-lg p-8 text-center">
-                  <div className="text-gray-400 mb-4">
-                    <DatabaseZap className="h-16 w-16 mx-auto mb-4 text-[#00B7FF] opacity-50" />
+                <div className="bg-white rounded-lg p-8 text-center border border-green-200">
+                  <div className="text-gray-500 mb-4">
+                    <DatabaseZap className="h-16 w-16 mx-auto mb-4 text-green-500 opacity-50" />
                     <p className="text-xl font-medium">
                       Aucune métadonnée trouvée
                     </p>
@@ -344,7 +342,7 @@ export default function MetaUp() {
                     </p>
                   </div>
                   <button
-                    className="mt-4 bg-[#00B7FF] hover:bg-[#009ad3] text-white px-6 py-3 rounded-lg flex items-center transition-colors duration-200 mx-auto"
+                    className="mt-4 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg flex items-center transition-colors duration-200 mx-auto"
                     onClick={() => setModalOpen(true)}
                   >
                     <Plus className="h-5 w-5 mr-2" />
@@ -353,9 +351,9 @@ export default function MetaUp() {
                 </div>
               ) : (
                 selectedDocumentTypeId && (
-                  <div className="bg-[#2a2a2a] rounded-lg overflow-hidden shadow-lg border border-[#4a4a4a]">
+                  <div className="bg-white rounded-lg overflow-hidden shadow-lg border border-green-200">
                     <table className="w-full">
-                      <thead className="bg-[#1a1a1a] text-white">
+                      <thead className="bg-green-100 text-green-800">
                         <tr>
                           <th className="px-6 py-4 text-left text-sm font-medium"></th>
                           <th className="px-6 py-4 text-left text-sm font-medium">
@@ -372,16 +370,16 @@ export default function MetaUp() {
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-[#4a4a4a]">
+                      <tbody className="divide-y divide-green-100">
                         {metadata.map((meta) => (
                           <tr
                             key={meta.id}
-                            className={`hover:bg-[#3a3a3a] transition-colors duration-200`}
+                            className="hover:bg-green-50 transition-colors duration-200"
                           >
                             <td className="px-6 py-4">
-                              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#2a2a2a]">
+                              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-green-100">
                                 {meta.metaType === "text" && (
-                                  <span className="text-[#00B7FF]">
+                                  <span className="text-green-600">
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       className="h-5 w-5"
@@ -399,7 +397,7 @@ export default function MetaUp() {
                                   </span>
                                 )}
                                 {meta.metaType === "Date" && (
-                                  <span className="text-[#00B7FF]">
+                                  <span className="text-green-600">
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       className="h-5 w-5"
@@ -417,7 +415,7 @@ export default function MetaUp() {
                                   </span>
                                 )}
                                 {meta.metaType === "number" && (
-                                  <span className="text-[#00B7FF]">
+                                  <span className="text-green-600">
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       className="h-5 w-5"
@@ -436,17 +434,17 @@ export default function MetaUp() {
                                 )}
                               </div>
                             </td>
-                            <td className="px-6 py-4 text-white font-medium">
+                            <td className="px-6 py-4 text-gray-800 font-medium">
                               {meta.cle}
                             </td>
                             <td className="px-6 py-4">
                               <span
                                 className={`px-3 py-1 rounded-full text-xs font-medium ${
                                   meta.metaType === "text"
-                                    ? "bg-blue-900 text-blue-200"
+                                    ? "bg-blue-100 text-blue-700"
                                     : meta.metaType === "Date"
-                                    ? "bg-green-900 text-green-200"
-                                    : "bg-purple-900 text-purple-200"
+                                    ? "bg-green-100 text-green-700"
+                                    : "bg-purple-100 text-purple-700"
                                 }`}
                               >
                                 {meta.metaType}
@@ -456,8 +454,8 @@ export default function MetaUp() {
                               <span
                                 className={`px-3 py-1 rounded-full text-xs font-medium ${
                                   meta.required
-                                    ? "bg-red-900 text-red-200"
-                                    : "bg-gray-700 text-gray-300"
+                                    ? "bg-red-100 text-red-700"
+                                    : "bg-gray-100 text-gray-700"
                                 }`}
                               >
                                 {meta.required ? "Obligatoire" : "Optionnel"}
@@ -468,7 +466,7 @@ export default function MetaUp() {
                                 <Tooltip title="Modifier" arrow>
                                   <button
                                     onClick={() => handleEdit(meta)}
-                                    className="p-2 text-[#00B7FF] hover:bg-[#404040] rounded-lg transition-colors duration-200"
+                                    className="p-2 bg-green-100 text-green-600 hover:bg-green-200 rounded-lg transition-colors duration-200"
                                   >
                                     <SquarePen className="h-5 w-5" />
                                   </button>
@@ -476,7 +474,7 @@ export default function MetaUp() {
                                 <Tooltip title="Supprimer" arrow>
                                   <button
                                     onClick={() => handleDelete(meta.id)}
-                                    className="p-2 text-red-500 hover:bg-[#404040] rounded-lg transition-colors duration-200"
+                                    className="p-2 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg transition-colors duration-200"
                                   >
                                     <Trash2 className="h-5 w-5" />
                                   </button>

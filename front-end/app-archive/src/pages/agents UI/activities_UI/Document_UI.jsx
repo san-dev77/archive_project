@@ -29,13 +29,15 @@ import { useParams } from "react-router-dom";
 import ReactDOM from "react-dom";
 
 const MainContainer = ({ children }) => (
-  <div className="flex w-full  bg-gray-300">{children}</div>
+  <div className="flex w-full bg-gradient-to-br from-green-50 to-emerald-100">
+    {children}
+  </div>
 );
 
 const ContentContainer = ({ children }) => (
   <div className="flex-1 flex flex-col">
     <div className="container w-full mx-auto px-4 py-8 mt-20">
-      <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+      <div className="bg-white w-full rounded-xl shadow-xl p-6 border border-green-100">
         {children}
       </div>
     </div>
@@ -43,7 +45,9 @@ const ContentContainer = ({ children }) => (
 );
 
 const StyledBox = ({ children }) => (
-  <div className="bg-[#3a3a3a] rounded-lg p-4">{children}</div>
+  <div className="bg-green-50 rounded-lg p-4 border border-green-200">
+    {children}
+  </div>
 );
 
 const Modal = ({ open, onClose, children }) => {
@@ -51,11 +55,11 @@ const Modal = ({ open, onClose, children }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg p-6 m-4 max-w-xl w-full"
+        className="bg-white rounded-lg p-6 m-4 max-w-xl w-full border border-green-100"
         onClick={(e) => e.stopPropagation()}
       >
         {children}
@@ -70,7 +74,6 @@ const DetailsTable = ({ children }) => (
 
 const DetailsDialog = ({
   open,
-  onClose,
   document,
   metadataKeys,
   documentLot,
@@ -152,24 +155,24 @@ const DetailsDialog = ({
   return (
     <div className="flex flex-col">
       <div className="flex gap-2 items-center justify-center mb-2">
-        <div className="avatar bg-gray-300 p-2 rounded-full text-black">
+        <div className="avatar bg-green-100 p-2 rounded-full text-green-800">
           <InfoOutlined />
         </div>
-        <h5 className="font-bold text-center text-black">
+        <h5 className="font-bold text-center text-gray-800">
           Détails du document
         </h5>
       </div>
       <div className="modal-content">
         <button
           onClick={toggleMode}
-          className="btn btn-outline border-2 w-full justify-center border-gray-400 text-gray-800 hover:bg-gray-400 hover:text-white"
+          className="btn btn-outline border-2 w-full justify-center border-green-200 text-green-700 hover:bg-green-100 hover:text-green-800"
         >
           <ArrowUpDown className="mr-2" />{" "}
           {isPieceMode ? "Passer au mode Lot" : "Passer au mode Pièce"}
         </button>
         <DetailsTable>
           <table className="table w-full">
-            <thead className="text-black">
+            <thead className="bg-green-100 text-green-800">
               <tr>
                 <th>Aperçu</th>
                 <th>Metadonnées</th>
@@ -186,13 +189,13 @@ const DetailsDialog = ({
                   .map((meta) => (
                     <tr key={meta.field}>
                       <td>
-                        <DatabaseZap className="text-gray-800" />
+                        <DatabaseZap className="text-green-600" />
                       </td>
                       <td>
                         <p className="font-bold text-gray-800">{meta.field}</p>
                       </td>
                       <td>
-                        <p className="text-gray-500">
+                        <p className="text-gray-600">
                           {document[meta.field] || "N/A"}
                         </p>
                       </td>
@@ -200,7 +203,7 @@ const DetailsDialog = ({
                   ))}
               <tr>
                 <td colSpan={3}>
-                  <p className="text-gray-800 italic text-center">
+                  <p className="text-gray-700 italic text-center">
                     {document
                       ? ` Document créé le: ${document.created_at}`
                       : "Date de création non disponible"}
@@ -208,8 +211,7 @@ const DetailsDialog = ({
                 </td>
               </tr>
               {isPieceMode
-                ? // Rendu pour le mode pièce
-                  Array.from(
+                ? Array.from(
                     new Set(document?.files?.map((file) => file.pieceName))
                   ).map((pieceName, index) => {
                     const file = document.files.find(
@@ -217,7 +219,7 @@ const DetailsDialog = ({
                     );
                     return (
                       <tr key={index} className="">
-                        <td className="hover:bg-cyan-600 cursor-pointer w-full text-gray-800 mt-2 rounded-lg bg-cyan-500 flex items-center justify-center">
+                        <td className="hover:bg-green-600 cursor-pointer w-full text-white mt-2 rounded-lg bg-green-500 flex items-center justify-center">
                           <FileUp
                             className="cursor-pointer"
                             onClick={() => window.open(file.fileUrl, "_blank")}
@@ -228,7 +230,7 @@ const DetailsDialog = ({
                         </td>
                         <td>
                           <span
-                            className="text-gray-800 cursor-pointer hover:text-blue-500"
+                            className="text-gray-800 cursor-pointer hover:text-green-600"
                             onClick={() => window.open(file.fileUrl, "_blank")}
                           >
                             {file.filePath}
@@ -243,8 +245,7 @@ const DetailsDialog = ({
                       </td>
                     </tr>
                   )
-                : // Rendu pour le mode lot
-                  documentLot?.map((lot, index) => {
+                : documentLot?.map((lot, index) => {
                     const uniqueFiles = Array.from(
                       new Set(lot.files.map((file) => file.filePath))
                     ).map((filePath) =>
@@ -253,14 +254,14 @@ const DetailsDialog = ({
 
                     return uniqueFiles.map((file, fileIndex) => (
                       <tr key={`${index}-${fileIndex}`}>
-                        <td className="hover:bg-cyan-600 cursor-pointer w-full text-gray-800 mt-2 rounded-lg bg-cyan-500 flex items-center justify-center">
+                        <td className="hover:bg-green-600 cursor-pointer w-full text-white mt-2 rounded-lg bg-green-500 flex items-center justify-center">
                           <FileUp
                             className="cursor-pointer"
                             onClick={() => window.open(file.fileUrl, "_blank")}
                           />
                         </td>
                         <td
-                          className="text-gray-800 w-full hover:text-blue-500 cursor-pointer"
+                          className="text-gray-800 w-full hover:text-green-600 cursor-pointer"
                           onClick={() => window.open(file.fileUrl, "_blank")}
                         >
                           {file.filePath}
@@ -321,7 +322,7 @@ const Document_UI = () => {
         metaType: meta.metaType,
         flex: 1,
         renderHeader: () => (
-          <span className="text-sm text-gray-500">{meta.cle}</span>
+          <span className="text-sm text-green-700">{meta.cle}</span>
         ),
       }));
       setMetadataKeys(columns);
@@ -470,11 +471,11 @@ const Document_UI = () => {
       renderCell: (params) => (
         <Tooltip title="View Details">
           <IconButton
-            className="bg-gray-800 p-2"
+            className="bg-green-100 p-2"
             onClick={() => handleOpenDetails(params.row)}
           >
             <Avatar sx={{ borderRadius: "50%", background: "#fff" }}>
-              <FolderCheckIcon style={{ color: "#333" }} />
+              <FolderCheckIcon style={{ color: "#166534" }} />
             </Avatar>
           </IconButton>
         </Tooltip>
@@ -493,9 +494,9 @@ const Document_UI = () => {
             <IconButton
               sx={{
                 borderRadius: "50%",
-                background: "#0059b3",
-                color: "white",
-                ":hover": { color: "black" },
+                background: "#dcfce7",
+                color: "#166534",
+                ":hover": { background: "#bbf7d0" },
               }}
               onClick={() => handleOpenDetails(params.row)}
             >
@@ -506,9 +507,9 @@ const Document_UI = () => {
             <IconButton
               sx={{
                 borderRadius: "50%",
-                background: "#862d86",
-                color: "white",
-                ":hover": { color: "black" },
+                background: "#dcfce7",
+                color: "#166534",
+                ":hover": { background: "#bbf7d0" },
               }}
               onClick={() => handleEdit(params.row)}
             >
@@ -519,9 +520,9 @@ const Document_UI = () => {
             <IconButton
               sx={{
                 borderRadius: "50%",
-                background: "#6666ff",
-                color: "white",
-                ":hover": { color: "black" },
+                background: "#dcfce7",
+                color: "#166534",
+                ":hover": { background: "#bbf7d0" },
               }}
               onClick={() => handleOpenPieceDialog(params.row.id)}
             >
@@ -532,9 +533,9 @@ const Document_UI = () => {
             <IconButton
               sx={{
                 borderRadius: "50%",
-                background: "crimson",
-                color: "white",
-                ":hover": { color: "black" },
+                background: "#fee2e2",
+                color: "#b91c1c",
+                ":hover": { background: "#fecaca" },
               }}
               onClick={() => handleDelete(params.row.id)}
             >
@@ -574,13 +575,13 @@ const Document_UI = () => {
         <TopBar_UI />
 
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold text-white flex items-center">
-            <LayoutPanelTop className="h-8 w-8 text-[#00B7FF] mr-2" />
+          <h1 className="text-2xl font-bold text-green-800 flex items-center">
+            <LayoutPanelTop className="h-8 w-8 text-green-600 mr-2" />
             Liste des dossiers archivés
           </h1>
           <button
             onClick={() => setCreateDialogOpen(true)}
-            className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
           >
             <Plus className="h-5 w-5 mr-2" />
             Nouveau Document
@@ -590,50 +591,50 @@ const Document_UI = () => {
         <StyledBox>
           <div className="flex justify-between mb-6">
             <div className="flex-1 mr-4">
-              <label className="block text-sm font-medium text-white mb-1">
+              <label className="block text-sm font-medium text-green-700 mb-1">
                 Rechercher des documents
               </label>
               <div className="relative">
                 <input
                   type="text"
                   placeholder="Rechercher des documents..."
-                  className="w-full px-4 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                  className="w-full px-4 py-2 bg-white border border-green-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent text-gray-700"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <Search className="absolute right-3 top-2.5 h-5 w-5 text-gray-400" />
+                <Search className="absolute right-3 top-2.5 h-5 w-5 text-green-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-[#2a2a2a] rounded-lg p-4">
+          <div className="bg-white rounded-lg p-4 border border-green-200">
             <DataGrid
               rows={filteredDocuments}
               columns={columns}
               pageSize={5}
               rowsPerPageOptions={[5, 10, 20]}
               autoHeight
-              className="bg-[#2a2a2a] text-white"
+              className="bg-white text-gray-800"
               sx={{
                 "& .MuiDataGrid-cell": {
-                  color: "white",
-                  borderColor: "#4a4a4a",
+                  color: "#333",
+                  borderColor: "#d1fae5",
                 },
                 "& .MuiDataGrid-columnHeaders": {
-                  backgroundColor: "#1f1f1f",
-                  color: "black",
-                  borderColor: "#4a4a4a",
+                  backgroundColor: "#dcfce7",
+                  color: "#166534",
+                  borderColor: "#d1fae5",
                 },
                 "& .MuiDataGrid-footerContainer": {
-                  backgroundColor: "#1f1f1f",
-                  color: "white",
-                  borderColor: "#4a4a4a",
+                  backgroundColor: "#dcfce7",
+                  color: "#166534",
+                  borderColor: "#d1fae5",
                 },
                 "& .MuiTablePagination-root": {
-                  color: "white",
+                  color: "#166534",
                 },
                 "& .MuiIconButton-root": {
-                  color: "white",
+                  color: "#166534",
                 },
               }}
             />
@@ -654,25 +655,25 @@ const Document_UI = () => {
 
         {createDialogOpen && (
           <Modal open={true} onClose={() => setCreateDialogOpen(false)}>
-            <div className="bg-[#2a2a2a] rounded-lg shadow-xl p-6 w-full max-w-lg">
+            <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg border border-green-200">
               <div className="flex gap-2 justify-center items-center mb-4">
-                <div className="avatar bg-[#00B7FF] p-2 rounded-full">
+                <div className="avatar bg-green-600 p-2 rounded-full">
                   <FolderPlusIcon size="35px" color="white" />
                 </div>
-                <h5 className="font-bold text-white text-lg">
-                  Création d'un nouveau document
+                <h5 className="font-bold text-green-800 text-lg">
+                  Création d&apos;un nouveau document
                 </h5>
               </div>
 
               <div className="grid grid-cols-1 gap-4">
                 {metadataKeys.map((meta) => (
                   <div key={meta.field}>
-                    <label className="block text-sm font-medium text-white mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       {meta.headerName}
                     </label>
                     <input
                       type={meta.metaType}
-                      className="w-full px-3 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                      className="w-full px-3 py-2 bg-green-50 text-gray-700 border border-green-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       value={formData[meta.field] || ""}
                       onChange={(e) =>
                         setFormData({
@@ -687,18 +688,18 @@ const Document_UI = () => {
 
               <div className="flex justify-end space-x-4 mt-6">
                 <button
-                  className="px-4 py-2 text-sm font-medium text-white bg-[#4a4a4a] rounded-lg hover:bg-[#5a5a5a]"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
                   onClick={() => setCreateDialogOpen(false)}
                 >
                   Annuler
                 </button>
                 <button
-                  className="px-4 py-2 text-sm font-medium text-white bg-[#00B7FF] rounded-lg hover:bg-[#0096FF]"
+                  className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
                   onClick={handleCreateDocument}
                   disabled={loadingForm}
                 >
                   {loadingForm ? (
-                    <CircularProgress size={24} />
+                    <CircularProgress size={24} color="inherit" />
                   ) : (
                     "Créer document"
                   )}
@@ -710,49 +711,51 @@ const Document_UI = () => {
 
         {editDialogOpen && (
           <Modal open={true} onClose={() => setEditDialogOpen(false)}>
-            <div className="flex gap-2 justify-center items-center mb-4">
-              <div className="avatar bg-gray-500 p-2 rounded-full">
-                <SquarePen size="35px" color="white" />
+            <div className="bg-white border border-green-200 rounded-lg shadow-xl p-6">
+              <div className="flex gap-2 justify-center items-center mb-4">
+                <div className="avatar bg-green-600 p-2 rounded-full">
+                  <SquarePen size="35px" color="white" />
+                </div>
+                <h5 className="font-bold text-green-800 text-lg">
+                  Modifier le document
+                </h5>
               </div>
-              <h5 className="font-bold text-gray-800 text-lg">
-                Modifier le document
-              </h5>
-            </div>
-            <div className="modal-content">
-              <div className="grid grid-cols-1 gap-4 text-black">
-                {metadataKeys.map((meta) => (
-                  <div key={meta.field} className="text-black">
-                    <label className="label text-black">
-                      <span className="label-text">{meta.headerName}</span>
-                    </label>
-                    <input
-                      type={meta.metaType}
-                      className="input input-bordered w-full bg-gray-400 hover:shadow- border-gray-300"
-                      value={editFormData[meta.field] || ""}
-                      onChange={(e) =>
-                        setEditFormData({
-                          ...editFormData,
-                          [meta.field]: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                ))}
+              <div className="modal-content">
+                <div className="grid grid-cols-1 gap-4 text-gray-800">
+                  {metadataKeys.map((meta) => (
+                    <div key={meta.field}>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {meta.headerName}
+                      </label>
+                      <input
+                        type={meta.metaType}
+                        className="w-full px-3 py-2 bg-green-50 text-gray-700 border border-green-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        value={editFormData[meta.field] || ""}
+                        onChange={(e) =>
+                          setEditFormData({
+                            ...editFormData,
+                            [meta.field]: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="modal-action">
-              <button
-                className="btn btn-outline border-2 w-full justify-center border-gray-400 text-gray-800 hover:bg-gray-400 hover:text-white"
-                onClick={handleUpdateDocument}
-                disabled={loadingForm}
-              >
-                <RefreshCcw />{" "}
-                {loadingForm ? (
-                  <CircularProgress size={24} />
-                ) : (
-                  "Mettre à jour le document"
-                )}
-              </button>
+              <div className="mt-6">
+                <button
+                  className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center justify-center transition-colors duration-200"
+                  onClick={handleUpdateDocument}
+                  disabled={loadingForm}
+                >
+                  <RefreshCcw className="mr-2" />{" "}
+                  {loadingForm ? (
+                    <CircularProgress size={24} color="inherit" />
+                  ) : (
+                    "Mettre à jour le document"
+                  )}
+                </button>
+              </div>
             </div>
           </Modal>
         )}
@@ -766,8 +769,8 @@ const Document_UI = () => {
         />
 
         {isLoading && (
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black bg-opacity-30">
-            <CircularProgress />
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/30 backdrop-blur-sm">
+            <CircularProgress sx={{ color: "#16a34a" }} />
           </div>
         )}
       </ContentContainer>

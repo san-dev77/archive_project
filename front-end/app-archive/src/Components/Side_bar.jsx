@@ -27,6 +27,7 @@ const SideBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [noResultsMessage, setNoResultsMessage] = useState("");
+  const [activeItem, setActiveItem] = useState("");
 
   useEffect(() => {
     const fetchDirectories = async () => {
@@ -54,6 +55,10 @@ const SideBar = () => {
       }
     };
 
+    // Set active item based on current path
+    const path = window.location.pathname;
+    setActiveItem(path);
+
     checkShowMoreIndicator();
     window.addEventListener("resize", checkShowMoreIndicator);
 
@@ -63,6 +68,7 @@ const SideBar = () => {
   }, []);
 
   const handleNavigate = (path) => {
+    setActiveItem(path);
     navigate(path);
   };
 
@@ -97,116 +103,169 @@ const SideBar = () => {
 
   return (
     <>
-      <div className="sticky top-0 h-screen overflow-x-hidden scrollbar-state z-20 bg-gray-900 shadow-lg flex flex-col justify-between items-center px-2 py-2 w-64">
+      <div className="sticky top-0 h-screen overflow-x-hidden scrollbar-state z-20 bg-gradient-to-b from-green-700 to-green-900 shadow-2xl flex flex-col justify-between items-center px-4 py-4 w-64">
         <div className="flex flex-col items-center space-y-4 w-full max-h-[80vh]">
           {/* Le logo */}
-          <div className="flex p-6 h-[50px] text-left w-full items-start justify-start">
+          <div className="flex p-4 h-[60px] text-left w-full items-center justify-start bg-green-800 rounded-xl shadow-lg">
             <div className="flex items-center justify-normal w-full gap-2 align-middle h-full">
               <img
                 src={logo}
                 alt="logo_BMS"
-                className="w-12 h-12 rounded-full bg-white shadow-md"
+                className="w-12 h-12 rounded-full bg-white shadow-md border-2 border-green-400"
               />
-              <h1 className="text-white text-2x font-bold">Digi Doc</h1>
+              <h1 className="text-white text-2xl font-bold tracking-wide">
+                Digi Doc
+              </h1>
             </div>
           </div>
           {/* Le logo */}
 
-          <div className="divider"></div>
+          <div className="divider before:bg-green-500 after:bg-green-500"></div>
 
-          <ul className="menu p-0 w-full">
+          <ul className="menu p-0 w-full space-y-2">
             <div
-              className="cursor-pointer flex items-start justify-start text-white gap-1 w-full rounded-lg p-2 bg-gray-800 hover:bg-gray-600 transition-colors duration-300"
+              className={`cursor-pointer flex items-center justify-start gap-1 w-full rounded-xl p-3 ${
+                activeItem === "/app-archive"
+                  ? "bg-emerald-500 text-white shadow-lg"
+                  : "bg-green-800/50 text-white hover:bg-emerald-600 hover:shadow-md"
+              } transition-all duration-300`}
               onClick={() => handleNavigate("/app-archive")}
             >
               <LayoutDashboard
-                color="white"
-                size="24px"
-                className="transition-transform duration-300 ease-in-out transform hover:scale-110"
+                size="22px"
+                className="transition-transform duration-300 ease-in-out transform group-hover:scale-110"
               />
-              <span className="text-sm ml-2">Dashboard</span>
+              <span className="text-sm ml-2 font-medium">Dashboard</span>
             </div>
+
             <li className="w-full">
               <div
                 onClick={() => handleNavigate("/services")}
-                className="flex w-full items-center justify-between text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
+                className={`flex w-full items-center justify-between rounded-xl p-3 ${
+                  activeItem === "/services"
+                    ? "bg-emerald-500 text-white shadow-lg"
+                    : "bg-green-800/50 text-white hover:bg-emerald-600 hover:shadow-md"
+                } transition-all duration-300 cursor-pointer`}
               >
                 <div className="flex items-center">
-                  <Network color="white" size="24px" />
-                  <span className="text-sm ml-2">Directions</span>
+                  <Network size="22px" />
+                  <span className="text-sm ml-2 font-medium">Directions</span>
                 </div>
               </div>
             </li>
+
             <li className="w-full">
               <div
                 onClick={() => handleNavigate("/document-types")}
-                className="flex w-full items-center justify-between text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
+                className={`flex w-full items-center justify-between rounded-xl p-3 ${
+                  activeItem === "/document-types"
+                    ? "bg-emerald-500 text-white shadow-lg"
+                    : "bg-green-800/50 text-white hover:bg-emerald-600 hover:shadow-md"
+                } transition-all duration-300 cursor-pointer`}
               >
                 <div className="flex items-center">
-                  <Layers3 color="white" size="24px" />
-                  <span className="text-sm ml-2">Types de documents</span>
+                  <Layers3 size="22px" />
+                  <span className="text-sm ml-2 font-medium">
+                    Types de documents
+                  </span>
                 </div>
               </div>
             </li>
+
             <li className="w-full">
               <div
                 onClick={() => handleNavigate("/create-piece")}
-                className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
+                className={`flex w-full items-center rounded-xl p-3 ${
+                  activeItem === "/create-piece"
+                    ? "bg-emerald-500 text-white shadow-lg"
+                    : "bg-green-800/50 text-white hover:bg-emerald-600 hover:shadow-md"
+                } transition-all duration-300 cursor-pointer`}
               >
-                <Grid color="white" size="24px" />
-                <span className="text-sm ml-2">Pièces</span>
+                <Grid size="22px" />
+                <span className="text-sm ml-2 font-medium">Pièces</span>
               </div>
             </li>
+
             <li className="w-full">
               <div
                 onClick={() => handleNavigate("/documents")}
-                className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
+                className={`flex w-full items-center rounded-xl p-3 ${
+                  activeItem === "/documents"
+                    ? "bg-emerald-500 text-white shadow-lg"
+                    : "bg-green-800/50 text-white hover:bg-emerald-600 hover:shadow-md"
+                } transition-all duration-300 cursor-pointer`}
               >
-                <BookMarked color="white" size="24px" />
-                <span className="text-sm ml-2">Dossier</span>
+                <BookMarked size="22px" />
+                <span className="text-sm ml-2 font-medium">Dossier</span>
               </div>
             </li>
+
             <li className="w-full">
               <div
                 onClick={() => handleNavigate("/search")}
-                className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
+                className={`flex w-full items-center rounded-xl p-3 ${
+                  activeItem === "/search"
+                    ? "bg-emerald-500 text-white shadow-lg"
+                    : "bg-green-800/50 text-white hover:bg-emerald-600 hover:shadow-md"
+                } transition-all duration-300 cursor-pointer`}
               >
-                <ScanSearch color="white" size="24px" />
-                <span className="text-sm ml-2">Rechercher</span>
+                <ScanSearch size="22px" />
+                <span className="text-sm ml-2 font-medium">Rechercher</span>
               </div>
             </li>
+
             <li className="w-full">
               <div
                 onClick={() => handleNavigate("/users")}
-                className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
+                className={`flex w-full items-center rounded-xl p-3 ${
+                  activeItem === "/users"
+                    ? "bg-emerald-500 text-white shadow-lg"
+                    : "bg-green-800/50 text-white hover:bg-emerald-600 hover:shadow-md"
+                } transition-all duration-300 cursor-pointer`}
               >
-                <UsersRound color="white" size="24px" />
-                <span className="text-sm ml-2">Utilisateurs</span>
+                <UsersRound size="22px" />
+                <span className="text-sm ml-2 font-medium">Utilisateurs</span>
               </div>
             </li>
+
             <li className="w-full">
               <div
                 onClick={() => handleNavigate("/suivi")}
-                className="flex w-full items-center text-white hover:text-yellow-300 transition-colors duration-300 ease-in-out transform hover:scale-105 cursor-pointer"
+                className={`flex w-full items-center rounded-xl p-3 ${
+                  activeItem === "/suivi"
+                    ? "bg-emerald-500 text-white shadow-lg"
+                    : "bg-green-800/50 text-white hover:bg-emerald-600 hover:shadow-md"
+                } transition-all duration-300 cursor-pointer`}
               >
-                <ChartNoAxesCombined color="white" size="24px" />
-                <span className="text-sm ml-2">Suivi</span>
+                <ChartNoAxesCombined size="22px" />
+                <span className="text-sm ml-2 font-medium">Suivi</span>
               </div>
             </li>
           </ul>
-          <div className="divider"></div>
+
+          <div className="divider before:bg-green-500 after:bg-green-500"></div>
+
+          <div
+            onClick={() => setShowSearchModal(true)}
+            className="w-full bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl p-3 flex items-center justify-center cursor-pointer shadow-md hover:shadow-lg transition-all duration-300 mt-auto"
+          >
+            <Search size="20px" className="mr-2" />
+            <span className="font-medium">Recherche rapide</span>
+          </div>
         </div>
       </div>
-      {showSearchModal && (
-        <div className="fixed inset-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg w-full max-w-2xl mx-4">
-            <div className="flex text-black justify-between items-center mb-4">
-              <Search className="" size={40} />
 
-              <h2 className="text-2xl font-bold">Recherche de services</h2>
+      {showSearchModal && (
+        <div className="fixed inset-0 w-full h-full bg-black bg-opacity-70 flex justify-center items-center z-50 backdrop-blur-sm">
+          <div className="bg-white p-6 rounded-xl w-full max-w-2xl mx-4 shadow-2xl border-2 border-green-500">
+            <div className="flex text-black justify-between items-center mb-4">
+              <Search className="text-green-600" size={32} />
+              <h2 className="text-2xl font-bold text-green-800">
+                Recherche de services
+              </h2>
               <button
                 onClick={() => setShowSearchModal(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-red-600 transition-colors duration-300"
               >
                 <X size={24} />
               </button>
@@ -217,11 +276,11 @@ const SideBar = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Rechercher un service..."
-                className="flex-grow p-2 border border-gray-300 rounded-l"
+                className="flex-grow p-3 border-2 border-green-200 focus:border-green-500 focus:ring-2 focus:ring-green-300 rounded-l-lg outline-none transition-all duration-300"
               />
               <button
                 onClick={handleSearch}
-                className="bg-gray-600 text-white p-2 rounded-r hover:bg-gray-800 transition-colors duration-300"
+                className="bg-green-600 text-white p-3 rounded-r-lg hover:bg-green-700 transition-colors duration-300 font-medium"
               >
                 Rechercher
               </button>
@@ -231,22 +290,24 @@ const SideBar = () => {
                 <div
                   key={service.id}
                   onClick={() => handleServiceClick(service.id)}
-                  className="p-4 mb-2 bg-gray-300 rounded hover:bg-gray-200 cursor-pointer transition-colors duration-300"
+                  className="p-4 mb-2 bg-green-50 rounded-lg hover:bg-green-100 cursor-pointer transition-colors duration-300 border border-green-200"
                 >
-                  <div className="font-semibold flex items-center text-lg text-black">
-                    <BadgeInfo className="mr-2" color="black" size="16px" />
+                  <div className="font-semibold flex items-center text-lg text-green-800">
+                    <BadgeInfo className="mr-2" color="#047857" size={18} />
                     {service.nom_service}
                   </div>
-                  <div className="text-sm text-gray-600">
+                  <div className="text-sm text-gray-600 ml-6">
                     Direction: {service.directory}
                   </div>
                 </div>
               ))}
               {noResultsMessage && (
                 <div className="text-red-500 text-center font-bold text-2xl flex flex-col justify-center mt-4">
-                  <Frown className="w-full flex justify-center" size={40} />
-
-                  {noResultsMessage}
+                  <Frown
+                    className="w-full flex justify-center text-red-400"
+                    size={48}
+                  />
+                  <p className="mt-2">{noResultsMessage}</p>
                 </div>
               )}
             </div>

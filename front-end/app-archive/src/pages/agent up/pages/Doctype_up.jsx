@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import TopBar from "../../../Components/Top_bar";
 import {
   SquarePen,
   Trash2,
@@ -10,7 +9,6 @@ import {
   Plus,
   Settings,
   Database,
-  Settings2Icon,
   Zap,
 } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
@@ -224,27 +222,27 @@ export default function DoctypeUp() {
   if (error) return <div className="text-red-500">{error}</div>;
 
   return (
-    <div className="flex min-h-screen bg-gray-300">
+    <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <SideBar_up isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar_up position="fixed" title="Types de documents" />
         <div className="container w-full mx-auto px-4 py-8 mt-20">
-          <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+          <div className="bg-white w-full rounded-xl shadow-xl p-6 border border-green-100">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold text-white flex items-center">
-                <Layers3 className="h-8 w-8 text-[#00B7FF] mr-2" />
+              <h1 className="text-2xl font-bold text-green-800 flex items-center">
+                <Layers3 className="h-8 w-8 text-green-600 mr-2" />
                 Types de documents
               </h1>
               <div className="flex gap-4">
                 <button
-                  className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
                   onClick={handleOpenModal}
                 >
                   <Plus className="h-5 w-5 mr-2" />
                   Nouveau
                 </button>
                 <button
-                  className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
+                  className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
                   onClick={handleShowMetadataModal}
                 >
                   <Settings className="h-5 w-5 mr-2" />
@@ -256,7 +254,7 @@ export default function DoctypeUp() {
             <div className="mb-6">
               <div className="flex items-center space-x-4">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-white mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Rechercher un service
                   </label>
                   <input
@@ -264,38 +262,38 @@ export default function DoctypeUp() {
                     value={searchTerm}
                     onChange={handleSearchChange}
                     placeholder="Rechercher..."
-                    className="w-full px-4 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                    className="w-full px-4 py-2 bg-white border border-green-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="bg-[#3a3a3a] rounded-lg p-4">
+            <div className="bg-green-50 rounded-lg p-4 border border-green-200">
               <div className="overflow-x-auto">
-                <div className="h-[600px] bg-gray-800 py-4 rounded-xl px-6 overflow-y-auto shadow-inner">
+                <div className="h-[600px] bg-white py-4 rounded-xl px-6 overflow-y-auto shadow-inner">
                   <ul className="list-none w-full grid grid-cols-1 gap-4">
                     {filteredServices.map((service) => (
                       <li
                         key={service.id}
-                        className="w-full border border-white rounded-lg p-4"
+                        className="w-full border border-green-200 rounded-lg p-4"
                       >
                         <button
-                          className="btn w-full bg-gray-500 hover:bg-gray-400 transition duration-300 rounded-lg shadow-md text-left flex justify-between items-center"
+                          className="w-full bg-green-100 hover:bg-green-200 transition duration-300 rounded-lg shadow-md text-left flex justify-between items-center p-4"
                           onClick={() => toggleService(service.id)}
                         >
-                          <div className="flex text-black items-center p-2 rounded-full bg-white">
-                            <Settings className="mr-2" />
+                          <div className="flex text-green-800 items-center">
+                            <Settings className="mr-2 text-green-600" />
                             {service.nom_service}
                           </div>
                           {expandedService === service.id ? (
-                            <ChevronUp />
+                            <ChevronUp className="text-green-600" />
                           ) : (
-                            <ChevronDown />
+                            <ChevronDown className="text-green-600" />
                           )}
                         </button>
                         {expandedService === service.id && (
                           <table className="table w-full mt-2">
-                            <thead className="sticky top-0 rounded-lg bg-gray-700 text-white">
+                            <thead className="sticky top-0 rounded-lg bg-green-100 text-green-800">
                               <tr>
                                 <th className="text-lg p-4">
                                   Type de document
@@ -310,16 +308,19 @@ export default function DoctypeUp() {
                                 service.documentTypes.map((docType) => (
                                   <tr
                                     key={docType.id}
-                                    className="hover:bg-gray-200 rounded-lg bg-gray-100 transition duration-200"
+                                    className="hover:bg-green-50 rounded-lg bg-white border-b border-green-100 transition duration-200"
                                   >
                                     <td className="flex items-center p-4 text-base text-gray-800">
-                                      <Layers3 size={20} className="mr-2" />
+                                      <Layers3
+                                        size={20}
+                                        className="mr-2 text-green-600"
+                                      />
                                       {docType.name}
                                     </td>
                                     <td className="text-right p-4 text-base text-gray-800">
                                       <Tooltip title="Modifier">
                                         <button
-                                          className="btn btn-outline btn-circle bg-gray-700 text-white hover:bg-indigo-500 transition duration-300"
+                                          className="p-2 bg-green-100 text-green-600 rounded-lg hover:bg-green-200 transition duration-300 mx-1"
                                           onClick={() => handleEdit(docType)}
                                         >
                                           <SquarePen />
@@ -327,7 +328,7 @@ export default function DoctypeUp() {
                                       </Tooltip>
                                       <Tooltip title="Supprimer">
                                         <button
-                                          className="btn btn-outline bg-gray-700 text-white btn-circle hover:bg-red-500 transition duration-300"
+                                          className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition duration-300 mx-1"
                                           onClick={() =>
                                             handleDelete(docType.id)
                                           }
@@ -352,17 +353,17 @@ export default function DoctypeUp() {
       </div>
 
       {openModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[#2a2a2a] rounded-lg shadow-xl p-6 w-full max-w-lg mx-4">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-lg mx-4 border border-green-200">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-white">
+              <h3 className="text-2xl font-bold text-green-800">
                 {newDocType.id
                   ? "Modifier le type de document"
                   : "Ajouter un nouveau type de document"}
               </h3>
               <button
                 onClick={handleCloseModal}
-                className="text-gray-400 hover:text-gray-200"
+                className="text-gray-400 hover:text-gray-600 bg-gray-100 hover:bg-gray-200 rounded-full p-2 transition-colors"
               >
                 ✕
               </button>
@@ -376,7 +377,9 @@ export default function DoctypeUp() {
             >
               {!newDocType.id && (
                 <div className="form-control">
-                  <label className="label">Sélectionner un service</label>
+                  <label className="label font-medium text-gray-700">
+                    Sélectionner un service
+                  </label>
                   <Select
                     value={serviceOptions.find(
                       (option) => option.value === newDocType.serviceId
@@ -390,27 +393,29 @@ export default function DoctypeUp() {
                 </div>
               )}
               <div className="form-control mt-4">
-                <label className="label">Nom du type de document</label>
+                <label className="label font-medium text-gray-700">
+                  Nom du type de document
+                </label>
                 <input
                   type="text"
                   value={newDocType.name}
                   onChange={(e) =>
                     setNewDocType({ ...newDocType, name: e.target.value })
                   }
-                  className="input input-bordered border-2 border-gray-300 bg-white text-black"
+                  className="input input-bordered w-full mb-4 bg-green-50 text-gray-800 border border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all"
                   required
                 />
               </div>
-              <div className="modal-action flex justify-center items-center">
+              <div className="modal-action flex justify-center items-center mt-6 space-x-4">
                 <button
                   type="submit"
-                  className="btn border-t-neutral-700 w-[40%] bg-gray-300 text-black hover:bg-gray-400 transition duration-300 rounded-lg"
+                  className="px-6 py-2.5 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                 >
                   {newDocType.id ? "Mettre à jour" : "Ajouter"}
                 </button>
                 <button
                   type="button"
-                  className="btn btn-outline btn-error w-[40%] mt-2"
+                  className="px-6 py-2.5 bg-white border border-red-500 text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-300"
                   onClick={handleCloseModal}
                 >
                   Annuler
@@ -427,48 +432,29 @@ export default function DoctypeUp() {
           onClick={handleCloseMetadataModal}
         >
           <div
-            className="bg-white/90 rounded-2xl shadow-2xl p-8 max-w-4xl w-full mx-4 transform transition duration-500 hover:scale-[1.02]"
+            className="bg-white rounded-2xl shadow-2xl p-8 max-w-4xl w-full mx-4 transform transition duration-500 hover:scale-[1.02] border border-green-200"
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              className="absolute right-4 top-4 p-2 rounded-full hover:bg-gray-100 transition-colors"
+              className="absolute right-4 top-4 p-2 rounded-full hover:bg-green-100 transition-colors"
               onClick={handleCloseMetadataModal}
             >
               <span className="sr-only">Fermer</span>✕
             </button>
 
             <div className="text-center mb-8">
-              <Settings className="mx-auto text-gray-700 mb-4" size={48} />
-              <h3 className="text-3xl font-bold text-gray-800">
+              <Settings className="mx-auto text-green-600 mb-4" size={48} />
+              <h3 className="text-3xl font-bold text-green-800">
                 Configuration du système
               </h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* <div
-                className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300"
-                onClick={() => (window.location.href = "/pieces")}
-              >
-                <div className="cursor-pointer absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="cursor-pointer relative p-6 text-center">
-                  <Settings2Icon
-                    className="mx-auto text-gray-700 group-hover:text-blue-600 transition-colors mb-4"
-                    size={48}
-                  />
-                  <h4 className="text-xl font-bold text-gray-800 mb-2">
-                    Pièces
-                  </h4>
-                  <p className="text-gray-600">
-                    Configuration et gestion des pièces
-                  </p>
-                </div>
-              </div> */}
-
               <div
-                className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300"
+                className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 border border-green-200"
                 onClick={() => (window.location.href = "/meta_up")}
               >
-                <div className="cursor-pointer absolute inset-0 bg-gradient-to-br from-gray-500/20 to-teal-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="cursor-pointer absolute inset-0 bg-gradient-to-br from-green-500/20 to-emerald-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="cursor-pointer relative p-6 text-center">
                   <Database
                     className="mx-auto text-gray-700 group-hover:text-green-600 transition-colors mb-4"
@@ -482,23 +468,6 @@ export default function DoctypeUp() {
                   </p>
                 </div>
               </div>
-
-              {/* <div
-                className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300"
-                onClick={() => (window.location.href = "/meta_dir")}
-              >
-                <div className="cursor-pointer absolute inset-0 bg-gradient-to-br from-yellow-500/20 to-orange-500/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="cursor-pointer relative p-6 text-center">
-                  <Zap
-                    className="mx-auto text-gray-700 group-hover:text-yellow-600 transition-colors mb-4"
-                    size={48}
-                  />
-                  <h4 className="text-xl font-bold text-gray-800 mb-2">
-                    Méta-données par direction
-                  </h4>
-                  <p className="text-gray-600">Configuration par direction</p>
-                </div>
-              </div> */}
             </div>
           </div>
         </div>

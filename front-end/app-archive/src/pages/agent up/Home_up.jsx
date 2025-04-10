@@ -1,25 +1,88 @@
-import { Activity, Users, Shield, ChartPie, AlertTriangle } from "lucide-react";
+import {
+  Activity,
+  Users,
+  Shield,
+  ChartPie,
+  AlertTriangle,
+  Clock,
+  Bell,
+} from "lucide-react";
 import SideBar_up from "./components/Sidebar_up";
 import TopBar_up from "./components/Topbar_up";
 
 export default function Home_up() {
   const role = localStorage.getItem("role");
   const service = localStorage.getItem("service");
+  const userName = localStorage.getItem("firstName") || "Administrateur";
+  const currentTime = new Date();
+  const hours = currentTime.getHours();
+
+  let greeting;
+  if (hours < 12) {
+    greeting = "Bonjour";
+  } else if (hours < 18) {
+    greeting = "Bon après-midi";
+  } else {
+    greeting = "Bonsoir";
+  }
 
   return (
-    <div className="flex min-h-screen bg-[#1a1f2d]">
+    <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <SideBar_up isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar_up />
         <div className="container w-full mx-auto px-4 py-8 mt-20">
-          <div className="bg-[#232b3e] rounded-xl shadow-xl p-6">
+          {/* Message d'accueil */}
+          <div className="bg-white rounded-xl shadow-lg p-6 mb-6 border border-green-200 overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-green-400 rounded-full opacity-10 -mr-32 -mt-32"></div>
+            <div className="absolute bottom-0 left-0 w-40 h-40 bg-emerald-600 rounded-full opacity-10 -ml-20 -mb-20"></div>
+
+            <div className="flex items-center justify-between relative z-10">
+              <div>
+                <h1 className="text-3xl font-bold text-green-800 flex items-center">
+                  {greeting},{" "}
+                  <span className="text-emerald-600 ml-2">{userName}</span>
+                </h1>
+                <p className="text-gray-600 mt-2 flex items-center">
+                  <Clock size={16} className="mr-2 text-green-600" />
+                  {currentTime.toLocaleDateString("fr-FR", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </p>
+                <p className="mt-4 text-gray-700">
+                  Bienvenue sur votre tableau de bord. Vous avez{" "}
+                  <span className="font-semibold text-green-700">
+                    3 incidents critiques
+                  </span>{" "}
+                  à surveiller aujourd'hui.
+                </p>
+              </div>
+              <div className="hidden md:flex items-center bg-green-100 p-4 rounded-lg border border-green-200">
+                <Bell className="mr-3 text-green-600" />
+                <div>
+                  <p className="text-sm font-medium text-green-800">
+                    Notification importante
+                  </p>
+                  <p className="text-xs text-gray-600">
+                    Maintenance prévue à 22h00
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-xl p-6 border border-green-100">
             {/* Welcome Card */}
-            <div className="bg-gradient-to-r from-[#2e374a] to-[#2c3242] rounded-xl p-6 mb-8 border border-[#3d4659]">
-              <h1 className="text-2xl font-semibold text-gray-100">
+            <div className="bg-gradient-to-r from-green-600 to-emerald-700 rounded-xl p-6 mb-8 border border-green-200 shadow-inner relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-white rounded-full opacity-10 -mr-20 -mt-20"></div>
+              <h1 className="text-2xl font-semibold text-white relative z-10">
                 Supervision système
               </h1>
-              <p className="text-gray-400 flex items-center gap-2 mt-2">
-                <Shield size={18} className="text-emerald-400" />
+              <p className="text-green-100 flex items-center gap-2 mt-2 relative z-10">
+                <Shield size={18} className="text-green-200" />
                 {role} • {service}
               </p>
             </div>
@@ -31,7 +94,7 @@ export default function Home_up() {
                 title="Charge système"
                 value="78%"
                 trend="+12% vs normal"
-                trendColor="text-amber-400"
+                trendColor="text-amber-600"
                 detail="Surveillance requise"
               />
               <QuickStatCard
@@ -39,7 +102,7 @@ export default function Home_up() {
                 title="Agents connectés"
                 value="24/35"
                 trend="3 en pause"
-                trendColor="text-blue-400"
+                trendColor="text-blue-600"
                 detail="68% capacité"
               />
               <QuickStatCard
@@ -47,7 +110,7 @@ export default function Home_up() {
                 title="Incidents critiques"
                 value="3"
                 trend="2 non assignés"
-                trendColor="text-rose-400"
+                trendColor="text-rose-600"
                 detail="Urgent"
               />
               <QuickStatCard
@@ -55,7 +118,7 @@ export default function Home_up() {
                 title="Performance"
                 value="92%"
                 trend="+5% vs hier"
-                trendColor="text-emerald-400"
+                trendColor="text-emerald-600"
                 detail="Optimal"
               />
             </div>
@@ -64,12 +127,12 @@ export default function Home_up() {
               {/* Colonne principale */}
               <div className="lg:col-span-2 space-y-6">
                 {/* Incidents critiques */}
-                <div className="bg-[#2a324a] rounded-xl p-6">
+                <div className="bg-green-50 rounded-xl p-6 border border-green-200 shadow-sm">
                   <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-lg font-semibold text-gray-100">
+                    <h2 className="text-lg font-semibold text-green-800">
                       Incidents critiques
                     </h2>
-                    <span className="px-3 py-1 bg-rose-500/20 text-rose-300 rounded-full text-sm">
+                    <span className="px-3 py-1 bg-rose-100 text-rose-600 rounded-full text-sm font-medium">
                       3 actifs
                     </span>
                   </div>
@@ -102,8 +165,8 @@ export default function Home_up() {
                 </div>
 
                 {/* Monitoring système */}
-                <div className="bg-[#2a324a] rounded-xl p-6">
-                  <h2 className="text-lg font-semibold text-gray-100 mb-6">
+                <div className="bg-green-50 rounded-xl p-6 border border-green-200 shadow-sm">
+                  <h2 className="text-lg font-semibold text-green-800 mb-6">
                     Monitoring système
                   </h2>
                   <div className="space-y-6">
@@ -138,8 +201,8 @@ export default function Home_up() {
               {/* Colonne latérale */}
               <div className="space-y-6">
                 {/* État des services */}
-                <div className="bg-[#2a324a] rounded-xl p-6">
-                  <h2 className="text-lg font-semibold text-gray-100 mb-4">
+                <div className="bg-green-50 rounded-xl p-6 border border-green-200 shadow-sm">
+                  <h2 className="text-lg font-semibold text-green-800 mb-4">
                     État des services
                   </h2>
                   <div className="space-y-3">
@@ -167,8 +230,8 @@ export default function Home_up() {
                 </div>
 
                 {/* Activité temps réel */}
-                <div className="bg-[#2a324a] rounded-xl p-6">
-                  <h2 className="text-lg font-semibold text-gray-100 mb-4">
+                <div className="bg-green-50 rounded-xl p-6 border border-green-200 shadow-sm">
+                  <h2 className="text-lg font-semibold text-green-800 mb-4">
                     Activité temps réel
                   </h2>
                   <div className="space-y-3">
@@ -200,16 +263,16 @@ export default function Home_up() {
 
 // Composants mis à jour
 const QuickStatCard = ({ icon, title, value, trend, trendColor, detail }) => (
-  <div className="bg-[#2a324a] rounded-xl p-6 border border-[#3d4659]">
+  <div className="bg-white rounded-xl p-6 border border-green-200 hover:shadow-md transition-all duration-300 transform hover:-translate-y-1">
     <div className="flex items-center justify-between">
-      <div className="p-2 bg-[#3d4659] rounded-lg">
-        <div className="text-gray-100">{icon}</div>
+      <div className="p-2 bg-green-100 rounded-lg">
+        <div className="text-green-700">{icon}</div>
       </div>
     </div>
-    <h3 className="text-gray-400 mt-4">{title}</h3>
-    <p className="text-2xl font-bold text-gray-100 mt-2">{value}</p>
+    <h3 className="text-gray-600 mt-4 font-medium">{title}</h3>
+    <p className="text-2xl font-bold text-green-800 mt-2">{value}</p>
     <div className="flex justify-between mt-2">
-      <p className={`text-sm ${trendColor}`}>{trend}</p>
+      <p className={`text-sm ${trendColor} font-medium`}>{trend}</p>
       <p className="text-sm text-gray-500">{detail}</p>
     </div>
   </div>
@@ -218,15 +281,15 @@ const QuickStatCard = ({ icon, title, value, trend, trendColor, detail }) => (
 const CriticalIncident = ({ code, title, severity, impact, time, status }) => {
   const getSeverityStyle = (severity) => {
     const styles = {
-      CRITIQUE: "bg-rose-500/20 text-rose-300",
-      HAUTE: "bg-amber-500/20 text-amber-300",
-      MOYENNE: "bg-blue-500/20 text-blue-300",
+      CRITIQUE: "bg-rose-100 text-rose-600",
+      HAUTE: "bg-amber-100 text-amber-600",
+      MOYENNE: "bg-blue-100 text-blue-600",
     };
     return styles[severity];
   };
 
   return (
-    <div className="bg-[#1f2537] rounded-lg p-4">
+    <div className="bg-white rounded-lg p-4 border border-green-100 hover:shadow-sm transition-all duration-300 transform hover:-translate-y-1">
       <div className="flex justify-between items-start">
         <div>
           <div className="flex items-center gap-3">
@@ -234,17 +297,17 @@ const CriticalIncident = ({ code, title, severity, impact, time, status }) => {
             <span
               className={`text-xs px-2 py-1 rounded-full ${getSeverityStyle(
                 severity
-              )}`}
+              )} font-medium`}
             >
               {severity}
             </span>
           </div>
-          <h3 className="text-gray-100 font-medium mt-2">{title}</h3>
-          <p className="text-gray-400 text-sm mt-1">{impact}</p>
+          <h3 className="text-gray-800 font-medium mt-2">{title}</h3>
+          <p className="text-gray-600 text-sm mt-1">{impact}</p>
         </div>
         <div className="text-right">
-          <div className="text-amber-400 font-mono">{time}</div>
-          <div className="text-gray-400 text-sm mt-1">{status}</div>
+          <div className="text-amber-600 font-mono font-medium">{time}</div>
+          <div className="text-gray-500 text-sm mt-1">{status}</div>
         </div>
       </div>
     </div>
@@ -264,12 +327,14 @@ const SystemMetric = ({ name, value, status, detail }) => {
   return (
     <div>
       <div className="flex justify-between mb-2">
-        <span className="text-gray-300">{name}</span>
-        <span className="text-gray-400">{detail}</span>
+        <span className="text-gray-700 font-medium">{name}</span>
+        <span className="text-gray-600">{detail}</span>
       </div>
-      <div className="h-2 bg-[#1f2537] rounded-full">
+      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
         <div
-          className={`h-2 rounded-full ${getStatusColor(status)}`}
+          className={`h-2 rounded-full ${getStatusColor(
+            status
+          )} transition-all duration-1000 ease-in-out`}
           style={{ width: `${value}%` }}
         />
       </div>
@@ -280,20 +345,24 @@ const SystemMetric = ({ name, value, status, detail }) => {
 const ServiceStatus = ({ name, status, latency }) => {
   const getStatusStyle = (status) => {
     const styles = {
-      operational: "bg-emerald-500/20 text-emerald-300",
-      degraded: "bg-amber-500/20 text-amber-300",
-      critical: "bg-rose-500/20 text-rose-300",
+      operational: "bg-emerald-100 text-emerald-600",
+      degraded: "bg-amber-100 text-amber-600",
+      critical: "bg-rose-100 text-rose-600",
     };
     return styles[status];
   };
 
   return (
-    <div className="flex items-center justify-between p-3 bg-[#1f2537] rounded-lg">
+    <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-green-100 hover:shadow-sm transition-all duration-300">
       <div className="flex items-center gap-3">
-        <div className={`w-2 h-2 rounded-full ${getStatusStyle(status)}`} />
-        <span className="text-gray-100">{name}</span>
+        <div
+          className={`w-2 h-2 rounded-full ${
+            getStatusStyle(status).split(" ")[1]
+          }`}
+        />
+        <span className="text-gray-800 font-medium">{name}</span>
       </div>
-      <span className="text-gray-400 text-sm">{latency}</span>
+      <span className="text-gray-500 text-sm">{latency}</span>
     </div>
   );
 };
@@ -301,18 +370,18 @@ const ServiceStatus = ({ name, status, latency }) => {
 const ActivityLog = ({ type, message, time }) => {
   const getTypeStyle = (type) => {
     const styles = {
-      alert: "text-rose-400",
-      warning: "text-amber-400",
-      info: "text-blue-400",
+      alert: "text-rose-600",
+      warning: "text-amber-600",
+      info: "text-blue-600",
     };
     return styles[type];
   };
 
   return (
-    <div className="flex items-center gap-3 p-3 bg-[#1f2537] rounded-lg">
-      <div className={`text-sm ${getTypeStyle(type)}`}>•</div>
+    <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-green-100 hover:shadow-sm transition-all duration-300">
+      <div className={`text-lg font-bold ${getTypeStyle(type)}`}>•</div>
       <div className="flex-1">
-        <p className="text-gray-300 text-sm">{message}</p>
+        <p className="text-gray-700 text-sm font-medium">{message}</p>
         <p className="text-gray-500 text-xs">Il y a {time}</p>
       </div>
     </div>

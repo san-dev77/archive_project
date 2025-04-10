@@ -74,7 +74,7 @@ export default function Profile() {
   ]);
 
   return (
-    <div className="flex min-h-screen bg-gray-300">
+    <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       {role === "admin" ? (
         <SideBar isVisible={true} />
       ) : (
@@ -92,32 +92,32 @@ export default function Profile() {
           animate={{ opacity: 1, y: 0 }}
           className="container w-full mx-auto px-4 py-8 mt-20"
         >
-          <div className="bg-[#232b3e] rounded-xl shadow-xl p-6">
+          <div className="bg-white rounded-xl shadow-xl p-6 border border-green-100">
             {/* En-tête du profil */}
-            <div className="bg-gradient-to-r from-[#2e374a] to-[#2c3242] rounded-xl p-6 mb-8 border border-[#3d4659]">
+            <div className="bg-gradient-to-r from-green-100 to-emerald-100 rounded-xl p-6 mb-8 border border-green-200">
               <div className="flex items-center gap-8">
                 <div className="relative">
-                  <div className="w-32 h-32 rounded-full bg-gradient-to-tr from-blue-500 to-cyan-400 p-1">
-                    <div className="w-full h-full rounded-full bg-[#1a1f2d] flex items-center justify-center">
-                      <User size={50} className="text-white/80" />
+                  <div className="w-32 h-32 rounded-full bg-gradient-to-tr from-green-500 to-green-400 p-1">
+                    <div className="w-full h-full rounded-full bg-white flex items-center justify-center">
+                      <User size={50} className="text-green-600" />
                     </div>
                   </div>
-                  <button className="absolute bottom-0 right-0 bg-blue-500 p-2 rounded-full hover:bg-blue-600 transition-colors">
+                  <button className="absolute bottom-0 right-0 bg-green-500 p-2 rounded-full hover:bg-green-600 transition-colors">
                     <SquarePen size={16} className="text-white" />
                   </button>
                 </div>
 
                 <div className="flex-1">
-                  <h1 className="text-3xl font-bold text-gray-100 mb-2">
+                  <h1 className="text-3xl font-bold text-green-800 mb-2">
                     {firstName} {lastName}
                   </h1>
-                  <div className="flex items-center gap-4 text-gray-400">
+                  <div className="flex items-center gap-4 text-gray-600">
                     <span className="flex items-center gap-2">
-                      <ShieldIcon size={16} />
+                      <ShieldIcon size={16} className="text-green-600" />
                       {role}
                     </span>
                     <span className="flex items-center gap-2">
-                      <BuildingIcon size={16} />
+                      <BuildingIcon size={16} className="text-green-600" />
                       {service}
                     </span>
                   </div>
@@ -125,7 +125,7 @@ export default function Profile() {
 
                 <button
                   onClick={() => setIsEditing(!isEditing)}
-                  className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all transform hover:scale-105"
+                  className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white rounded-xl transition-all transform hover:scale-105"
                 >
                   {isEditing ? "Sauvegarder" : "Modifier le profil"}
                 </button>
@@ -138,10 +138,10 @@ export default function Profile() {
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="bg-[#2a324a] rounded-xl p-6 border border-[#3d4659]"
+                className="bg-white rounded-xl p-6 border border-green-200"
               >
-                <h2 className="text-xl font-semibold text-gray-100 mb-6 flex items-center gap-2">
-                  <UserIcon className="text-blue-500" />
+                <h2 className="text-xl font-semibold text-green-700 mb-6 flex items-center gap-2">
+                  <UserIcon className="text-green-500" />
                   Informations Personnelles
                 </h2>
 
@@ -157,33 +157,33 @@ export default function Profile() {
                             firstName: e.target.value,
                           })
                         }
-                        className="w-full bg-[#1f2537] border border-[#3d4659] rounded-lg p-3 text-white"
+                        className="w-full bg-green-50 border border-green-200 rounded-lg p-3 text-gray-800"
                       />
                     </>
                   ) : (
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-[#1f2537] rounded-xl">
+                      <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl">
                         <div>
-                          <p className="text-sm text-gray-400">Email</p>
-                          <p className="text-gray-100">{mail}</p>
+                          <p className="text-sm text-gray-500">Email</p>
+                          <p className="text-gray-800">{mail}</p>
                         </div>
-                        <MailIcon className="text-blue-500" size={20} />
+                        <MailIcon className="text-green-500" size={20} />
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-[#1f2537] rounded-xl">
+                      <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl">
                         <div>
-                          <p className="text-sm text-gray-400">Téléphone</p>
-                          <p className="text-gray-100">{tel_number}</p>
+                          <p className="text-sm text-gray-500">Téléphone</p>
+                          <p className="text-gray-800">{tel_number}</p>
                         </div>
-                        <PhoneIcon className="text-blue-500" size={20} />
+                        <PhoneIcon className="text-green-500" size={20} />
                       </div>
 
-                      <div className="flex items-center justify-between p-4 bg-[#1f2537] rounded-xl">
+                      <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl">
                         <div>
-                          <p className="text-sm text-gray-400">
+                          <p className="text-sm text-gray-500">
                             Date d'inscription
                           </p>
-                          <p className="text-gray-100">
+                          <p className="text-gray-800">
                             {new Date(created_at).toLocaleDateString("fr-FR", {
                               day: "numeric",
                               month: "long",
@@ -191,7 +191,7 @@ export default function Profile() {
                             })}
                           </p>
                         </div>
-                        <CalendarIcon className="text-blue-500" size={20} />
+                        <CalendarIcon className="text-green-500" size={20} />
                       </div>
                     </div>
                   )}
@@ -202,32 +202,32 @@ export default function Profile() {
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="bg-[#2a324a] rounded-xl p-6 border border-[#3d4659]"
+                className="bg-white rounded-xl p-6 border border-green-200"
               >
-                <h2 className="text-xl font-semibold text-gray-100 mb-6 flex items-center gap-2">
-                  <KeyIcon className="text-blue-500" />
+                <h2 className="text-xl font-semibold text-green-700 mb-6 flex items-center gap-2">
+                  <KeyIcon className="text-green-500" />
                   Sécurité
                 </h2>
 
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-[#1f2537] rounded-xl">
+                  <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl">
                     <div>
-                      <p className="text-sm text-gray-400">Identifiant</p>
-                      <p className="text-gray-100">{login}</p>
+                      <p className="text-sm text-gray-500">Identifiant</p>
+                      <p className="text-gray-800">{login}</p>
                     </div>
-                    <UserIcon className="text-blue-500" size={20} />
+                    <UserIcon className="text-green-500" size={20} />
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-[#1f2537] rounded-xl">
+                  <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl">
                     <div>
-                      <p className="text-sm text-gray-400">Mot de passe</p>
-                      <p className="text-gray-100">
+                      <p className="text-sm text-gray-500">Mot de passe</p>
+                      <p className="text-gray-800">
                         {showPassword ? password : "••••••••"}
                       </p>
                     </div>
                     <button onClick={() => setShowPassword(!showPassword)}>
                       <EyeIcon
-                        className="text-blue-500 hover:text-blue-400 transition-colors"
+                        className="text-green-500 hover:text-green-600 transition-colors"
                         size={20}
                       />
                     </button>
@@ -239,50 +239,50 @@ export default function Profile() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="md:col-span-2 bg-[#2a324a] rounded-xl p-6 border border-[#3d4659]"
+                className="md:col-span-2 bg-white rounded-xl p-6 border border-green-200"
               >
-                <h2 className="text-xl font-semibold text-gray-100 mb-6 flex items-center gap-2">
-                  <BarChart3Icon className="text-blue-500" />
+                <h2 className="text-xl font-semibold text-green-700 mb-6 flex items-center gap-2">
+                  <BarChart3Icon className="text-green-500" />
                   Statistiques
                 </h2>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-[#1f2537] rounded-xl p-4">
+                  <div className="bg-green-50 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
                       <ActivityIcon className="text-green-500" size={24} />
-                      <span className="text-2xl font-bold text-gray-100">
+                      <span className="text-2xl font-bold text-gray-800">
                         {stats.ticketsResolus}
                       </span>
                     </div>
-                    <p className="text-gray-400 text-sm">Tickets résolus</p>
+                    <p className="text-gray-500 text-sm">Tickets résolus</p>
                   </div>
-                  <div className="bg-[#1f2537] rounded-xl p-4">
+                  <div className="bg-green-50 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <UsersIcon className="text-blue-500" size={24} />
-                      <span className="text-2xl font-bold text-gray-100">
+                      <UsersIcon className="text-green-500" size={24} />
+                      <span className="text-2xl font-bold text-gray-800">
                         {stats.projetsSuivis}
                       </span>
                     </div>
-                    <p className="text-gray-400 text-sm">Projets suivis</p>
+                    <p className="text-gray-500 text-sm">Projets suivis</p>
                   </div>
-                  <div className="bg-[#1f2537] rounded-xl p-4">
+                  <div className="bg-green-50 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <ClockIcon className="text-yellow-500" size={24} />
-                      <span className="text-2xl font-bold text-gray-100">
+                      <ClockIcon className="text-green-500" size={24} />
+                      <span className="text-2xl font-bold text-gray-800">
                         {stats.tempsMoyenReponse}
                       </span>
                     </div>
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-gray-500 text-sm">
                       Temps moyen de réponse
                     </p>
                   </div>
-                  <div className="bg-[#1f2537] rounded-xl p-4">
+                  <div className="bg-green-50 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <Settings2Icon className="text-purple-500" size={24} />
-                      <span className="text-2xl font-bold text-gray-100">
+                      <Settings2Icon className="text-green-500" size={24} />
+                      <span className="text-2xl font-bold text-gray-800">
                         {stats.tauxSatisfaction}
                       </span>
                     </div>
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-gray-500 text-sm">
                       Taux de satisfaction
                     </p>
                   </div>
@@ -293,30 +293,30 @@ export default function Profile() {
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="bg-[#2a324a] rounded-xl p-6 border border-[#3d4659]"
+                className="bg-white rounded-xl p-6 border border-green-200"
               >
-                <h2 className="text-xl font-semibold text-gray-100 mb-6 flex items-center gap-2">
-                  <ActivityIcon className="text-blue-500" />
+                <h2 className="text-xl font-semibold text-green-700 mb-6 flex items-center gap-2">
+                  <ActivityIcon className="text-green-500" />
                   Activités récentes
                 </h2>
                 <div className="space-y-4">
                   {activites.map((activite) => (
                     <div
                       key={activite.id}
-                      className="flex items-center gap-4 p-4 bg-[#1f2537] rounded-xl"
+                      className="flex items-center gap-4 p-4 bg-green-50 rounded-xl"
                     >
                       <div
                         className={`w-2 h-2 rounded-full ${
                           activite.type === "success"
                             ? "bg-green-500"
                             : activite.type === "info"
-                            ? "bg-blue-500"
+                            ? "bg-green-500"
                             : "bg-yellow-500"
                         }`}
                       />
                       <div className="flex-1">
-                        <p className="text-gray-100">{activite.action}</p>
-                        <p className="text-sm text-gray-400">{activite.date}</p>
+                        <p className="text-gray-800">{activite.action}</p>
+                        <p className="text-sm text-gray-500">{activite.date}</p>
                       </div>
                     </div>
                   ))}
@@ -327,17 +327,17 @@ export default function Profile() {
               <motion.div
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="bg-[#2a324a] rounded-xl p-6 border border-[#3d4659]"
+                className="bg-white rounded-xl p-6 border border-green-200"
               >
-                <h2 className="text-xl font-semibold text-gray-100 mb-6 flex items-center gap-2">
-                  <BellIcon className="text-blue-500" />
+                <h2 className="text-xl font-semibold text-green-700 mb-6 flex items-center gap-2">
+                  <BellIcon className="text-green-500" />
                   Préférences de notification
                 </h2>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-[#1f2537] rounded-xl">
+                  <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl">
                     <div>
-                      <p className="text-gray-100">Notifications par email</p>
-                      <p className="text-sm text-gray-400">
+                      <p className="text-gray-800">Notifications par email</p>
+                      <p className="text-sm text-gray-500">
                         Recevoir les mises à jour par email
                       </p>
                     </div>
@@ -347,13 +347,13 @@ export default function Profile() {
                         className="sr-only peer"
                         defaultChecked
                       />
-                      <div className="w-11 h-6 bg-[#3d4659] peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                      <div className="w-11 h-6 bg-green-50 peer-focus:ring-4 peer-focus:ring-green-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
                     </label>
                   </div>
-                  <div className="flex items-center justify-between p-4 bg-[#1f2537] rounded-xl">
+                  <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl">
                     <div>
-                      <p className="text-gray-100">Notifications push</p>
-                      <p className="text-sm text-gray-400">
+                      <p className="text-gray-800">Notifications push</p>
+                      <p className="text-sm text-gray-500">
                         Recevoir les alertes en temps réel
                       </p>
                     </div>
@@ -363,7 +363,7 @@ export default function Profile() {
                         className="sr-only peer"
                         defaultChecked
                       />
-                      <div className="w-11 h-6 bg-[#3d4659] peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                      <div className="w-11 h-6 bg-green-50 peer-focus:ring-4 peer-focus:ring-green-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
                     </label>
                   </div>
                 </div>

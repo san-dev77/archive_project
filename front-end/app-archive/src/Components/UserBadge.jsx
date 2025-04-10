@@ -9,7 +9,7 @@ const UserBadge = ({ path }) => {
 
   return (
     <div
-      className="flex bg-gray-700 items-center space-x-2 p-2 transition-all hover:bg-slate-700 cursor-pointer hover:scale-110 shadow-md rounded-lg relative"
+      className="flex bg-green-600 items-center space-x-2 p-2 transition-all hover:bg-green-800 cursor-pointer hover:scale-110 shadow-md rounded-lg relative"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => {

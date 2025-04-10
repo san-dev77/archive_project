@@ -103,7 +103,7 @@ export default function Login() {
           redirectUrl = "/agent_up";
           break;
         case "agent":
-          redirectUrl = "/agents";
+          redirectUrl = "/agents_UI";
           break;
         default:
           redirectUrl = "/";

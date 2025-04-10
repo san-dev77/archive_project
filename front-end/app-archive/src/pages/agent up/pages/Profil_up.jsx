@@ -64,7 +64,7 @@ export default function Profil_up() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-400">
+    <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <SideBar_ui isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar_up position="fixed" title="Mon Profil" />
@@ -76,30 +76,30 @@ export default function Profil_up() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-gray-800 w-full rounded-lg shadow-md overflow-hidden mb-6"
+            className="bg-white w-full rounded-lg shadow-md overflow-hidden mb-6"
           >
-            <div className="h-32 bg-primary/80"></div>
+            <div className="h-32 bg-green-600"></div>
             <div className="px-6 py-4 flex w-full flex-col md:flex-row gap-6 items-center md:items-end -mt-16 relative">
-              <div className="w-32 h-32 rounded-full border-4 border-gray-800 bg-gray-800 shadow-lg overflow-hidden z-10">
-                <div className="w-full h-full bg-primary flex items-center justify-center">
+              <div className="w-32 h-32 rounded-full border-4 border-white bg-green-600 shadow-lg overflow-hidden z-10">
+                <div className="w-full h-full bg-green-600 flex items-center justify-center">
                   <User size={64} className="text-white" />
                 </div>
               </div>
 
               <div className="flex-1 w-full text-center md:text-left">
-                <h1 className="text-2xl font-bold text-white">{`${firstName} ${lastName}`}</h1>
+                <h1 className="text-2xl font-bold text-green-800">{`${firstName} ${lastName}`}</h1>
                 <div className="flex flex-wrap gap-2 justify-center md:justify-start mt-2">
-                  <span className="px-3 py-1 bg-primary/70 text-primary-content text-white rounded-full text-sm font-medium">
+                  <span className="px-3 py-1 bg-green-600 text-white rounded-full text-sm font-medium">
                     {role}
                   </span>
-                  <span className="px-3 py-1 bg-info/70 text-white text-secondary-content rounded-full text-sm font-medium">
+                  <span className="px-3 py-1 bg-green-500 text-white rounded-full text-sm font-medium">
                     {service}
                   </span>
                 </div>
               </div>
 
               <div className="flex gap-3">
-                <button className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md flex items-center transition-all duration-200 shadow-sm">
+                <button className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md flex items-center transition-all duration-200 shadow-sm">
                   <SquarePen className="h-5 w-5 mr-2" />
                   Modifier
                 </button>
@@ -117,7 +117,7 @@ export default function Profil_up() {
                   onClick={() => setActiveTab("profile")}
                   className={`px-4 py-2 font-medium text-sm whitespace-nowrap ${
                     activeTab === "profile"
-                      ? "text-primary border-b-2 border-primary"
+                      ? "text-green-600 border-b-2 border-green-600"
                       : "text-gray-400 hover:text-gray-300"
                   }`}
                 >
@@ -127,7 +127,7 @@ export default function Profil_up() {
                   onClick={() => setActiveTab("activity")}
                   className={`px-4 py-2 font-medium text-sm whitespace-nowrap ${
                     activeTab === "activity"
-                      ? "text-primary border-b-2 border-primary"
+                      ? "text-green-600 border-b-2 border-green-600"
                       : "text-gray-400 hover:text-gray-300"
                   }`}
                 >
@@ -137,7 +137,7 @@ export default function Profil_up() {
                   onClick={() => setActiveTab("security")}
                   className={`px-4 py-2 font-medium text-sm whitespace-nowrap ${
                     activeTab === "security"
-                      ? "text-primary border-b-2 border-primary"
+                      ? "text-green-600 border-b-2 border-green-600"
                       : "text-gray-400 hover:text-gray-300"
                   }`}
                 >
@@ -157,44 +157,44 @@ export default function Profil_up() {
               {/* Informations personnelles */}
               <motion.div
                 variants={itemVariants}
-                className="bg-gray-800 rounded-lg shadow-md p-6"
+                className="bg-white rounded-lg shadow-md p-6"
               >
-                <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <UserIcon className="text-primary" />
+                <h3 className="text-xl font-semibold text-green-800 mb-4 flex items-center gap-2">
+                  <UserIcon className="text-green-600" />
                   Informations Personnelles
                 </h3>
 
                 <div className="space-y-4">
-                  <div className="bg-gray-700 p-4 rounded-md border border-gray-600 hover:border-primary/30 transition-colors">
-                    <p className="text-sm text-gray-400">Nom complet</p>
-                    <p className="font-medium text-white text-lg">{`${firstName} ${lastName}`}</p>
+                  <div className="bg-gray-200 p-4 rounded-md border border-gray-300 hover:border-green-500 transition-colors">
+                    <p className="text-sm text-gray-600">Nom complet</p>
+                    <p className="font-medium text-green-800 text-lg">{`${firstName} ${lastName}`}</p>
                   </div>
 
-                  <div className="bg-gray-700 p-4 rounded-md border border-gray-600 hover:border-primary/30 transition-colors">
-                    <p className="text-sm text-gray-400">Téléphone</p>
+                  <div className="bg-gray-200 p-4 rounded-md border border-gray-300 hover:border-green-500 transition-colors">
+                    <p className="text-sm text-gray-600">Téléphone</p>
                     <div className="flex items-center">
-                      <PhoneIcon className="h-4 w-4 text-gray-400 mr-2" />
-                      <p className="font-medium text-white text-lg">
+                      <PhoneIcon className="h-4 w-4 text-gray-600 mr-2" />
+                      <p className="font-medium text-green-800 text-lg">
                         {tel_number || "Non renseigné"}
                       </p>
                     </div>
                   </div>
 
-                  <div className="bg-gray-700 p-4 rounded-md border border-gray-600 hover:border-primary/30 transition-colors">
-                    <p className="text-sm text-gray-400">Email</p>
+                  <div className="bg-gray-200 p-4 rounded-md border border-gray-300 hover:border-green-500 transition-colors">
+                    <p className="text-sm text-gray-600">Email</p>
                     <div className="flex items-center">
-                      <MailIcon className="h-4 w-4 text-gray-400 mr-2" />
-                      <p className="font-medium text-white text-primary-content text-lg">
+                      <MailIcon className="h-4 w-4 text-gray-600 mr-2" />
+                      <p className="font-medium text-green-800 text-lg">
                         {mail}
                       </p>
                     </div>
                   </div>
 
-                  <div className="bg-gray-700 p-4 rounded-md border border-gray-600 hover:border-primary/30 transition-colors">
-                    <p className="text-sm text-gray-400">Membre depuis</p>
+                  <div className="bg-gray-200 p-4 rounded-md border border-gray-300 hover:border-green-500 transition-colors">
+                    <p className="text-sm text-gray-600">Membre depuis</p>
                     <div className="flex items-center">
-                      <CalendarIcon className="h-4 w-4 text-gray-400 mr-2" />
-                      <p className="font-medium text-white text-lg">
+                      <CalendarIcon className="h-4 w-4 text-gray-600 mr-2" />
+                      <p className="font-medium text-green-800 text-lg">
                         {new Date(created_at).toLocaleDateString("fr-FR", {
                           year: "numeric",
                           month: "long",
@@ -209,53 +209,55 @@ export default function Profil_up() {
               {/* Informations professionnelles */}
               <motion.div
                 variants={itemVariants}
-                className="bg-gray-800 rounded-lg shadow-md p-6"
+                className="bg-white rounded-lg shadow-md p-6"
               >
-                <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <BuildingIcon className="text-primary" />
+                <h3 className="text-xl font-semibold text-green-800 mb-4 flex items-center gap-2">
+                  <BuildingIcon className="text-green-600" />
                   Informations Professionnelles
                 </h3>
 
                 <div className="space-y-4">
-                  <div className="bg-gray-700 p-4 rounded-md border border-gray-600 hover:border-primary/30 transition-colors">
-                    <p className="text-sm text-gray-400">Rôle</p>
+                  <div className="bg-gray-200 p-4 rounded-md border border-gray-300 hover:border-green-500 transition-colors">
+                    <p className="text-sm text-gray-600">Rôle</p>
                     <div className="flex items-center gap-2 mt-1">
-                      <span className="px-3 text-white py-1 bg-primary/70 text-primary-content rounded-full text-sm font-medium">
+                      <span className="px-3 text-white py-1 bg-green-600 rounded-full text-sm font-medium">
                         {role}
                       </span>
-                      <p className="text-gray-100">
+                      <p className="text-gray-800">
                         Accès {role === "admin" ? "complet" : "limité"} au
                         système
                       </p>
                     </div>
                   </div>
 
-                  <div className="bg-gray-700 p-4 rounded-md border border-gray-600 hover:border-primary/30 transition-colors">
-                    <p className="text-sm text-gray-400">Service</p>
+                  <div className="bg-gray-200 p-4 rounded-md border border-gray-300 hover:border-green-500 transition-colors">
+                    <p className="text-sm text-gray-600">Service</p>
                     <div className="flex items-center gap-2 mt-1">
-                      <Briefcase className="h-4 w-4 text-gray-400" />
-                      <p className="font-medium text-white">{service}</p>
+                      <Briefcase className="h-4 w-4 text-gray-600" />
+                      <p className="font-medium text-green-800">{service}</p>
                     </div>
                   </div>
 
-                  <div className="bg-gray-700 p-4 rounded-md border border-gray-600 hover:border-primary/30 transition-colors">
-                    <p className="text-sm text-gray-400">Localisation</p>
+                  <div className="bg-gray-200 p-4 rounded-md border border-gray-300 hover:border-green-500 transition-colors">
+                    <p className="text-sm text-gray-600">Localisation</p>
                     <div className="flex items-center gap-2 mt-1">
-                      <MapPin className="h-4 w-4 text-gray-400" />
-                      <p className="font-medium text-white">Siège principal</p>
+                      <MapPin className="h-4 w-4 text-gray-600" />
+                      <p className="font-medium text-green-800">
+                        Siège principal
+                      </p>
                     </div>
                   </div>
 
-                  <div className="bg-gray-700 p-4 rounded-md border border-gray-600 hover:border-primary/30 transition-colors">
-                    <p className="text-sm text-gray-100">Compétences</p>
-                    <div className="flex text-white flex-wrap gap-2 mt-2">
-                      <span className="px-3 text-white py-1 bg-primary/70 text-primary-content rounded-full text-sm">
+                  <div className="bg-gray-200 p-4 rounded-md border border-gray-300 hover:border-green-500 transition-colors">
+                    <p className="text-sm text-gray-600">Compétences</p>
+                    <div className="flex text-green-800 flex-wrap gap-2 mt-2">
+                      <span className="px-3 text-white py-1 bg-green-600 rounded-full text-sm">
                         Archivage
                       </span>
-                      <span className="px-3 text-white py-1 bg-warning/70 text-secondary-content rounded-full text-sm">
+                      <span className="px-3 text-white py-1 bg-green-500 rounded-full text-sm">
                         Documentation
                       </span>
-                      <span className="px-3 text-white py-1 bg-accent/70 text-accent-content rounded-full text-sm">
+                      <span className="px-3 text-white py-1 bg-green-400 rounded-full text-sm">
                         Gestion
                       </span>
                     </div>
@@ -266,69 +268,67 @@ export default function Profil_up() {
               {/* Statistiques */}
               <motion.div
                 variants={itemVariants}
-                className="md:col-span-2 bg-gray-800 rounded-lg shadow-md p-6"
+                className="md:col-span-2 bg-white rounded-lg shadow-md p-6"
               >
-                <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <Award className="text-primary" />
+                <h3 className="text-xl font-semibold text-green-800 mb-4 flex items-center gap-2">
+                  <Award className="text-green-600" />
                   Statistiques et Performance
                 </h3>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="bg-gray-700 p-4 rounded-md border border-primary/20">
+                  <div className="bg-gray-200 p-4 rounded-md border border-green-200">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-400">Documents traités</p>
-                      <FileText className="h-5 w-5 text-primary" />
+                      <p className="text-sm text-gray-600">Documents traités</p>
+                      <FileText className="h-5 w-5 text-green-600" />
                     </div>
-                    <p className="font-bold text-2xl text-white mt-2">
+                    <p className="font-bold text-2xl text-green-800 mt-2">
                       {stats.documentsTraités}
                     </p>
                     <p className="text-xs text-green-400 mt-1">+12% ce mois</p>
                   </div>
 
-                  <div className="bg-gray-700 p-4 rounded-md border border-secondary/20">
+                  <div className="bg-gray-200 p-4 rounded-md border border-green-200">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-400">Archives gérées</p>
-                      <BuildingIcon className="h-5 w-5 text-secondary" />
+                      <p className="text-sm text-gray-600">Archives gérées</p>
+                      <BuildingIcon className="h-5 w-5 text-green-600" />
                     </div>
-                    <p className="font-bold text-2xl text-white mt-2">
+                    <p className="font-bold text-2xl text-green-800 mt-2">
                       {stats.archivesGérées}
                     </p>
-                    <p className="text-xs text-secondary-content mt-1">
-                      Actives
-                    </p>
+                    <p className="text-xs text-green-600 mt-1">Actives</p>
                   </div>
 
-                  <div className="bg-gray-700 p-4 rounded-md border border-accent/20">
+                  <div className="bg-gray-200 p-4 rounded-md border border-green-200">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-400">
+                      <p className="text-sm text-gray-600">
                         Taux de complétion
                       </p>
-                      <div className="h-5 w-5 rounded-full bg-accent text-white flex items-center justify-center text-xs font-bold">
+                      <div className="h-5 w-5 rounded-full bg-green-600 text-white flex items-center justify-center text-xs font-bold">
                         %
                       </div>
                     </div>
-                    <p className="font-bold text-2xl text-white mt-2">
+                    <p className="font-bold text-2xl text-green-800 mt-2">
                       {stats.tauxComplétion}%
                     </p>
                     <div className="w-full bg-gray-600 rounded-full h-2 mt-2">
                       <div
-                        className="bg-accent h-2 rounded-full"
+                        className="bg-green-600 h-2 rounded-full"
                         style={{ width: `${stats.tauxComplétion}%` }}
                       ></div>
                     </div>
                   </div>
 
-                  <div className="bg-gray-700 p-4 rounded-md border border-gray-600">
+                  <div className="bg-gray-200 p-4 rounded-md border border-green-200">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-400">
+                      <p className="text-sm text-gray-600">
                         Dernière connexion
                       </p>
-                      <Clock className="h-5 w-5 text-gray-400" />
+                      <Clock className="h-5 w-5 text-gray-600" />
                     </div>
-                    <p className="font-medium text-white mt-2">
+                    <p className="font-medium text-green-800 mt-2">
                       {stats.dernièreConnexion}
                     </p>
-                    <p className="text-xs text-gray-400 mt-1">
+                    <p className="text-xs text-gray-600 mt-1">
                       Activité régulière
                     </p>
                   </div>
@@ -338,43 +338,45 @@ export default function Profil_up() {
               {/* Informations de connexion */}
               <motion.div
                 variants={itemVariants}
-                className="md:col-span-2 bg-gray-800 rounded-lg shadow-md p-6"
+                className="md:col-span-2 bg-white rounded-lg shadow-md p-6"
               >
-                <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-                  <KeyIcon className="text-primary" />
+                <h3 className="text-xl font-semibold text-green-800 mb-4 flex items-center gap-2">
+                  <KeyIcon className="text-green-600" />
                   Informations de Connexion
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="bg-gray-700 p-4 rounded-md border border-gray-600 hover:border-primary/30 transition-colors">
-                    <p className="text-sm text-gray-400">Identifiant</p>
-                    <p className="font-medium text-white text-lg">{login}</p>
+                  <div className="bg-gray-200 p-4 rounded-md border border-gray-300 hover:border-green-500 transition-colors">
+                    <p className="text-sm text-gray-600">Identifiant</p>
+                    <p className="font-medium text-green-800 text-lg">
+                      {login}
+                    </p>
                   </div>
 
-                  <div className="bg-gray-700 p-4 rounded-md border border-gray-600 hover:border-primary/30 transition-colors">
-                    <p className="text-sm text-gray-400">Mot de passe</p>
+                  <div className="bg-gray-200 p-4 rounded-md border border-gray-300 hover:border-green-500 transition-colors">
+                    <p className="text-sm text-gray-600">Mot de passe</p>
                     <div className="flex items-center justify-between">
-                      <p className="font-medium text-white text-lg">
+                      <p className="font-medium text-green-800 text-lg">
                         {showPassword ? password : "••••••••"}
                       </p>
                       <EyeIcon
-                        className="h-5 w-5 text-gray-400 hover:text-primary cursor-pointer transition-colors duration-200"
+                        className="h-5 w-5 text-gray-600 hover:text-green-600 cursor-pointer transition-colors duration-200"
                         onClick={() => setShowPassword(!showPassword)}
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="mt-4 p-4 bg-gray-700 rounded-md border border-primary/20">
+                <div className="mt-4 p-4 bg-gray-200 rounded-md border border-green-200">
                   <div className="flex items-start">
-                    <ShieldIcon className="h-5 w-5 text-primary mt-0.5 mr-2" />
+                    <ShieldIcon className="h-5 w-5 text-green-600 mt-0.5 mr-2" />
                     <div>
-                      <p className="text-sm text-gray-300">
+                      <p className="text-sm text-gray-600">
                         Pour votre sécurité, nous vous recommandons de changer
                         votre mot de passe régulièrement et de ne jamais le
                         partager.
                       </p>
-                      <button className="mt-2 text-sm font-medium text-primary hover:text-primary/80">
+                      <button className="mt-2 text-sm font-medium text-green-600 hover:text-green-500">
                         Changer mon mot de passe
                       </button>
                     </div>
@@ -389,9 +391,9 @@ export default function Profil_up() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="bg-gray-800 w-full rounded-lg shadow-md p-6"
+              className="bg-white w-full rounded-lg shadow-md p-6"
             >
-              <h3 className="text-xl font-semibold text-white mb-4">
+              <h3 className="text-xl font-semibold text-green-800 mb-4">
                 Activité récente
               </h3>
 
@@ -400,45 +402,47 @@ export default function Profil_up() {
                   {
                     action: "Connexion au système",
                     date: "Aujourd'hui, 09:45",
-                    icon: <User className="h-4 w-4 text-white" />,
+                    icon: <User className="h-4 w-4 text-green-800" />,
                   },
                   {
                     action: "Document archivé",
                     date: "Hier, 15:30",
-                    icon: <FileText className="h-4 w-4 text-white" />,
+                    icon: <FileText className="h-4 w-4 text-green-800" />,
                   },
                   {
                     action: "Modification de métadonnées",
                     date: "22/04/2023, 11:15",
-                    icon: <SquarePen className="h-4 w-4 text-white" />,
+                    icon: <SquarePen className="h-4 w-4 text-green-800" />,
                   },
                   {
                     action: "Recherche d'archives",
                     date: "20/04/2023, 14:22",
-                    icon: <SearchIcon className="h-4 w-4 text-white" />,
+                    icon: <SearchIcon className="h-4 w-4 text-green-800" />,
                   },
                   {
                     action: "Changement de mot de passe",
                     date: "15/04/2023, 10:00",
-                    icon: <KeyIcon className="h-4 w-4 text-white" />,
+                    icon: <KeyIcon className="h-4 w-4 text-green-800" />,
                   },
                 ].map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-start p-3 border-b border-gray-700 last:border-0"
+                    className="flex items-start p-3 border-b border-gray-300 last:border-0"
                   >
-                    <div className="bg-primary/20 p-2 rounded-full text-primary-content mr-3">
+                    <div className="bg-green-100 p-2 rounded-full text-green-600 mr-3">
                       {item.icon}
                     </div>
                     <div className="flex-1">
-                      <p className="text-white font-medium">{item.action}</p>
-                      <p className="text-sm text-gray-400">{item.date}</p>
+                      <p className="text-green-800 font-medium">
+                        {item.action}
+                      </p>
+                      <p className="text-sm text-gray-600">{item.date}</p>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <button className="mt-4 text-primary hover:text-primary/80 text-sm font-medium">
+              <button className="mt-4 text-green-600 hover:text-green-500 text-sm font-medium">
                 Voir toute l&apos;activité
               </button>
             </motion.div>
@@ -449,52 +453,51 @@ export default function Profil_up() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
-              className="bg-gray-800 w-full rounded-lg shadow-md p-6"
+              className="bg-white w-full rounded-lg shadow-md p-6"
             >
-              <h3 className="text-xl font-semibold text-white mb-4">
+              <h3 className="text-xl font-semibold text-green-800 mb-4">
                 Paramètres de sécurité
               </h3>
 
               <div className="space-y-6">
-                <div className="p-4 border border-gray-700 rounded-md">
+                <div className="p-4 border border-gray-300 rounded-md">
                   <div className="flex justify-between items-center">
                     <div>
-                      <h4 className="font-medium text-white">
+                      <h4 className="font-medium text-green-800">
                         Authentification à deux facteurs
                       </h4>
-                      <p className="text-sm text-gray-400 mt-1">
+                      <p className="text-sm text-gray-600 mt-1">
                         Ajoutez une couche de sécurité supplémentaire à votre
                         compte
                       </p>
                     </div>
                     <div className="form-control">
-                      <input
-                        type="checkbox"
-                        className="toggle toggle-primary"
-                      />
+                      <input type="checkbox" className="toggle toggle-green" />
                     </div>
                   </div>
                 </div>
 
-                <div className="p-4 border border-gray-700 rounded-md">
+                <div className="p-4 border border-gray-300 rounded-md">
                   <div>
-                    <h4 className="font-medium text-white">
+                    <h4 className="font-medium text-green-800">
                       Appareils connectés
                     </h4>
-                    <p className="text-sm text-gray-400 mt-1">
+                    <p className="text-sm text-gray-600 mt-1">
                       Gérez les appareils qui ont accès à votre compte
                     </p>
                   </div>
 
                   <div className="mt-4 space-y-3">
-                    <div className="flex justify-between items-center p-3 bg-gray-700 rounded-md">
+                    <div className="flex justify-between items-center p-3 bg-gray-200 rounded-md">
                       <div className="flex items-center">
-                        <div className="bg-primary/20 p-2 rounded-full text-primary-content mr-3">
+                        <div className="bg-green-100 p-2 rounded-full text-green-600 mr-3">
                           <Laptop className="h-4 w-4" />
                         </div>
                         <div>
-                          <p className="text-white font-medium">MacBook Pro</p>
-                          <p className="text-xs text-gray-400">
+                          <p className="text-green-800 font-medium">
+                            MacBook Pro
+                          </p>
+                          <p className="text-xs text-gray-600">
                             Kati, Mali • Dernière activité: Aujourd&apos;hui
                           </p>
                         </div>
@@ -506,16 +509,16 @@ export default function Profil_up() {
                   </div>
                 </div>
 
-                <div className="p-4 border border-gray-700 rounded-md">
-                  <h4 className="font-medium text-white">
+                <div className="p-4 border border-gray-300 rounded-md">
+                  <h4 className="font-medium text-green-800">
                     Changer le mot de passe
                   </h4>
-                  <p className="text-sm text-gray-400 mt-1">
+                  <p className="text-sm text-gray-600 mt-1">
                     Mettez à jour régulièrement votre mot de passe pour plus de
                     sécurité
                   </p>
 
-                  <button className="mt-3 px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-md text-sm font-medium transition-colors">
+                  <button className="mt-3 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm font-medium transition-colors">
                     Modifier le mot de passe
                   </button>
                 </div>

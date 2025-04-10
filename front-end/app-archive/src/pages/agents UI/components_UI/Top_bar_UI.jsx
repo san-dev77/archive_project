@@ -27,9 +27,7 @@ const TopBar_UI = () => {
         <div className="navbar bg-gray-100 shadow-md">
           <div className="container mx-auto px-4 py-3">
             <div className="flex justify-between items-center w-full">
-              <div className="flex-none">
-                <Logo2 />
-              </div>
+              <div className="flex-none"></div>
 
               {/* <div className="flex-1 flex justify-center gap-6">
                 <button

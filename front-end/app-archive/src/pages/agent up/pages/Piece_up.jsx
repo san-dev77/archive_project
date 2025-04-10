@@ -12,7 +12,7 @@ import {
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "daisyui/dist/full.css";
-import { showDeleteConfirmation } from "../utils/alerts"; // Importer la fonction
+import { showDeleteConfirmation } from "../../../utils/alerts"; // Importer la fonction
 import SideBar_up from "../components/Sidebar_up";
 import TopBar_up from "../components/Topbar_up";
 
@@ -118,33 +118,24 @@ export default function Piece_up() {
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-300">
+    <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <SideBar_up isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar_up position="fixed" title="Pièces" />
         <div className="container w-full mx-auto px-4 py-8 mt-20">
-          <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+          <div className="bg-white w-full rounded-xl shadow-xl p-6 border border-green-100">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold text-white flex items-center">
-                <LayoutList className="h-8 w-8 text-[#00B7FF] mr-2" />
+              <h1 className="text-2xl font-bold text-green-800 flex items-center">
+                <LayoutList className="h-8 w-8 text-green-600 mr-2" />
                 Liste des Pièces
               </h1>
               <div className="flex gap-3">
                 <button
                   onClick={() => setOpenModal(true)}
-                  className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
                 >
                   <Plus className="h-5 w-5 mr-2" />
                   Nouvelle Pièce
-                </button>
-                <button
-                  onClick={() => {
-                    window.location.href = "/pieces";
-                  }}
-                  className="bg-white hover:bg-gray-700 text-black hover:text-white px-4 py-2 rounded-lg flex items-center transition-colors duration-200"
-                >
-                  <Settings className="h-5 w-5 mr-2" />
-                  Configurer
                 </button>
               </div>
             </div>
@@ -152,7 +143,7 @@ export default function Piece_up() {
             <div className="mb-6">
               <div className="flex items-center space-x-4">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-white mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Rechercher une pièce
                   </label>
                   <input
@@ -160,16 +151,16 @@ export default function Piece_up() {
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Rechercher par code ou nom..."
-                    className="w-full px-4 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                    className="w-full px-4 py-2 bg-white border border-green-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="bg-[#3a3a3a] rounded-lg p-4">
+            <div className="bg-green-50 rounded-lg p-4 border border-green-200">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-[#2a2a2a] text-white">
+                  <thead className="bg-green-100 text-green-800">
                     <tr>
                       <th className="px-4 py-3 text-left">Code de la pièce</th>
                       <th className="px-4 py-3 text-left">Nom de la pièce</th>
@@ -180,20 +171,20 @@ export default function Piece_up() {
                     {filteredPieces.map((piece) => (
                       <tr
                         key={piece.id}
-                        className={`border-b border-[#4a4a4a] hover:bg-[#2a2a2a] transition-colors duration-200`}
+                        className="border-b border-green-100 hover:bg-green-50 transition-colors duration-200"
                       >
                         <td className="px-4 py-3">
                           <div className="flex items-center">
-                            <Ungroup className="h-5 w-5 text-[#00B7FF] mr-2" />
-                            <span className="text-white">
+                            <Ungroup className="h-5 w-5 text-green-600 mr-2" />
+                            <span className="text-gray-800">
                               {piece.code_piece}
                             </span>
                           </div>
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center">
-                            <Bookmark className="h-5 w-5 text-[#00B7FF] mr-2" />
-                            <span className="text-white">
+                            <Bookmark className="h-5 w-5 text-green-600 mr-2" />
+                            <span className="text-gray-800">
                               {piece.nom_piece}
                             </span>
                           </div>
@@ -202,13 +193,13 @@ export default function Piece_up() {
                           <div className="flex justify-end space-x-2">
                             <button
                               onClick={() => handleEdit(piece)}
-                              className="p-2 text-[#00B7FF] hover:bg-[#404040] rounded-lg transition-colors duration-200"
+                              className="p-2 bg-green-100 text-green-600 hover:bg-green-200 rounded-lg transition-colors duration-200"
                             >
                               <SquarePen className="h-5 w-5" />
                             </button>
                             <button
                               onClick={() => handleDelete(piece.id)}
-                              className="p-2 text-red-500 hover:bg-[#404040] rounded-lg transition-colors duration-200"
+                              className="p-2 bg-red-100 text-red-600 hover:bg-red-200 rounded-lg transition-colors duration-200"
                             >
                               <Trash2 className="h-5 w-5" />
                             </button>
@@ -224,15 +215,15 @@ export default function Piece_up() {
         </div>
 
         {openModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-[#2a2a2a] rounded-lg shadow-xl p-6 w-full max-w-lg mx-4">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+            <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-lg mx-4 border border-green-200">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-white">
+                <h3 className="text-xl font-bold text-green-800">
                   {editMode ? "Modifier la pièce" : "Nouvelle pièce"}
                 </h3>
                 <button
                   onClick={() => setOpenModal(false)}
-                  className="text-gray-400 hover:text-gray-200"
+                  className="text-gray-400 hover:text-gray-600"
                 >
                   ✕
                 </button>
@@ -242,7 +233,7 @@ export default function Piece_up() {
                 onSubmit={editMode ? handlePieceUpdated : handlePieceCreated}
               >
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-white mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Code de la pièce
                   </label>
                   <input
@@ -257,12 +248,12 @@ export default function Piece_up() {
                         : setCode(e.target.value)
                     }
                     required
-                    className="w-full px-3 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                    className="w-full px-3 py-2 bg-green-50 text-gray-800 border border-green-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   />
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-sm font-medium text-white mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Nom de la pièce
                   </label>
                   <input
@@ -277,7 +268,7 @@ export default function Piece_up() {
                         : setName(e.target.value)
                     }
                     required
-                    className="w-full px-3 py-2 bg-[#3a3a3a] text-white border border-[#4a4a4a] rounded-lg focus:ring-2 focus:ring-[#00B7FF] focus:border-transparent"
+                    className="w-full px-3 py-2 bg-green-50 text-gray-800 border border-green-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   />
                 </div>
 
@@ -285,13 +276,13 @@ export default function Piece_up() {
                   <button
                     type="button"
                     onClick={() => setOpenModal(false)}
-                    className="px-4 py-2 text-sm font-medium text-white bg-[#4a4a4a] rounded-lg hover:bg-[#5a5a5a] focus:outline-none focus:ring-2 focus:ring-[#6a6a6a]"
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
                   >
                     Annuler
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-sm font-medium text-white bg-[#00B7FF] rounded-lg hover:bg-[#0096FF] focus:outline-none focus:ring-2 focus:ring-[#00B7FF]"
+                    className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
                   >
                     {editMode ? "Mettre à jour" : "Ajouter"}
                   </button>

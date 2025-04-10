@@ -405,32 +405,31 @@ const ProfilPage = () => {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
+    <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <SideBar isVisible={true} />
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      <div className="flex-1 flex flex-col">
         <TopBar />
 
         <Container style={{ flex: 1, overflowY: "auto" }}>
           <div className="mx-auto w-[95%] mt-24 mb-6">
-            <div className="bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-700">
+            <div className="bg-gradient-to-r from-green-600 to-emerald-700 rounded-2xl shadow-2xl p-6 border border-green-400/30 relative">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
-                    <ZapIcon className="text-yellow-500" />
+                    <ZapIcon className="text-green-300" />
                     Attribution des Actions
                   </h2>
-                  <p className="text-gray-300 mb-4">
+                  <p className="text-green-100 mb-4">
                     Pour permettre aux agents d&apos;interagir avec le système,
                     vous devez leur attribuer des actions spécifiques. Chaque
                     agent peut avoir différents niveaux d&apos;accès et de
                     permissions selon son rôle.
                   </p>
                   <div className="flex gap-4 items-center">
-                    <div className="flex items-center gap-2 bg-gray-700 px-4 py-2 rounded-lg border border-gray-600">
-                      <span className="text-blue-500">⚠️</span>
-                      <span className="text-gray-300 text-sm">
-                        <span className="text-blue-400 font-bold text-2x1">
-                          {" "}
+                    <div className="flex items-center gap-2 bg-green-700/50 px-4 py-2 rounded-lg">
+                      <span className="text-yellow-300">⚠️</span>
+                      <span className="text-green-100 text-sm">
+                        <span className="text-green-800 p-1 rounded-full bg-white font-bold text-2x1">
                           {/* {AgentNoProfil.count} */}
                         </span>{" "}
                         agents nécessitent un profil avec au moins une
@@ -439,17 +438,20 @@ const ProfilPage = () => {
                     </div>
                     <button
                       onClick={() => (window.location.href = "/rights")}
-                      className="btn bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300"
+                      className="btn bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 transform hover:-translate-y-0.5 hover:shadow-lg flex items-center gap-2"
                     >
-                      <Settings className="w-5 h-5 mr-2 inline" />
+                      <Settings className="w-5 h-5 mr-2" />
                       Configurer les Actions
                     </button>
                   </div>
                 </div>
                 <div className="hidden lg:block">
                   <div className="w-48 h-48 relative">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-green-500/20 to-emerald-600/20 rounded-full animate-pulse"></div>
+                    <div className="absolute inset-4 bg-gradient-to-tr from-green-500/40 to-emerald-600/40 rounded-full animate-pulse delay-75"></div>
+                    <div className="absolute inset-8 bg-gradient-to-tr from-green-500/60 to-emerald-600/60 rounded-full animate-pulse delay-150"></div>
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <ZapIcon className="w-16 h-16 text-blue-100" />
+                      <ZapIcon className="w-16 h-16 text-white" />
                     </div>
                   </div>
                 </div>
@@ -463,6 +465,7 @@ const ProfilPage = () => {
               borderRadius: "12px",
               background: "#ffffff",
               boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+              border: "1px solid #ecfdf5",
             }}
           >
             <Typography
@@ -470,7 +473,7 @@ const ProfilPage = () => {
               gutterBottom
               sx={{
                 fontWeight: 700,
-                color: "#1e40af",
+                color: "#065f46",
                 display: "flex",
                 alignItems: "center",
                 gap: 2,
@@ -491,10 +494,10 @@ const ProfilPage = () => {
                   "& .MuiOutlinedInput-root": {
                     borderRadius: "8px",
                     "&:hover fieldset": {
-                      borderColor: "#3b82f6",
+                      borderColor: "#10b981",
                     },
                     "&.Mui-focused fieldset": {
-                      borderColor: "#1e40af",
+                      borderColor: "#047857",
                     },
                   },
                 }}
@@ -505,9 +508,9 @@ const ProfilPage = () => {
                     checked={showDescription}
                     onChange={(e) => setShowDescription(e.target.checked)}
                     sx={{
-                      color: "#3b82f6",
+                      color: "#10b981",
                       "&.Mui-checked": {
-                        color: "#1e40af",
+                        color: "#047857",
                       },
                     }}
                   />
@@ -528,10 +531,10 @@ const ProfilPage = () => {
                     "& .MuiOutlinedInput-root": {
                       borderRadius: "8px",
                       "&:hover fieldset": {
-                        borderColor: "#3b82f6",
+                        borderColor: "#10b981",
                       },
                       "&.Mui-focused fieldset": {
-                        borderColor: "#1e40af",
+                        borderColor: "#047857",
                       },
                     },
                   }}
@@ -539,7 +542,7 @@ const ProfilPage = () => {
               )}
               <div className="flex items-end justify-end w-full">
                 <button
-                  className="btn bg-gray-800 hover:bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg mt-5 transition-all duration-300"
+                  className="btn bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-semibold px-6 py-3 rounded-lg mt-5 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-1"
                   onClick={handleCreateProfil}
                 >
                   <UserRoundPlus className="w-5 h-5 mr-2 inline" />
@@ -557,6 +560,7 @@ const ProfilPage = () => {
               background: "#ffffff",
               borderRadius: "12px",
               boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
+              border: "1px solid #ecfdf5",
             }}
           >
             <Typography
@@ -564,7 +568,7 @@ const ProfilPage = () => {
               gutterBottom
               sx={{
                 fontWeight: 700,
-                color: "#1e40af",
+                color: "#065f46",
                 display: "flex",
                 alignItems: "center",
                 gap: 2,
@@ -582,10 +586,13 @@ const ProfilPage = () => {
                   sx={{
                     borderRadius: "8px",
                     background:
-                      activeProfilId === profil.id ? "#374151" : "#4b5563",
+                      activeProfilId === profil.id
+                        ? "linear-gradient(to right, #065f46, #047857)"
+                        : "linear-gradient(to right, #059669, #10b981)",
                     padding: "1rem",
                     transition: "all 0.2s ease",
                     boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+                    marginBottom: "8px",
                   }}
                 >
                   <ListItemText
@@ -618,11 +625,11 @@ const ProfilPage = () => {
                     <Tooltip title="Ajouter agent au profil" arrow>
                       <IconButton
                         sx={{
-                          backgroundColor: "rgba(0,255,255,0.15)",
+                          backgroundColor: "rgba(209,250,229,0.15)",
                         }}
                         onClick={() => handleOpenLinkModal(profil)}
                       >
-                        <UserRoundPlus className="text-cyan-400" />
+                        <UserRoundPlus className="text-emerald-200" />
                       </IconButton>
                     </Tooltip>
 
@@ -630,11 +637,11 @@ const ProfilPage = () => {
                       <Tooltip title="Modifier" arrow>
                         <IconButton
                           sx={{
-                            backgroundColor: "rgba(0,255,0,0.15)",
+                            backgroundColor: "rgba(209,250,229,0.15)",
                           }}
                           onClick={() => handleEditProfil(profil)}
                         >
-                          <SquarePen className="text-green-400" />
+                          <SquarePen className="text-emerald-200" />
                         </IconButton>
                       </Tooltip>
                     )}
@@ -642,22 +649,22 @@ const ProfilPage = () => {
                     <Tooltip title="Agents" arrow>
                       <IconButton
                         sx={{
-                          backgroundColor: "rgba(0,191,255,0.15)",
+                          backgroundColor: "rgba(209,250,229,0.15)",
                         }}
                         onClick={() => handleWatchProfil(profil)}
                       >
-                        <Users className="text-blue-400" />
+                        <Users className="text-emerald-200" />
                       </IconButton>
                     </Tooltip>
                     {index !== 0 && (
                       <Tooltip title="Les actions du profils" arrow>
                         <IconButton
                           sx={{
-                            backgroundColor: "rgba(255,255,0,0.15)",
+                            backgroundColor: "rgba(209,250,229,0.15)",
                           }}
                           onClick={() => handleOpenActionsModal(profil)}
                         >
-                          <ZapIcon className="text-yellow-400" />
+                          <ZapIcon className="text-emerald-200" />
                         </IconButton>
                       </Tooltip>
                     )}
@@ -668,8 +675,12 @@ const ProfilPage = () => {
                           onChange={() => handleToggleActiveProfil(profil.id)}
                           sx={{
                             "& .MuiSwitch-switchBase.Mui-checked": {
-                              color: "#4caf50",
+                              color: "#10b981",
                             },
+                            "& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track":
+                              {
+                                backgroundColor: "#34d399",
+                              },
                           }}
                         />
                       </Tooltip>
@@ -679,11 +690,11 @@ const ProfilPage = () => {
                       <Tooltip title="Supprimer le profil" arrow>
                         <IconButton
                           sx={{
-                            backgroundColor: "rgba(220,20,60,0.15)",
+                            backgroundColor: "rgba(254,202,202,0.15)",
                           }}
                           onClick={() => handleDeleteProfil(profil.id)}
                         >
-                          <Trash2 className="text-red-500" />
+                          <Trash2 className="text-red-300" />
                         </IconButton>
                       </Tooltip>
                     )}
@@ -693,387 +704,395 @@ const ProfilPage = () => {
             </List>
           </Paper>
         </Container>
-      </div>
-      <ToastContainer />
+        <ToastContainer />
 
-      <Modal open={openEditModal} onClose={handleCloseEditModal}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 600,
-            bgcolor: "white",
-            borderRadius: "12px",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
-            p: 4,
-          }}
-        >
-          <Typography
-            variant="h5"
-            gutterBottom
+        <Modal open={openEditModal} onClose={handleCloseEditModal}>
+          <Box
             sx={{
-              fontWeight: 700,
-              color: "#1e40af",
-              display: "flex",
-              alignItems: "center",
-              gap: 2,
-              mb: 3,
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 600,
+              bgcolor: "white",
+              borderRadius: "12px",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+              p: 4,
+              border: "1px solid #ecfdf5",
             }}
           >
-            <SquarePen />
-            Modifier le Profil
-          </Typography>
-
-          <TextField
-            label="Nom du profil"
-            variant="outlined"
-            value={editNomProfil}
-            onChange={(e) => setEditNomProfil(e.target.value)}
-            fullWidth
-            margin="normal"
-            sx={{
-              mb: 3,
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                "&:hover fieldset": {
-                  borderColor: "#3b82f6",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#1e40af",
-                },
-              },
-            }}
-          />
-
-          <TextField
-            label="Description"
-            variant="outlined"
-            value={editDescription}
-            onChange={(e) => setEditDescription(e.target.value)}
-            fullWidth
-            multiline
-            rows={4}
-            margin="normal"
-            sx={{
-              mb: 3,
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "8px",
-                "&:hover fieldset": {
-                  borderColor: "#3b82f6",
-                },
-                "&.Mui-focused fieldset": {
-                  borderColor: "#1e40af",
-                },
-              },
-            }}
-          />
-
-          <button
-            onClick={handleUpdateProfil}
-            className="w-full bg-gray-800 hover:bg-gray-700 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300"
-          >
-            <SquarePen size={20} className="mr-2 inline" />
-            Mettre à jour le profil
-          </button>
-        </Box>
-      </Modal>
-
-      <Modal open={openViewModal} onClose={handleCloseViewModal}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 600,
-            bgcolor: "#ffffff",
-            borderRadius: "12px",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
-            p: 4,
-          }}
-        >
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between border-b border-gray-200 pb-3">
-              <Typography
-                variant="h5"
-                className="flex items-center gap-3 font-bold text-gray-800"
-              >
-                <Users className="w-5 h-5 text-gray-600" />
-                Agents liés au Profil
-              </Typography>
-              <IconButton onClick={handleCloseViewModal} size="small">
-                <X className="w-5 h-5 text-gray-500" />
-              </IconButton>
-            </div>
-
-            {selectedProfil && (
-              <div className="flex items-center gap-2 px-4 py-3 bg-gray-600 rounded-lg">
-                <Folder className="w-5 h-5 text-gray-100" />
-                <Typography
-                  variant="subtitle1"
-                  className="font-medium text-gray-100"
-                >
-                  {selectedProfil.nom_profil}
-                </Typography>
-              </div>
-            )}
-
-            <div className="max-h-[400px] overflow-y-auto">
-              <List className="space-y-2">
-                {linkedAgents.map((agent) => (
-                  <ListItem
-                    key={agent.id}
-                    className="py-3 bg-gray-600 text-white rounded-lg"
-                  >
-                    <div className="flex items-center gap-4 w-full">
-                      <div className="flex-shrink-0">
-                        <div className="w-10 h-10 rounded-full bg-gray-400 flex items-center justify-center">
-                          <UserRound className="w-5 h-5 text-gray-700" />
-                        </div>
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <Typography className="font-medium text-gray-100 truncate">
-                          {agent.nom} {agent.prenom}
-                        </Typography>
-                        <Typography className="text-sm text-gray-200">
-                          {agent.nom_role} • {agent.nom_service}
-                        </Typography>
-                      </div>
-
-                      <IconButton
-                        edge="end"
-                        onClick={() => handleRemoveLinkedAgent(agent.id)}
-                        className="text-gray-100"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </IconButton>
-                    </div>
-                  </ListItem>
-                ))}
-              </List>
-            </div>
-
-            <button
-              onClick={handleCloseViewModal}
-              className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg"
+            <Typography
+              variant="h5"
+              gutterBottom
+              sx={{
+                fontWeight: 700,
+                color: "#065f46",
+                display: "flex",
+                alignItems: "center",
+                gap: 2,
+                mb: 3,
+              }}
             >
-              Fermer
-            </button>
-          </div>
-        </Box>
-      </Modal>
-
-      <Modal open={openActionsModal} onClose={handleCloseActionsModal}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "90%",
-            maxWidth: "700px",
-            bgcolor: "#ffffff",
-            borderRadius: "12px",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
-            p: 4,
-          }}
-        >
-          <div className="flex items-center gap-3 mb-4 pb-3 border-b border-gray-200">
-            <ZapIcon className="w-6 h-6 text-yellow-500" />
-            <Typography variant="h5" className="font-bold text-gray-800">
-              Actions du Profil{" "}
-              <span className="text-blue-600">
-                {selectedActionProfil && selectedActionProfil.nom_profil}
-              </span>
+              <SquarePen />
+              Modifier le Profil
             </Typography>
-          </div>
 
-          <div className="max-h-[60vh] overflow-y-auto pr-2">
-            {Object.entries(groupActionsBySection(actions)).map(
-              ([section, actions]) => (
-                <Accordion
-                  key={section}
-                  sx={{
-                    mb: 2,
-                    border: "1px solid #e5e7eb",
-                    borderRadius: "8px !important",
-                    "&:before": {
-                      display: "none",
-                    },
-                    boxShadow: "none",
-                  }}
-                >
-                  <AccordionSummary
-                    expandIcon={<ExpandMoreIcon className="text-gray-600" />}
-                    sx={{
-                      borderRadius: "8px",
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <ZapIcon className="w-5 h-5 text-yellow-500" />
-                      <Typography className="font-semibold text-gray-700">
-                        {section}
-                      </Typography>
-                    </div>
-                  </AccordionSummary>
-                  <AccordionDetails>
-                    <List>
-                      {actions.map((action) => (
-                        <ListItem
-                          key={action.id}
-                          className="py-2 hover:bg-gray-100 rounded-lg"
-                        >
-                          <div className="flex items-center gap-3 flex-1">
-                            <div className="p-2 rounded-lg bg-gray-500">
-                              <ZapIcon className="w-4 h-4 text-gray-100" />
-                            </div>
-                            <ListItemText
-                              primary={action.action}
-                              className="text-gray-700"
-                            />
-                          </div>
-                          <IconButton
-                            edge="end"
-                            onClick={() => handleRemoveAction(action)}
-                            className="text-gray-400 hover:text-red-500"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </IconButton>
-                        </ListItem>
-                      ))}
-                    </List>
-                  </AccordionDetails>
-                </Accordion>
-              )
-            )}
-          </div>
-
-          <div className="flex justify-end mt-4 pt-3 border-t border-gray-200">
-            <button
-              onClick={handleCloseActionsModal}
-              className="px-6 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium"
-            >
-              Fermer
-            </button>
-          </div>
-        </Box>
-      </Modal>
-
-      <Modal open={openLinkModal} onClose={handleCloseLinkModal}>
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 600,
-            bgcolor: "#ffffff",
-            borderRadius: "12px",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
-            p: 4,
-          }}
-        >
-          <Typography
-            variant="h6"
-            gutterBottom
-            sx={{
-              fontWeight: 600,
-              color: "#374151",
-              borderBottom: "1px solid #e5e7eb",
-              pb: 2,
-            }}
-          >
-            Lier des Agents au Profil{" "}
-            <span className="font-semibold text-blue-600">
-              {selectedProfil && selectedProfil.nom_profil}
-            </span>
-          </Typography>
-
-          <Box sx={{ display: "flex", flexDirection: "column", mt: 3 }}>
             <TextField
-              label="Rechercher un agent"
+              label="Nom du profil"
               variant="outlined"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={editNomProfil}
+              onChange={(e) => setEditNomProfil(e.target.value)}
               fullWidth
+              margin="normal"
               sx={{
                 mb: 3,
                 "& .MuiOutlinedInput-root": {
                   borderRadius: "8px",
                   "&:hover fieldset": {
-                    borderColor: "#9ca3af",
+                    borderColor: "#10b981",
                   },
                   "&.Mui-focused fieldset": {
-                    borderColor: "#3b82f6",
+                    borderColor: "#047857",
                   },
                 },
               }}
             />
 
-            <Typography
-              variant="h6"
+            <TextField
+              label="Description"
+              variant="outlined"
+              value={editDescription}
+              onChange={(e) => setEditDescription(e.target.value)}
+              fullWidth
+              multiline
+              rows={4}
+              margin="normal"
               sx={{
-                fontWeight: 600,
-                color: "#4b5563",
-                mb: 2,
+                mb: 3,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "8px",
+                  "&:hover fieldset": {
+                    borderColor: "#10b981",
+                  },
+                  "&.Mui-focused fieldset": {
+                    borderColor: "#047857",
+                  },
+                },
               }}
-            >
-              Agents
-            </Typography>
-
-            <List
-              sx={{
-                maxHeight: "300px",
-                overflowY: "auto",
-                bgcolor: "#f9fafb",
-                borderRadius: "8px",
-                p: 2,
-              }}
-            >
-              {filteredAgents.map((agent) => (
-                <ListItem
-                  key={agent.id}
-                  sx={{
-                    borderRadius: "8px",
-                    mb: 1,
-                  }}
-                >
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={selectedAgents.includes(agent.id)}
-                        onChange={() => handleToggleAgent(agent.id)}
-                        sx={{
-                          color: "#6b7280",
-                          "&.Mui-checked": {
-                            color: "#3b82f6",
-                          },
-                        }}
-                      />
-                    }
-                    label={
-                      <span className="text-gray-700 font-medium">
-                        {`${agent.prenom} ${agent.nom} - Fonction: ${agent.nom_role} - ${agent.nom_service}`}
-                      </span>
-                    }
-                  />
-                </ListItem>
-              ))}
-            </List>
+            />
 
             <button
-              onClick={handleLinkAgentsToSelectedProfil}
-              className="flex items-center justify-center gap-2 px-6 py-3 mt-4 bg-gray-800 hover:bg-gray-700 text-white rounded-lg"
+              onClick={handleUpdateProfil}
+              className="w-full bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
             >
-              <Link2Icon className="w-5 h-5" />
-              Lier Agents au Profil
+              <SquarePen size={20} className="mr-2 inline" />
+              Mettre à jour le profil
             </button>
           </Box>
-        </Box>
-      </Modal>
+        </Modal>
+
+        <Modal open={openViewModal} onClose={handleCloseViewModal}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 600,
+              bgcolor: "#ffffff",
+              borderRadius: "12px",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+              p: 4,
+              border: "1px solid #ecfdf5",
+            }}
+          >
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between border-b border-green-100 pb-3">
+                <Typography
+                  variant="h5"
+                  className="flex items-center gap-3 font-bold text-green-800"
+                >
+                  <Users className="w-5 h-5 text-green-600" />
+                  Agents liés au Profil
+                </Typography>
+                <IconButton onClick={handleCloseViewModal} size="small">
+                  <X className="w-5 h-5 text-gray-500" />
+                </IconButton>
+              </div>
+
+              {selectedProfil && (
+                <div className="flex items-center gap-2 px-4 py-3 bg-green-600 rounded-lg">
+                  <Folder className="w-5 h-5 text-green-100" />
+                  <Typography
+                    variant="subtitle1"
+                    className="font-medium text-green-100"
+                  >
+                    {selectedProfil.nom_profil}
+                  </Typography>
+                </div>
+              )}
+
+              <div className="max-h-[400px] overflow-y-auto">
+                <List className="space-y-2">
+                  {linkedAgents.map((agent) => (
+                    <ListItem
+                      key={agent.id}
+                      className="py-3 bg-gradient-to-r from-green-600 to-emerald-700 text-white rounded-lg"
+                    >
+                      <div className="flex items-center gap-4 w-full">
+                        <div className="flex-shrink-0">
+                          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                            <UserRound className="w-5 h-5 text-white" />
+                          </div>
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <Typography className="font-medium text-white truncate">
+                            {agent.nom} {agent.prenom}
+                          </Typography>
+                          <Typography className="text-sm text-green-100">
+                            {agent.nom_role} • {agent.nom_service}
+                          </Typography>
+                        </div>
+
+                        <IconButton
+                          edge="end"
+                          onClick={() => handleRemoveLinkedAgent(agent.id)}
+                          className="text-green-100 hover:text-red-200"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </IconButton>
+                      </div>
+                    </ListItem>
+                  ))}
+                </List>
+              </div>
+
+              <button
+                onClick={handleCloseViewModal}
+                className="w-full px-4 py-2 text-sm font-medium text-green-700 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
+              >
+                Fermer
+              </button>
+            </div>
+          </Box>
+        </Modal>
+
+        <Modal open={openActionsModal} onClose={handleCloseActionsModal}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "90%",
+              maxWidth: "700px",
+              bgcolor: "#ffffff",
+              borderRadius: "12px",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+              p: 4,
+              border: "1px solid #ecfdf5",
+            }}
+          >
+            <div className="flex items-center gap-3 mb-4 pb-3 border-b border-green-100">
+              <ZapIcon className="w-6 h-6 text-green-500" />
+              <Typography variant="h5" className="font-bold text-green-800">
+                Actions du Profil{" "}
+                <span className="text-green-600">
+                  {selectedActionProfil && selectedActionProfil.nom_profil}
+                </span>
+              </Typography>
+            </div>
+
+            <div className="max-h-[60vh] overflow-y-auto pr-2">
+              {Object.entries(groupActionsBySection(actions)).map(
+                ([section, actions]) => (
+                  <Accordion
+                    key={section}
+                    sx={{
+                      mb: 2,
+                      border: "1px solid #d1fae5",
+                      borderRadius: "8px !important",
+                      "&:before": {
+                        display: "none",
+                      },
+                      boxShadow: "none",
+                    }}
+                  >
+                    <AccordionSummary
+                      expandIcon={<ExpandMoreIcon className="text-green-600" />}
+                      sx={{
+                        borderRadius: "8px",
+                        background: "#f0fdf4",
+                      }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <ZapIcon className="w-5 h-5 text-green-500" />
+                        <Typography className="font-semibold text-green-700">
+                          {section}
+                        </Typography>
+                      </div>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <List>
+                        {actions.map((action) => (
+                          <ListItem
+                            key={action.id}
+                            className="py-2 hover:bg-green-50 rounded-lg transition-colors"
+                          >
+                            <div className="flex items-center gap-3 flex-1">
+                              <div className="p-2 rounded-lg bg-green-500">
+                                <ZapIcon className="w-4 h-4 text-white" />
+                              </div>
+                              <ListItemText
+                                primary={action.action}
+                                className="text-gray-700"
+                              />
+                            </div>
+                            <IconButton
+                              edge="end"
+                              onClick={() => handleRemoveAction(action)}
+                              className="text-gray-400 hover:text-red-500"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </IconButton>
+                          </ListItem>
+                        ))}
+                      </List>
+                    </AccordionDetails>
+                  </Accordion>
+                )
+              )}
+            </div>
+
+            <div className="flex justify-end mt-4 pt-3 border-t border-green-100">
+              <button
+                onClick={handleCloseActionsModal}
+                className="px-6 py-2 rounded-lg bg-green-100 text-green-700 hover:bg-green-200 font-medium transition-colors"
+              >
+                Fermer
+              </button>
+            </div>
+          </Box>
+        </Modal>
+
+        <Modal open={openLinkModal} onClose={handleCloseLinkModal}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 600,
+              bgcolor: "#ffffff",
+              borderRadius: "12px",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.15)",
+              p: 4,
+              border: "1px solid #ecfdf5",
+            }}
+          >
+            <Typography
+              variant="h6"
+              gutterBottom
+              sx={{
+                fontWeight: 600,
+                color: "#065f46",
+                borderBottom: "1px solid #d1fae5",
+                pb: 2,
+              }}
+            >
+              Lier des Agents au Profil{" "}
+              <span className="font-semibold text-green-600">
+                {selectedProfil && selectedProfil.nom_profil}
+              </span>
+            </Typography>
+
+            <Box sx={{ display: "flex", flexDirection: "column", mt: 3 }}>
+              <TextField
+                label="Rechercher un agent"
+                variant="outlined"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                fullWidth
+                sx={{
+                  mb: 3,
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "8px",
+                    "&:hover fieldset": {
+                      borderColor: "#10b981",
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: "#047857",
+                    },
+                  },
+                }}
+              />
+
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 600,
+                  color: "#065f46",
+                  mb: 2,
+                }}
+              >
+                Agents
+              </Typography>
+
+              <List
+                sx={{
+                  maxHeight: "300px",
+                  overflowY: "auto",
+                  bgcolor: "#f0fdf4",
+                  borderRadius: "8px",
+                  p: 2,
+                }}
+              >
+                {filteredAgents.map((agent) => (
+                  <ListItem
+                    key={agent.id}
+                    sx={{
+                      borderRadius: "8px",
+                      mb: 1,
+                      "&:hover": {
+                        bgcolor: "#ecfdf5",
+                      },
+                    }}
+                  >
+                    <FormControlLabel
+                      control={
+                        <Checkbox
+                          checked={selectedAgents.includes(agent.id)}
+                          onChange={() => handleToggleAgent(agent.id)}
+                          sx={{
+                            color: "#10b981",
+                            "&.Mui-checked": {
+                              color: "#047857",
+                            },
+                          }}
+                        />
+                      }
+                      label={
+                        <span className="text-gray-700 font-medium">
+                          {`${agent.prenom} ${agent.nom} - Fonction: ${agent.nom_role} - ${agent.nom_service}`}
+                        </span>
+                      }
+                    />
+                  </ListItem>
+                ))}
+              </List>
+
+              <button
+                onClick={handleLinkAgentsToSelectedProfil}
+                className="flex items-center justify-center gap-2 px-6 py-3 mt-4 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white rounded-lg transition-all duration-300 shadow-md hover:shadow-lg"
+              >
+                <Link2Icon className="w-5 h-5" />
+                Lier Agents au Profil
+              </button>
+            </Box>
+          </Box>
+        </Modal>
+      </div>
     </div>
   );
 };

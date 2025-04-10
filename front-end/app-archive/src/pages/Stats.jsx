@@ -155,34 +155,34 @@ const Stats = () => {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-gray-300">
+    <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <SideBar isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar position="fixed" title="Statistiques" />
         <div className="container w-full mx-auto px-4 py-8 mt-20">
-          <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+          <div className="bg-white w-full rounded-xl shadow-xl p-6 border border-green-100">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold text-white flex items-center">
+              <h1 className="text-2xl font-bold text-green-800 flex items-center">
                 <BarChart3
-                  className={`h-8 w-8 text-[#00B7FF] mr-2 ${
+                  className={`h-8 w-8 text-green-600 mr-2 ${
                     refreshAnimation ? "animate-pulse" : ""
                   }`}
                 />
                 Tableau de Bord Analytics
               </h1>
               <div className="flex items-center">
-                <div className="text-sm text-gray-400 mr-3">
+                <div className="text-sm text-gray-500 mr-3">
                   Dernière mise à jour: {new Date().toLocaleTimeString()}
                 </div>
                 <button
                   onClick={fetchStats}
-                  className={`bg-[#3a3a3a] p-2 rounded-full hover:bg-[#4a4a4a] transition-all duration-300 ${
+                  className={`bg-green-100 p-2 rounded-full hover:bg-green-200 transition-all duration-300 ${
                     refreshAnimation ? "animate-spin" : ""
                   }`}
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-[#00B7FF]"
+                    className="h-5 w-5 text-green-600"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
@@ -198,23 +198,23 @@ const Stats = () => {
               </div>
             </div>
 
-            <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6 mb-6">
-              <h3 className="text-lg font-semibold text-[#00B7FF] flex items-center mb-4">
-                <div className="bg-[#3a3a3a] p-2 rounded-full mr-3">
-                  <BarChart3 className="h-5 w-5 text-[#00B7FF]" />
+            <div className="bg-white border border-green-100 rounded-lg p-6 mb-6 shadow-md">
+              <h3 className="text-lg font-semibold text-green-700 flex items-center mb-4">
+                <div className="bg-green-100 p-2 rounded-full mr-3">
+                  <BarChart3 className="h-5 w-5 text-green-600" />
                 </div>
                 Tendances et Activité
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-[#3a3a3a] rounded-lg p-4 transform hover:scale-105 transition-transform duration-300">
+                <div className="bg-white rounded-xl p-4 shadow-md border-l-4 border-green-500 transform hover:scale-105 transition-transform duration-300">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-white font-medium">Documents</p>
+                      <p className="text-green-700 font-medium">Documents</p>
                       <div className="flex items-center">
-                        <p className="text-2xl font-bold text-green-400 mt-1">
+                        <p className="text-2xl font-bold text-gray-800 mt-1">
                           {stats.documentsLastWeek[0]?.total || 0}
                         </p>
-                        <div className="ml-2 text-xs bg-green-900 text-green-300 px-2 py-1 rounded-full">
+                        <div className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
                           +
                           {(
                             (stats.documentsLastWeek[0]?.total /
@@ -225,16 +225,16 @@ const Stats = () => {
                           %
                         </div>
                       </div>
-                      <p className="text-sm text-gray-400 mt-1">
+                      <p className="text-sm text-gray-500 mt-1">
                         {stats.documentsLastWeek[0]?.periode || "récemment"}
                       </p>
                     </div>
-                    <div className="bg-[#2a2a2a] p-3 rounded-full">
-                      <FolderArchive className="h-5 w-5 text-green-400" />
+                    <div className="bg-green-100 p-3 rounded-full">
+                      <FolderArchive className="h-5 w-5 text-green-600" />
                     </div>
                   </div>
                   <div className="mt-3">
-                    <div className="w-full h-1 bg-[#2a2a2a] rounded-full overflow-hidden">
+                    <div className="w-full h-1 bg-green-100 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-gradient-to-r from-green-500 to-green-300 animate-pulse"
                         style={{ width: "75%" }}
@@ -243,91 +243,93 @@ const Stats = () => {
                   </div>
                 </div>
 
-                <div className="bg-[#3a3a3a] rounded-lg p-4 transform hover:scale-105 transition-transform duration-300">
+                <div className="bg-white rounded-xl p-4 shadow-md border-l-4 border-green-500 transform hover:scale-105 transition-transform duration-300">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-white font-medium">Activité</p>
+                      <p className="text-green-700 font-medium">Activité</p>
                       <div className="flex items-center">
-                        <p className="text-2xl font-bold text-blue-400 mt-1">
+                        <p className="text-2xl font-bold text-gray-800 mt-1">
                           {stats.totalConnexions.total_connections}
                         </p>
-                        <div className="ml-2 text-xs bg-blue-900 text-blue-300 px-2 py-1 rounded-full">
+                        <div className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
                           Actif
                         </div>
                       </div>
-                      <p className="text-sm text-gray-400 mt-1">connexions</p>
+                      <p className="text-sm text-gray-500 mt-1">connexions</p>
                     </div>
-                    <div className="bg-[#2a2a2a] p-3 rounded-full">
-                      <GlobeLock className="h-5 w-5 text-blue-400" />
+                    <div className="bg-green-100 p-3 rounded-full">
+                      <GlobeLock className="h-5 w-5 text-green-600" />
                     </div>
                   </div>
                   <div className="mt-3">
-                    <div className="w-full h-1 bg-[#2a2a2a] rounded-full overflow-hidden">
+                    <div className="w-full h-1 bg-green-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-blue-500 to-blue-300 animate-pulse"
+                        className="h-full bg-gradient-to-r from-green-500 to-green-300 animate-pulse"
                         style={{ width: "60%" }}
                       ></div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-[#3a3a3a] rounded-lg p-4 transform hover:scale-105 transition-transform duration-300">
+                <div className="bg-white rounded-xl p-4 shadow-md border-l-4 border-green-500 transform hover:scale-105 transition-transform duration-300">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-white font-medium">Base de données</p>
+                      <p className="text-green-700 font-medium">
+                        Base de données
+                      </p>
                       <div className="flex items-center">
-                        <p className="text-xl font-bold text-purple-400 mt-1">
-                          <span className="text-purple-300">
+                        <p className="text-xl font-bold text-gray-800 mt-1">
+                          <span className="text-gray-800">
                             {stats.databaseSize[0]?.database_name}
                           </span>{" "}
-                          <span className="text-purple-300">
+                          <span className="text-gray-800">
                             {stats.databaseSize[0]?.size_mb} MB
                           </span>
                         </p>
-                        <div className="ml-2 text-xs bg-purple-900 text-purple-300 px-2 py-1 rounded-full">
+                        <div className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
                           Taille
                         </div>
                       </div>
-                      <p className="text-sm text-gray-400 mt-1">
+                      <p className="text-sm text-gray-500 mt-1">
                         espace utilisé
                       </p>
                     </div>
-                    <div className="bg-[#2a2a2a] p-3 rounded-full">
-                      <Database className="h-5 w-5 text-purple-400" />
+                    <div className="bg-green-100 p-3 rounded-full">
+                      <Database className="h-5 w-5 text-green-600" />
                     </div>
                   </div>
                   <div className="mt-3">
-                    <div className="w-full h-1 bg-[#2a2a2a] rounded-full overflow-hidden">
+                    <div className="w-full h-1 bg-green-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-purple-500 to-purple-300 animate-pulse"
+                        className="h-full bg-gradient-to-r from-green-500 to-green-300 animate-pulse"
                         style={{ width: "90%" }}
                       ></div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-[#3a3a3a] rounded-lg p-4 transform hover:scale-105 transition-transform duration-300">
+                <div className="bg-white rounded-xl p-4 shadow-md border-l-4 border-green-500 transform hover:scale-105 transition-transform duration-300">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-white font-medium">Métadonnées</p>
+                      <p className="text-green-700 font-medium">Métadonnées</p>
                       <div className="flex items-center">
-                        <p className="text-2xl font-bold text-amber-400 mt-1">
+                        <p className="text-2xl font-bold text-gray-800 mt-1">
                           {stats.averageMetadataPerDocument}
                         </p>
-                        <div className="ml-2 text-xs bg-amber-900 text-amber-300 px-2 py-1 rounded-full">
+                        <div className="ml-2 text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
                           Moyenne
                         </div>
                       </div>
-                      <p className="text-sm text-gray-400 mt-1">par document</p>
+                      <p className="text-sm text-gray-500 mt-1">par document</p>
                     </div>
-                    <div className="bg-[#2a2a2a] p-3 rounded-full">
-                      <Database className="h-5 w-5 text-amber-400" />
+                    <div className="bg-green-100 p-3 rounded-full">
+                      <Database className="h-5 w-5 text-green-600" />
                     </div>
                   </div>
                   <div className="mt-3">
-                    <div className="w-full h-1 bg-[#2a2a2a] rounded-full overflow-hidden">
+                    <div className="w-full h-1 bg-green-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-amber-500 to-amber-300 animate-pulse"
+                        className="h-full bg-gradient-to-r from-green-500 to-green-300 animate-pulse"
                         style={{ width: "65%" }}
                       ></div>
                     </div>
@@ -336,32 +338,34 @@ const Stats = () => {
               </div>
             </div>
 
-            <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6 mb-6">
+            <div className="bg-white border border-green-100 rounded-lg p-6 mb-6 shadow-md">
               <div className="flex items-center justify-between">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-[#00B7FF] flex items-center mb-4">
-                    <div className="bg-[#3a3a3a] p-2 rounded-full mr-3">
-                      <BarChart3 className="h-5 w-5 text-[#00B7FF]" />
+                  <h3 className="text-lg font-semibold text-green-700 flex items-center mb-4">
+                    <div className="bg-green-100 p-2 rounded-full mr-3">
+                      <BarChart3 className="h-5 w-5 text-green-600" />
                     </div>
                     Points d&apos;attention
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-[#3a3a3a] rounded-lg p-4">
+                    <div className="bg-white rounded-xl p-4 shadow-md border-l-4 border-green-500">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-white font-medium">Directions</p>
-                          <p className="text-2xl font-bold text-yellow-400 mt-1">
+                          <p className="text-green-700 font-medium">
+                            Directions
+                          </p>
+                          <p className="text-2xl font-bold text-gray-800 mt-1">
                             {stats.directoriesWithoutServices}
                           </p>
-                          <p className="text-sm text-gray-400 mt-1">
+                          <p className="text-sm text-gray-500 mt-1">
                             sans services
                           </p>
                         </div>
-                        <div className="bg-[#2a2a2a] p-3 rounded-full">
-                          <FolderTree className="h-5 w-5 text-yellow-400" />
+                        <div className="bg-green-100 p-3 rounded-full">
+                          <FolderTree className="h-5 w-5 text-green-600" />
                         </div>
                       </div>
-                      <div className="mt-3 text-xs text-gray-400">
+                      <div className="mt-3 text-xs text-gray-500">
                         {stats.directoriesWithoutServices > 0
                           ? `${(
                               (stats.directoriesWithoutServices /
@@ -374,24 +378,24 @@ const Stats = () => {
                       </div>
                     </div>
 
-                    <div className="bg-[#3a3a3a] rounded-lg p-4">
+                    <div className="bg-white rounded-xl p-4 shadow-md border-l-4 border-green-500">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-white font-medium">
+                          <p className="text-green-700 font-medium">
                             Types de documents
                           </p>
-                          <p className="text-2xl font-bold text-yellow-400 mt-1">
+                          <p className="text-2xl font-bold text-gray-800 mt-1">
                             {stats.documentTypesWithoutMetadata}
                           </p>
-                          <p className="text-sm text-gray-400 mt-1">
+                          <p className="text-sm text-gray-500 mt-1">
                             sans métadonnées
                           </p>
                         </div>
-                        <div className="bg-[#2a2a2a] p-3 rounded-full">
-                          <Layers3 className="h-5 w-5 text-yellow-400" />
+                        <div className="bg-green-100 p-3 rounded-full">
+                          <Layers3 className="h-5 w-5 text-green-600" />
                         </div>
                       </div>
-                      <div className="mt-3 text-xs text-gray-400">
+                      <div className="mt-3 text-xs text-gray-500">
                         {stats.documentTypesWithoutMetadata > 0
                           ? `${(
                               (stats.documentTypesWithoutMetadata /
@@ -404,22 +408,22 @@ const Stats = () => {
                       </div>
                     </div>
 
-                    <div className="bg-[#3a3a3a] rounded-lg p-4">
+                    <div className="bg-white rounded-xl p-4 shadow-md border-l-4 border-green-500">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-white font-medium">Services</p>
-                          <p className="text-2xl font-bold text-yellow-400 mt-1">
+                          <p className="text-green-700 font-medium">Services</p>
+                          <p className="text-2xl font-bold text-gray-800 mt-1">
                             {stats.servicesWithoutDocTypes}
                           </p>
-                          <p className="text-sm text-gray-400 mt-1">
+                          <p className="text-sm text-gray-500 mt-1">
                             sans types de documents
                           </p>
                         </div>
-                        <div className="bg-[#2a2a2a] p-3 rounded-full">
-                          <LayoutList className="h-5 w-5 text-yellow-400" />
+                        <div className="bg-green-100 p-3 rounded-full">
+                          <LayoutList className="h-5 w-5 text-green-600" />
                         </div>
                       </div>
-                      <div className="mt-3 text-xs text-gray-400">
+                      <div className="mt-3 text-xs text-gray-500">
                         {stats.servicesWithoutDocTypes > 0
                           ? `${(
                               (stats.servicesWithoutDocTypes /
@@ -437,30 +441,30 @@ const Stats = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
+              <div className="bg-white border border-green-100 rounded-xl p-6 hover:shadow-md transition-shadow duration-200">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-lg font-semibold text-[#00B7FF]">
+                    <p className="text-lg font-semibold text-green-700">
                       Services
                     </p>
-                    <h3 className="text-4xl font-bold text-white mt-2">
+                    <h3 className="text-4xl font-bold text-gray-800 mt-2">
                       {stats.totalServices}
                     </h3>
                     <div className="mt-3 space-y-1">
-                      <p className="text-sm text-gray-400 flex items-center">
-                        <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                      <p className="text-sm text-gray-500 flex items-center">
+                        <span className="w-2 h-2 bg-green-600 rounded-full mr-2"></span>
                         {stats.activeServices} services actifs
                       </p>
-                      <p className="text-sm text-gray-400 flex items-center">
+                      <p className="text-sm text-gray-500 flex items-center">
                         <span className="w-2 h-2 bg-red-400 rounded-full mr-2"></span>
                         {stats.totalServices - stats.activeServices} services
                         inactifs
                       </p>
                     </div>
-                    <div className="mt-3 pt-3 border-t border-[#4a4a4a]">
-                      <div className="w-full bg-[#3a3a3a] h-2 rounded-full overflow-hidden">
+                    <div className="mt-3 pt-3 border-t border-green-100">
+                      <div className="w-full bg-green-100 h-2 rounded-full overflow-hidden">
                         <div
-                          className="bg-green-400 h-full"
+                          className="bg-green-600 h-full"
                           style={{
                             width: `${
                               (stats.activeServices / stats.totalServices) * 100
@@ -468,7 +472,7 @@ const Stats = () => {
                           }}
                         ></div>
                       </div>
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-xs text-gray-500 mt-1">
                         {(
                           (stats.activeServices / stats.totalServices) *
                           100
@@ -477,37 +481,37 @@ const Stats = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="bg-[#3a3a3a] p-4 rounded-full">
-                    <LayoutList className="h-8 w-8 text-[#00B7FF]" />
+                  <div className="bg-green-100 p-4 rounded-full">
+                    <LayoutList className="h-8 w-8 text-green-600" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
+              <div className="bg-white border border-green-100 rounded-xl p-6 hover:shadow-md transition-shadow duration-200">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-lg font-semibold text-[#00B7FF]">
+                    <p className="text-lg font-semibold text-green-700">
                       Directions
                     </p>
-                    <h3 className="text-4xl font-bold text-white mt-2">
+                    <h3 className="text-4xl font-bold text-gray-800 mt-2">
                       {stats.totalDirectories}
                     </h3>
                     <div className="mt-3 space-y-1">
-                      <p className="text-sm text-gray-400 flex items-center">
-                        <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                      <p className="text-sm text-gray-500 flex items-center">
+                        <span className="w-2 h-2 bg-green-600 rounded-full mr-2"></span>
                         {stats.totalDirectories -
                           stats.directoriesWithoutServices}{" "}
                         avec services
                       </p>
-                      <p className="text-sm text-gray-400 flex items-center">
+                      <p className="text-sm text-gray-500 flex items-center">
                         <span className="w-2 h-2 bg-yellow-400 rounded-full mr-2"></span>
                         {stats.directoriesWithoutServices} sans services
                       </p>
                     </div>
-                    <div className="mt-3 pt-3 border-t border-[#4a4a4a]">
-                      <div className="w-full bg-[#3a3a3a] h-2 rounded-full overflow-hidden">
+                    <div className="mt-3 pt-3 border-t border-green-100">
+                      <div className="w-full bg-green-100 h-2 rounded-full overflow-hidden">
                         <div
-                          className="bg-green-400 h-full"
+                          className="bg-green-600 h-full"
                           style={{
                             width: `${
                               ((stats.totalDirectories -
@@ -518,7 +522,7 @@ const Stats = () => {
                           }}
                         ></div>
                       </div>
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-xs text-gray-500 mt-1">
                         {(
                           ((stats.totalDirectories -
                             stats.directoriesWithoutServices) /
@@ -529,35 +533,35 @@ const Stats = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="bg-[#3a3a3a] p-4 rounded-full">
-                    <FolderTree className="h-8 w-8 text-[#00B7FF]" />
+                  <div className="bg-green-100 p-4 rounded-full">
+                    <FolderTree className="h-8 w-8 text-green-600" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
+              <div className="bg-white border border-green-100 rounded-xl p-6 hover:shadow-md transition-shadow duration-200">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-lg font-semibold text-[#00B7FF]">
+                    <p className="text-lg font-semibold text-green-700">
                       Types de Documents
                     </p>
-                    <h3 className="text-4xl font-bold text-white mt-2">
+                    <h3 className="text-4xl font-bold text-gray-800 mt-2">
                       {stats.totalDocumentTypes}
                     </h3>
                     <div className="mt-3 space-y-1">
-                      <p className="text-sm text-gray-400 flex items-center">
-                        <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+                      <p className="text-sm text-gray-500 flex items-center">
+                        <span className="w-2 h-2 bg-green-600 rounded-full mr-2"></span>
                         {stats.documentTypesWithMetadata} avec métadonnées
                       </p>
-                      <p className="text-sm text-gray-400 flex items-center">
+                      <p className="text-sm text-gray-500 flex items-center">
                         <span className="w-2 h-2 bg-yellow-400 rounded-full mr-2"></span>
                         {stats.documentTypesWithoutMetadata} sans métadonnées
                       </p>
                     </div>
-                    <div className="mt-3 pt-3 border-t border-[#4a4a4a]">
-                      <div className="w-full bg-[#3a3a3a] h-2 rounded-full overflow-hidden">
+                    <div className="mt-3 pt-3 border-t border-green-100">
+                      <div className="w-full bg-green-100 h-2 rounded-full overflow-hidden">
                         <div
-                          className="bg-green-400 h-full"
+                          className="bg-green-600 h-full"
                           style={{
                             width: `${
                               (stats.documentTypesWithMetadata /
@@ -567,7 +571,7 @@ const Stats = () => {
                           }}
                         ></div>
                       </div>
-                      <p className="text-xs text-gray-400 mt-1">
+                      <p className="text-xs text-gray-500 mt-1">
                         {(
                           (stats.documentTypesWithMetadata /
                             stats.totalDocumentTypes) *
@@ -577,34 +581,35 @@ const Stats = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="bg-[#3a3a3a] p-4 rounded-full">
-                    <Layers3 className="h-8 w-8 text-[#00B7FF]" />
+                  <div className="bg-green-100 p-4 rounded-full">
+                    <Layers3 className="h-8 w-8 text-green-600" />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6 hover:shadow-md transition-shadow duration-200 col-span-full">
+              <div className="bg-white border border-green-100 rounded-xl p-6 hover:shadow-md transition-shadow duration-200 col-span-full">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-lg font-semibold text-[#00B7FF]">
+                        <p className="text-lg font-semibold text-green-700">
                           Pièces
                         </p>
-                        <h3 className="text-3xl font-bold text-white">
+                        <h3 className="text-3xl font-bold text-gray-800">
                           {stats.totalPieces}
                         </h3>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-gray-500">
                           dont {stats.totalLinkedPieces} configurées
                         </p>
                       </div>
-                      <div className="bg-[#3a3a3a] p-3 rounded-full">
-                        <StretchHorizontal className="h-6 w-6 text-[#00B7FF]" />
+                      <div className="bg-green-100 p-3 rounded-full">
+                        <StretchHorizontal className="h-6 w-6 text-green-600" />
                       </div>
                     </div>
-                    <div className="w-full bg-[#3a3a3a] h-2 rounded-full overflow-hidden">
+
+                    <div className="w-full bg-green-100 h-2 rounded-full overflow-hidden">
                       <div
-                        className="bg-green-400 h-full"
+                        className="bg-green-600 h-full"
                         style={{
                           width: `${
                             (stats.totalLinkedPieces / stats.totalPieces) * 100
@@ -612,7 +617,7 @@ const Stats = () => {
                         }}
                       ></div>
                     </div>
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-gray-500">
                       {(
                         (stats.totalLinkedPieces / stats.totalPieces) *
                         100
@@ -624,21 +629,21 @@ const Stats = () => {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-lg font-semibold text-[#00B7FF]">
+                        <p className="text-lg font-semibold text-green-700">
                           Documents
                         </p>
-                        <h3 className="text-3xl font-bold text-white">
+                        <h3 className="text-3xl font-bold text-gray-800">
                           {stats.totalDocuments}
                         </h3>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-gray-500">
                           archivés au total
                         </p>
                       </div>
-                      <div className="bg-[#3a3a3a] p-3 rounded-full">
-                        <FolderArchive className="h-6 w-6 text-[#00B7FF]" />
+                      <div className="bg-green-100 p-3 rounded-full">
+                        <FolderArchive className="h-6 w-6 text-green-600" />
                       </div>
                     </div>
-                    <div className="mt-2 text-xs text-gray-400">
+                    <div className="mt-2 text-xs text-gray-500">
                       <p>
                         Moyenne de{" "}
                         {(
@@ -658,19 +663,19 @@ const Stats = () => {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-lg font-semibold text-[#00B7FF]">
+                        <p className="text-lg font-semibold text-green-700">
                           Métadonnées
                         </p>
-                        <h3 className="text-3xl font-bold text-white">
+                        <h3 className="text-3xl font-bold text-gray-800">
                           {stats.totalMetadata}
                         </h3>
-                        <p className="text-sm text-gray-400">enregistrées</p>
+                        <p className="text-sm text-gray-500">enregistrées</p>
                       </div>
-                      <div className="bg-[#3a3a3a] p-3 rounded-full">
-                        <Database className="h-6 w-6 text-[#00B7FF]" />
+                      <div className="bg-green-100 p-3 rounded-full">
+                        <Database className="h-6 w-6 text-green-600" />
                       </div>
                     </div>
-                    <div className="mt-2 text-xs text-gray-400">
+                    <div className="mt-2 text-xs text-gray-500">
                       <p>
                         Moyenne de{" "}
                         {(
@@ -688,14 +693,14 @@ const Stats = () => {
                   </div>
                 </div>
 
-                <div className="mt-6 pt-6 border-t border-[#4a4a4a]">
+                <div className="mt-6 pt-6 border-t border-green-100">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-lg font-semibold text-[#00B7FF] flex items-center">
+                      <p className="text-lg font-semibold text-green-700 flex items-center">
                         <GlobeLock className="h-5 w-5 mr-2" />
                         Statistiques de connexion
                       </p>
-                      <h3 className="text-3xl font-bold text-white mt-2">
+                      <h3 className="text-3xl font-bold text-gray-800 mt-2">
                         {stats.totalConnexions.total_connections}
                       </h3>
                       <div className="flex flex-col md:flex-row md:items-center gap-2 mt-1">
@@ -711,11 +716,11 @@ const Stats = () => {
                               ).toLocaleDateString()
                             : "N/A"}
                         </p>
-                        <p className="text-sm text-gray-400"></p>
+                        <p className="text-sm text-gray-500"></p>
                       </div>
                     </div>
                     <button
-                      className="bg-[#00B7FF] hover:bg-[#0099cc] text-white font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center"
+                      className="bg-green-100 hover:bg-green-200 text-green-600 font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center"
                       onClick={() =>
                         (window.location.href = "/connexions-details")
                       }
@@ -726,9 +731,9 @@ const Stats = () => {
                   </div>
                 </div>
 
-                <div className="mt-6 pt-6 border-t border-[#4a4a4a] grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="mt-6 pt-6 border-t border-green-100 grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-4">
-                    <p className="text-lg font-semibold text-[#00B7FF] flex items-center">
+                    <p className="text-lg font-semibold text-green-700 flex items-center">
                       <LayoutList className="h-5 w-5 mr-2" />
                       Top Services par Activité
                     </p>
@@ -738,7 +743,7 @@ const Stats = () => {
                         stats.topServices.map((service, index) => (
                           <div
                             key={index}
-                            className="bg-[#3a3a3a] rounded-lg p-3 group hover:bg-[#444] transition-colors duration-300"
+                            className="bg-white rounded-xl p-3 group hover:bg-green-100 transition-colors duration-300"
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center">
@@ -756,15 +761,15 @@ const Stats = () => {
                                   {index + 1}
                                 </div>
                                 <div className="ml-3">
-                                  <p className="text-white font-medium">
+                                  <p className="text-green-700 font-medium">
                                     {service.service_name}
                                   </p>
-                                  <p className="text-xs text-gray-400">
+                                  <p className="text-xs text-gray-500">
                                     {service.documents_per_service} documents
                                   </p>
                                 </div>
                               </div>
-                              <div className="text-[#00B7FF] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                              <div className="text-green-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   className="h-5 w-5"
@@ -781,9 +786,9 @@ const Stats = () => {
                                 </svg>
                               </div>
                             </div>
-                            <div className="mt-2 w-full bg-[#2a2a2a] h-1.5 rounded-full overflow-hidden">
+                            <div className="mt-2 w-full bg-green-100 h-1.5 rounded-full overflow-hidden">
                               <div
-                                className="h-full bg-gradient-to-r from-[#00B7FF] to-[#00D7FF]"
+                                className="h-full bg-gradient-to-r from-green-500 to-green-300 animate-pulse"
                                 style={{
                                   width: `${
                                     (service.count /
@@ -797,7 +802,7 @@ const Stats = () => {
                           </div>
                         ))
                       ) : (
-                        <div className="bg-[#3a3a3a] rounded-lg p-4 text-center text-gray-400">
+                        <div className="bg-white rounded-xl p-4 text-center text-gray-500">
                           Aucune donnée disponible
                         </div>
                       )}
@@ -805,14 +810,14 @@ const Stats = () => {
 
                     <button
                       onClick={() => handleChangePage("/services")}
-                      className="w-full bg-[#3a3a3a] hover:bg-[#444] text-[#00B7FF] py-2 rounded-lg transition-colors duration-300 text-sm font-medium"
+                      className="w-full bg-green-100 hover:bg-green-200 text-green-600 py-2 rounded-lg transition-colors duration-300 text-sm font-medium"
                     >
                       Voir tous les services
                     </button>
                   </div>
 
                   <div className="space-y-4">
-                    <p className="text-lg font-semibold text-[#00B7FF] flex items-center">
+                    <p className="text-lg font-semibold text-green-700 flex items-center">
                       <Layers3 className="h-5 w-5 mr-2" />
                       Types de Documents Populaires
                     </p>
@@ -822,7 +827,7 @@ const Stats = () => {
                         stats.topDocumentTypes.map((type, index) => (
                           <div
                             key={index}
-                            className="bg-[#3a3a3a] rounded-lg p-3 group hover:bg-[#444] transition-colors duration-300"
+                            className="bg-white rounded-xl p-3 group hover:bg-green-100 transition-colors duration-300"
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center">
@@ -840,15 +845,15 @@ const Stats = () => {
                                   {index + 1}
                                 </div>
                                 <div className="ml-3">
-                                  <p className="text-white font-medium">
+                                  <p className="text-green-700 font-medium">
                                     {type.document_type_name}
                                   </p>
-                                  <p className="text-xs text-gray-400">
+                                  <p className="text-xs text-gray-500">
                                     {type.usage_count} utilisations
                                   </p>
                                 </div>
                               </div>
-                              <div className="text-[#00B7FF] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                              <div className="text-green-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   className="h-5 w-5"
@@ -866,9 +871,9 @@ const Stats = () => {
                               </div>
                             </div>
 
-                            <div className="mt-2 w-full bg-[#2a2a2a] h-1.5 rounded-full overflow-hidden">
+                            <div className="mt-2 w-full bg-green-100 h-1.5 rounded-full overflow-hidden">
                               <div
-                                className="h-full bg-gradient-to-r from-[#00B7FF] to-[#00D7FF]"
+                                className="h-full bg-gradient-to-r from-green-500 to-green-300 animate-pulse"
                                 style={{
                                   width: `${
                                     (type.usage_count /
@@ -882,7 +887,7 @@ const Stats = () => {
                           </div>
                         ))
                       ) : (
-                        <div className="bg-[#3a3a3a] rounded-lg p-4 text-center text-gray-400">
+                        <div className="bg-white rounded-xl p-4 text-center text-gray-500">
                           Aucune donnée disponible
                         </div>
                       )}
@@ -890,16 +895,16 @@ const Stats = () => {
 
                     <button
                       onClick={() => handleChangePage("/document-types")}
-                      className="w-full bg-[#3a3a3a] hover:bg-[#444] text-[#00B7FF] py-2 rounded-lg transition-colors duration-300 text-sm font-medium"
+                      className="w-full bg-green-100 hover:bg-green-200 text-green-600 py-2 rounded-lg transition-colors duration-300 text-sm font-medium"
                     >
                       Voir tous les types de documents
                     </button>
                   </div>
                 </div>
 
-                <div className="mt-6 pt-6 border-t border-[#4a4a4a]">
+                <div className="mt-6 pt-6 border-t border-green-100">
                   <div className="flex items-center justify-between mb-4">
-                    <p className="text-lg font-semibold text-[#00B7FF] flex items-center">
+                    <p className="text-lg font-semibold text-green-700 flex items-center">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         className="h-5 w-5 mr-2"
@@ -923,13 +928,13 @@ const Stats = () => {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="bg-[#3a3a3a] rounded-lg p-4">
+                    <div className="bg-white rounded-xl p-4">
                       <div className="flex items-center justify-between">
-                        <p className="text-gray-400">Temps de fonctionnement</p>
-                        <div className="bg-[#2a2a2a] p-2 rounded-full">
+                        <p className="text-gray-500">Temps de fonctionnement</p>
+                        <div className="bg-green-100 p-2 rounded-full">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4 text-[#00B7FF]"
+                            className="h-4 w-4 text-green-600"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -943,18 +948,18 @@ const Stats = () => {
                           </svg>
                         </div>
                       </div>
-                      <p className="text-xl font-bold text-white mt-2">
+                      <p className="text-xl font-bold text-gray-800 mt-2">
                         {stats.systemPerformance?.uptime || "177"} jours
                       </p>
                     </div>
 
-                    <div className="bg-[#3a3a3a] rounded-lg p-4">
+                    <div className="bg-white rounded-xl p-4">
                       <div className="flex items-center justify-between">
-                        <p className="text-gray-400">Dernière sauvegarde</p>
-                        <div className="bg-[#2a2a2a] p-2 rounded-full">
+                        <p className="text-gray-500">Dernière sauvegarde</p>
+                        <div className="bg-green-100 p-2 rounded-full">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4 text-[#00B7FF]"
+                            className="h-4 w-4 text-green-600"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -968,7 +973,7 @@ const Stats = () => {
                           </svg>
                         </div>
                       </div>
-                      <p className="text-xl font-bold text-white mt-2">
+                      <p className="text-xl font-bold text-gray-800 mt-2">
                         {stats.systemPerformance?.lastBackup ||
                           "Il y a Six mois"}{" "}
                         <br />
@@ -978,13 +983,13 @@ const Stats = () => {
                       </p>
                     </div>
 
-                    <div className="bg-[#3a3a3a] rounded-lg p-4">
+                    <div className="bg-white rounded-xl p-4">
                       <div className="flex items-center justify-between">
-                        <p className="text-gray-400">Utilisation stockage</p>
-                        <div className="bg-[#2a2a2a] p-2 rounded-full">
+                        <p className="text-gray-500">Utilisation stockage</p>
+                        <div className="bg-green-100 p-2 rounded-full">
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4 text-[#00B7FF]"
+                            className="h-4 w-4 text-green-600"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -999,13 +1004,13 @@ const Stats = () => {
                         </div>
                       </div>
                       <div className="mt-2">
-                        <div className="flex justify-between text-xs text-gray-400 mb-1">
+                        <div className="flex justify-between text-xs text-gray-500 mb-1">
                           <span>42.3 GB / 100 GB</span>
                           <span>42.3%</span>
                         </div>
-                        <div className="w-full bg-[#2a2a2a] h-2 rounded-full overflow-hidden">
+                        <div className="w-full bg-green-100 h-2 rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-gradient-to-r from-green-500 to-[#00B7FF]"
+                            className="h-full bg-gradient-to-r from-green-500 to-green-300 animate-pulse"
                             style={{ width: "42.3%" }}
                           ></div>
                         </div>

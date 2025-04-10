@@ -43,11 +43,13 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useNavigate } from "react-router-dom";
 
 const MainContainer = ({ children }) => (
-  <div className="flex w-full  bg-gray-300">{children}</div>
+  <div className="flex w-full  bg-gradient-to-br from-green-50 to-emerald-100">
+    {children}
+  </div>
 );
 
 const ContentContainer = ({ children }) => (
-  <div className="mt-24 p-1 bg-gray-100 rounded-lg shadow-none flex flex-col h-screen overflow-auto mr-10 w-full ml-7">
+  <div className="mt-24 p-1 bg-gradient-to-br from-green-50 to-emerald-100 rounded-lg shadow-none flex flex-col h-screen overflow-auto mr-10 w-full ml-7">
     {children}
   </div>
 );
@@ -58,7 +60,7 @@ const StyledBox = ({ children }) => (
   </div>
 );
 const StyledBox2 = ({ children }) => (
-  <div className="bg-gray-800 rounded-lg shadow-2xl p-3 mb-4 overflow-x-auto">
+  <div className="bg-white rounded-lg shadow-2xl p-3 mb-4 overflow-x-auto">
     {children}
   </div>
 );
@@ -85,7 +87,7 @@ const CenteredModal = ({ open, onClose, children, maxWidth = "lg" }) => {
       onClick={onClose}
     >
       <div
-        className={`bg-[#2a2a2a] rounded-lg shadow-xl p-6 w-full ${maxWidthClasses[maxWidth]} mx-4`}
+        className={`bg-white rounded-lg shadow-xl p-6 w-full ${maxWidthClasses[maxWidth]} mx-4`}
         onClick={(e) => e.stopPropagation()}
       >
         {children}
@@ -178,14 +180,16 @@ const DetailsDialog = ({
 
   return (
     <CenteredModal open={open} onClose={onClose} maxWidth="lg">
-      <div className="flex justify-between items-center mb-4 border-b border-gray-600 pb-3">
+      <div className="flex justify-between items-center mb-4 border-b border-green-200 pb-3">
         <div className="flex items-center">
-          <InfoOutlined className="text-[#00B7FF] mr-2" />
-          <h3 className="text-xl font-bold text-white">Détails du document</h3>
+          <InfoOutlined className="text-green-600 mr-2" />
+          <h3 className="text-xl font-bold text-green-800">
+            Détails du document
+          </h3>
         </div>
         <button
           onClick={onClose}
-          className="text-gray-400 hover:text-gray-200 bg-gray-700 hover:bg-gray-600 rounded-full p-2 transition-all duration-200"
+          className="text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full p-2 transition-all duration-200"
         >
           <CircleX size={18} />
         </button>
@@ -193,22 +197,22 @@ const DetailsDialog = ({
 
       <button
         onClick={() => setIsPieceMode(!isPieceMode)}
-        className="w-full px-4 py-3 mb-4 text-sm font-medium text-black transition-all duration-300 hover:text-white bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-500 hover:to-blue-600 rounded-lg flex items-center justify-center gap-2 shadow-md"
+        className="w-full px-4 py-3 mb-4 text-sm font-medium text-white transition-all duration-300 hover:text-white bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 rounded-lg flex items-center justify-center gap-2 shadow-md"
       >
         <ArrowUpDown />
         {isPieceMode ? "Passer au mode Lot" : "Passer au mode Pièce"}
       </button>
 
-      <div className="bg-gradient-to-b from-[#3a3a3a] to-[#2a2a2a] rounded-lg p-4 max-h-[60vh] overflow-y-auto shadow-inner border border-gray-700">
+      <div className="bg-gradient-to-b from-green-50 to-emerald-50 rounded-lg p-4 max-h-[60vh] overflow-y-auto shadow-inner border border-green-100">
         <table className="w-full table-fixed">
-          <thead className="bg-[#1f1f1f] text-white sticky top-0 z-10">
+          <thead className="bg-gradient-to-r from-green-600 to-emerald-600 text-white sticky top-0 z-10">
             <tr>
               <th className="w-1/6 p-3 text-left rounded-tl-md">Aperçu</th>
               <th className="w-2/6 p-3 text-left">Metadonnées</th>
               <th className="w-3/6 p-3 text-left rounded-tr-md">Valeurs</th>
             </tr>
           </thead>
-          <tbody className="text-white">
+          <tbody className="text-gray-800">
             {document &&
               metadataKeys
                 .filter(
@@ -218,20 +222,20 @@ const DetailsDialog = ({
                 .map((meta, index) => (
                   <tr
                     key={meta.field}
-                    className={index % 2 === 0 ? "bg-[#333333]" : ""}
+                    className={index % 2 === 0 ? "bg-green-50" : ""}
                   >
-                    <td className="w-1/6 text-white border-b border-gray-600 p-3">
+                    <td className="w-1/6 text-gray-800 border-b border-green-100 p-3">
                       <div className="flex justify-center">
-                        <DatabaseZap className="text-cyan-400" />
+                        <DatabaseZap className="text-green-600" />
                       </div>
                     </td>
-                    <td className="w-2/6 text-white border-b border-gray-600 p-3">
-                      <p className="font-bold text-gray-100 truncate">
+                    <td className="w-2/6 text-gray-800 border-b border-green-100 p-3">
+                      <p className="font-bold text-gray-700 truncate">
                         {meta.field}
                       </p>
                     </td>
-                    <td className="w-3/6 p-3 text-white border-b border-gray-600">
-                      <p className="text-gray-100 truncate">
+                    <td className="w-3/6 p-3 text-gray-800 border-b border-green-100">
+                      <p className="text-gray-700 truncate">
                         {document[meta.field] || "N/A"}
                       </p>
                     </td>
@@ -239,7 +243,7 @@ const DetailsDialog = ({
                 ))}
             <tr>
               <td colSpan={3} className="p-3">
-                <p className="text-gray-100 italic text-center">
+                <p className="text-gray-700 italic text-center">
                   {document
                     ? ` Document créé le: ${document.created_at}`
                     : "Date de création non disponible"}
@@ -275,21 +279,21 @@ const DetailsDialog = ({
                                 className=""
                                 key={index}
                                 sx={{
-                                  color: "white",
+                                  color: "black",
                                   fontWeight: "bold",
                                   borderRadius: "8px",
                                   marginBottom: "8px",
                                   width: "100%",
-                                  background: "#444",
-                                  boxShadow: "0 2px 5px rgba(0,0,0,0.2)",
-                                  ":hover": { background: "#555" },
+                                  background: "#fff",
+                                  boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+                                  ":hover": { background: "#f0f9f0" },
                                 }}
                               >
                                 <AccordionSummary
                                   sx={{
                                     width: "100%",
                                     background:
-                                      "linear-gradient(to right, #444, #333)",
+                                      "linear-gradient(to right, #10b981, #059669)",
                                   }}
                                   expandIcon={
                                     <ExpandMoreIcon sx={{ color: "white" }} />
@@ -298,11 +302,13 @@ const DetailsDialog = ({
                                   id={`panel${index}-header`}
                                 >
                                   <Typography className="text-white flex items-center justify-start p-2 rounded-lg font-bold truncate">
-                                    <FileChartColumn className="mr-2 text-cyan-400" />
+                                    <FileChartColumn className="mr-2 text-green-300" />
                                     {pieceName}
                                   </Typography>
                                 </AccordionSummary>
-                                <AccordionDetails sx={{ background: "#333" }}>
+                                <AccordionDetails
+                                  sx={{ background: "#f0f9f0" }}
+                                >
                                   <table className="w-full">
                                     <tbody>
                                       {files.map((file, fileIndex) => (
@@ -310,13 +316,13 @@ const DetailsDialog = ({
                                           key={fileIndex}
                                           className={
                                             fileIndex % 2 === 0
-                                              ? "bg-[#3a3a3a]"
+                                              ? "bg-green-50"
                                               : ""
                                           }
                                         >
                                           <td className="w-1/6 p-2">
                                             <div className="flex gap-2">
-                                              <div className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 cursor-pointer text-white rounded-lg p-2 flex justify-center transition-all duration-200 shadow-md">
+                                              <div className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 cursor-pointer text-white rounded-lg p-2 flex justify-center transition-all duration-200 shadow-md">
                                                 <FileUp
                                                   className="cursor-pointer"
                                                   onClick={() =>
@@ -343,7 +349,7 @@ const DetailsDialog = ({
                                           </td>
                                           <td className="w-5/6 pl-2">
                                             <p
-                                              className="text-gray-200 truncate hover:text-cyan-400 transition-colors duration-200 cursor-pointer"
+                                              className="text-gray-700 truncate hover:text-green-600 transition-colors duration-200 cursor-pointer"
                                               onClick={() =>
                                                 handleFileClick(file.fileUrl)
                                               }
@@ -365,7 +371,7 @@ const DetailsDialog = ({
                   );
                 })() || (
                   <tr>
-                    <td colSpan="3" className="text-center p-4 text-gray-400">
+                    <td colSpan="3" className="text-center p-4 text-gray-500">
                       Aucun fichier disponible
                     </td>
                   </tr>
@@ -381,11 +387,11 @@ const DetailsDialog = ({
                   return uniqueFiles.map((file, fileIndex) => (
                     <tr
                       key={`${index}-${fileIndex}`}
-                      className={fileIndex % 2 === 0 ? "bg-[#333333]" : ""}
+                      className={fileIndex % 2 === 0 ? "bg-green-50" : ""}
                     >
                       <td className="w-1/6 p-2">
                         <div className="flex gap-2">
-                          <div className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 cursor-pointer text-white rounded-lg p-2 flex justify-center transition-all duration-200 shadow-md">
+                          <div className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 cursor-pointer text-white rounded-lg p-2 flex justify-center transition-all duration-200 shadow-md">
                             <LayoutPanelTop
                               className="cursor-pointer"
                               onClick={() => handleFileClick(file.fileUrl)}
@@ -408,7 +414,7 @@ const DetailsDialog = ({
                       </td>
                       <td colSpan="2" className="w-5/6 p-2">
                         <p
-                          className="text-gray-200 truncate hover:text-cyan-400 transition-colors duration-200 cursor-pointer"
+                          className="text-gray-700 truncate hover:text-green-600 transition-colors duration-200 cursor-pointer"
                           onClick={() => handleFileClick(file.fileUrl)}
                         >
                           {file.filePath}
@@ -418,7 +424,7 @@ const DetailsDialog = ({
                   ));
                 }) || (
                   <tr>
-                    <td colSpan="3" className="text-center p-4 text-gray-400">
+                    <td colSpan="3" className="text-center p-4 text-gray-500">
                       Aucun lot disponible
                     </td>
                   </tr>
@@ -428,7 +434,7 @@ const DetailsDialog = ({
       </div>
       {isDeleting && (
         <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-          <CircularProgress color="info" />
+          <CircularProgress color="success" />
         </div>
       )}
     </CenteredModal>
@@ -437,20 +443,20 @@ const DetailsDialog = ({
 
 const FilePreviewModal = ({ open, onClose, fileUrl }) => (
   <CenteredModal open={open} onClose={onClose}>
-    <div className="flex justify-between items-center mb-4 border-b border-gray-600 pb-3">
-      <h3 className="text-xl font-bold text-white flex items-center">
-        <FileChartColumn className="mr-2 text-cyan-400" />
+    <div className="flex justify-between items-center mb-4 border-b border-green-200 pb-3">
+      <h3 className="text-xl font-bold text-green-800 flex items-center">
+        <FileChartColumn className="mr-2 text-green-600" />
         Aperçu du fichier
       </h3>
       <button
         onClick={onClose}
-        className="text-gray-400 hover:text-gray-200 bg-gray-700 hover:bg-gray-600 rounded-full p-2 transition-all duration-200"
+        className="text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full p-2 transition-all duration-200"
       >
         <CircleX size={18} />
       </button>
     </div>
     <div
-      className="bg-[#3a3a3a] rounded-lg p-4 border border-gray-700 shadow-inner"
+      className="bg-green-50 rounded-lg p-4 border border-green-100 shadow-inner"
       style={{ height: "70vh" }}
     >
       <iframe
@@ -482,36 +488,36 @@ const CreateEditModal = ({
   loadingForm,
 }) => (
   <CenteredModal open={open} onClose={onClose} maxWidth="lg">
-    <div className="flex justify-between items-center mb-6 border-b border-gray-600 pb-4">
+    <div className="flex justify-between items-center mb-6 border-b border-green-200 pb-4">
       <div className="flex items-center">
         {isEditing ? (
-          <div className="bg-white p-3 rounded-full mr-3 shadow-lg">
-            <SquarePen size={24} className="text-black" />
+          <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-3 rounded-full mr-3 shadow-lg">
+            <SquarePen size={24} className="text-white" />
           </div>
         ) : (
-          <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-3 rounded-full mr-3 shadow-lg">
+          <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-3 rounded-full mr-3 shadow-lg">
             <FolderPlusIcon size={24} className="text-white" />
           </div>
         )}
-        <h3 className="text-xl font-bold text-white">
+        <h3 className="text-xl font-bold text-green-800">
           {isEditing ? "Modifier le document" : "Ajouter un nouveau document"}
         </h3>
       </div>
       <button
         onClick={onClose}
-        className="text-gray-400 hover:text-gray-200 bg-gray-700 hover:bg-gray-600 rounded-full p-2 transition-all duration-200"
+        className="text-gray-500 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full p-2 transition-all duration-200"
       >
         <CircleX size={18} />
       </button>
     </div>
 
-    <div className="bg-gradient-to-b from-[#3a3a3a] to-[#2a2a2a] rounded-lg p-5 mb-6 shadow-inner border border-gray-700">
+    <div className="bg-gradient-to-b from-green-50 to-emerald-50 rounded-lg p-5 mb-6 shadow-inner border border-green-100">
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {metadataKeys.map((meta) => (
             <div key={meta.field} className="form-group">
-              <label className="block text-sm font-medium text-gray-300 mb-2 flex items-center">
-                <DatabaseZap className="mr-2 text-cyan-400" size={16} />
+              <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                <DatabaseZap className="mr-2 text-green-600" size={16} />
                 {meta.headerName}
               </label>
               <div className="relative">
@@ -521,7 +527,7 @@ const CreateEditModal = ({
                   onChange={(e) =>
                     setFormData({ ...formData, [meta.field]: e.target.value })
                   }
-                  className="w-full px-4 py-3 bg-[#1f1f1f] text-white border border-gray-600 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all duration-200 shadow-sm"
+                  className="w-full px-4 py-3 bg-white text-gray-800 border border-green-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 shadow-sm"
                   placeholder={`Saisir ${meta.headerName.toLowerCase()}...`}
                 />
               </div>
@@ -544,10 +550,10 @@ const CreateEditModal = ({
         type="submit"
         onClick={handleSubmit}
         disabled={loadingForm}
-        className={`px-6 py-3 text-sm font-medium  ${
+        className={`px-6 py-3 text-sm font-medium text-white ${
           isEditing
-            ? "bg-white text-black  "
-            : "bg-gradient-to-r text-white from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600"
+            ? "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+            : "bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
         } rounded-lg transition-all duration-200 shadow-md flex items-center gap-2`}
       >
         {loadingForm ? (
@@ -854,11 +860,11 @@ const DocumentListShow = () => {
       renderCell: (params) => (
         <Tooltip title="View Details">
           <IconButton
-            className="bg-gray-800 p-2"
+            className="bg-green-600 p-2"
             onClick={() => handleOpenDetails(params.row)}
           >
             <Avatar sx={{ borderRadius: "50%", background: "#fff" }}>
-              <FolderCheckIcon style={{ color: "#333" }} />
+              <FolderCheckIcon style={{ color: "green" }} />
             </Avatar>
           </IconButton>
         </Tooltip>
@@ -877,72 +883,72 @@ const DocumentListShow = () => {
             <IconButton
               sx={{
                 borderRadius: "8px",
-                background: "linear-gradient(to right, #0059b3, #0077e6)",
+                background: "linear-gradient(to right, #0066cc, #0099ff)",
                 color: "white",
                 padding: "8px",
                 boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
                 ":hover": {
-                  background: "linear-gradient(to right, #004c99, #0066cc)",
+                  background: "linear-gradient(to right, #0052a3, #0080e5)",
                 },
                 transition: "all 0.2s ease",
               }}
               onClick={() => handleOpenDetails(params.row)}
             >
-              <ScanEye size={18} />
+              <ScanEye size={18} style={{ color: "white" }} />
             </IconButton>
           </Tooltip>
           <Tooltip title="Modifier document">
             <IconButton
               sx={{
                 borderRadius: "8px",
-                background: "linear-gradient(to right, #862d86, #a13da1)",
+                background: "linear-gradient(to right, #6b46c1, #805ad5)",
                 color: "white",
                 padding: "8px",
                 boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
                 ":hover": {
-                  background: "linear-gradient(to right, #722672, #8f358f)",
+                  background: "linear-gradient(to right, #553c9a, #6b46c1)",
                 },
                 transition: "all 0.2s ease",
               }}
               onClick={() => handleEdit(params.row)}
             >
-              <SquarePen size={18} />
+              <SquarePen size={18} style={{ color: "white" }} />
             </IconButton>
           </Tooltip>
           <Tooltip title="Sélectionner pièces">
             <IconButton
               sx={{
                 borderRadius: "8px",
-                background: "linear-gradient(to right, #5151f0, #7070ff)",
+                background: "linear-gradient(to right, #2563eb, #3b82f6)",
                 color: "white",
                 padding: "8px",
                 boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
                 ":hover": {
-                  background: "linear-gradient(to right, #4040cc, #5c5cff)",
+                  background: "linear-gradient(to right, #1d4ed8, #2563eb)",
                 },
                 transition: "all 0.2s ease",
               }}
               onClick={() => handleOpenPieceDialog(params.row.id)}
             >
-              <Link size={18} />
+              <Link size={18} style={{ color: "white" }} />
             </IconButton>
           </Tooltip>
           <Tooltip title="Supprimer document">
             <IconButton
               sx={{
                 borderRadius: "8px",
-                background: "linear-gradient(to right, #d32f2f, #f44336)",
+                background: "linear-gradient(to right, #e11d48, #f43f5e)",
                 color: "white",
                 padding: "8px",
                 boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
                 ":hover": {
-                  background: "linear-gradient(to right, #b71c1c, #e53935)",
+                  background: "linear-gradient(to right, #be123c, #e11d48)",
                 },
                 transition: "all 0.2s ease",
               }}
               onClick={() => handleDelete(params.row.id)}
             >
-              <Trash2 size={18} />
+              <Trash2 size={18} style={{ color: "white" }} />
             </IconButton>
           </Tooltip>
         </ActionContainer>
@@ -1044,31 +1050,31 @@ const DocumentListShow = () => {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-gray-300">
+    <div className="flex min-h-screen bg-gray-100">
       <Side_bar isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar position="fixed" title="Documents" />
         <div className="container w-full mx-auto px-4 py-8 mt-20">
-          <div className="bg-gray-800 w-full rounded-lg shadow-lg p-6">
+          <div className="bg-white w-full rounded-lg shadow-lg p-6">
             <div className="flex justify-between items-center mb-6">
-              <h1 className="text-2xl font-bold text-white flex items-center">
+              <h1 className="text-2xl font-bold text-gray-800 flex items-center">
                 <ArchiveIcon
                   sx={{ fontSize: "32px" }}
-                  className="text-[#00B7FF] mr-2"
+                  className="text-green-600 mr-2"
                 />
                 Liste des dossiers archivés par services
               </h1>
             </div>
 
-            <div className="bg-[#3a3a3a] rounded-lg p-4 mb-6">
+            <div className="bg-blue-50 rounded-lg p-4 mb-6">
               <div className="flex gap-4 mb-4">
                 <div className="form-control w-1/2">
-                  <label className="label w-full flex text-white items-center justify-start">
-                    <Building2 className="mr-2" />
+                  <label className="label w-full flex text-gray-700 items-center justify-start">
+                    <Building2 className="mr-2 text-green-600" />
                     Liste des services
                   </label>
                   <select
-                    className="select select-bordered text-black bg-gray-200 border-gray-300 w-full"
+                    className="select select-bordered text-gray-800 bg-white border-gray-300 w-full"
                     value={selectedService}
                     onChange={handleServiceChange}
                   >
@@ -1090,12 +1096,12 @@ const DocumentListShow = () => {
 
                 {selectedService && (
                   <div className="form-control w-1/2">
-                    <label className="label w-full flex text-white items-center justify-start">
-                      <Layers3 className="mr-2" />
+                    <label className="label w-full flex text-gray-700 items-center justify-start">
+                      <Layers3 className="mr-2 text-green-600" />
                       Liste type de document
                     </label>
                     <select
-                      className="select select-bordered text-black bg-gray-200 border-gray-300 w-full"
+                      className="select select-bordered text-gray-800 bg-white border-gray-300 w-full"
                       value={selectedDocType}
                       onChange={handleDocTypeChange}
                     >
@@ -1112,28 +1118,28 @@ const DocumentListShow = () => {
 
               <div className="flex justify-between items-center mb-4">
                 <div className="form-control w-1/2">
-                  <label className="label w-full flex text-white items-center justify-start">
-                    <Search className="mr-2" />
+                  <label className="label w-full flex text-gray-700 items-center justify-start">
+                    <Search className="mr-2 text-green-600" />
                     Rechercher des documents
                   </label>
                   <input
                     type="text"
                     placeholder="Rechercher des documents..."
-                    className="input input-bordered bg-[#2a2a2a] text-white border-[#4a4a4a] w-full"
+                    className="input input-bordered bg-white text-gray-800 border-gray-300 w-full"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
                 <div className="flex gap-3 items-center">
                   <button
-                    className="btn bg-blue-600 hover:from-blue-600 hover:to-cyan-600 text-white px-5 py-2 rounded-lg flex items-center transition-all duration-300 shadow-md border-none h-12"
+                    className="btn bg-green-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg flex items-center transition-all duration-300 shadow-md border-none h-12"
                     onClick={() => setCreateDialogOpen(true)}
                   >
                     <Plus className="h-5 w-5 mr-2" />
                     Nouveau document
                   </button>
                   <button
-                    className="btn bg-white hover:to-indigo-600 hover:text-white text-black px-5 py-2 rounded-lg flex items-center transition-all duration-300 shadow-md border-none h-12"
+                    className="btn bg-green-800 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg flex items-center transition-all duration-300 shadow-md border-none h-12"
                     onClick={() => navigate("/docs_dir")}
                   >
                     <Building2 className="h-5 w-5 mr-2" />
@@ -1142,34 +1148,34 @@ const DocumentListShow = () => {
                 </div>
               </div>
 
-              <div className="bg-[#2a2a2a] rounded-lg p-4">
+              <div className="bg-white rounded-lg p-4 shadow-sm">
                 <DataGrid
                   rows={formattedDocuments}
                   columns={columns}
                   pageSize={5}
                   rowsPerPageOptions={[5, 10, 20]}
                   autoHeight
-                  className="bg-[#2a2a2a] text-white"
+                  className="bg-white text-gray-800"
                   sx={{
                     "& .MuiDataGrid-cell": {
-                      color: "white",
-                      borderColor: "#4a4a4a",
+                      color: "#333",
+                      borderColor: "#e5e7eb",
                     },
                     "& .MuiDataGrid-columnHeaders": {
-                      backgroundColor: "#1f1f1f",
-                      color: "black",
-                      borderColor: "#4a4a4a",
+                      backgroundColor: "#f3f4f6",
+                      color: "#374151",
+                      borderColor: "#e5e7eb",
                     },
                     "& .MuiDataGrid-footerContainer": {
-                      backgroundColor: "#1f1f1f",
-                      color: "white",
-                      borderColor: "#4a4a4a",
+                      backgroundColor: "#f9fafb",
+                      color: "#374151",
+                      borderColor: "#e5e7eb",
                     },
                     "& .MuiTablePagination-root": {
-                      color: "white",
+                      color: "#374151",
                     },
                     "& .MuiIconButton-root": {
-                      color: "white",
+                      color: "#4b5563",
                     },
                   }}
                 />

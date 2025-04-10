@@ -211,30 +211,50 @@ const UserRights = () => {
   // };
 
   return (
-    <div className="flex h-screen bg-[#f0f2f5]">
+    <div className="flex h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <SideBar isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar />
-        <div className="p-6 flex-1 overflow-y-auto">
-          {/* Header Section */}
-          <div className="mb-6">
-            <h1 className="text-2xl font-bold text-gray-800">
-              Gestion des Droits Utilisateurs
-            </h1>
-            <p className="text-gray-600">
-              Configurez les permissions pour chaque profil utilisateur
-            </p>
+        <div className="p-6 mt-20 flex-1 overflow-y-auto">
+          {/* Carte d'information - Similaire à Show_service et Profile_page */}
+          <div className="mx-auto w-full mb-6">
+            <div className="bg-gradient-to-r from-green-600 to-emerald-700 rounded-2xl shadow-2xl p-6 border border-green-400/30 relative">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+                    <ListCheckIcon className="text-green-300" />
+                    Gestion des Droits Utilisateurs
+                  </h2>
+                  <p className="text-green-100 mb-4">
+                    Configurez précisément les permissions pour chaque profil
+                    utilisateur. Déterminez quelles actions peuvent être
+                    effectuées par chaque profil pour assurer un contrôle
+                    d'accès cohérent et sécurisé.
+                  </p>
+                </div>
+                <div className="hidden lg:block">
+                  <div className="w-48 h-48 relative">
+                    <div className="absolute inset-0 bg-gradient-to-tr from-green-500/20 to-emerald-600/20 rounded-full animate-pulse"></div>
+                    <div className="absolute inset-4 bg-gradient-to-tr from-green-500/40 to-emerald-600/40 rounded-full animate-pulse delay-75"></div>
+                    <div className="absolute inset-8 bg-gradient-to-tr from-green-500/60 to-emerald-600/60 rounded-full animate-pulse delay-150"></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <ListCheckIcon className="w-16 h-16 text-white" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Main Content */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Profils Section */}
-            <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="bg-white rounded-xl shadow-lg p-6 border border-green-100">
               <div className="flex items-center gap-2 mb-4">
-                <span className="p-2 bg-blue-100 rounded-lg">
-                  <ListCheckIcon className="h-5 w-5 text-blue-600" />
+                <span className="p-2 bg-green-100 rounded-lg">
+                  <ListCheckIcon className="h-5 w-5 text-green-600" />
                 </span>
-                <h2 className="text-lg font-semibold text-gray-800">
+                <h2 className="text-lg font-semibold text-green-800">
                   Sélection du Profil
                 </h2>
               </div>
@@ -245,8 +265,8 @@ const UserRights = () => {
                     onClick={() => handleSelectProfil(profil)}
                     className={`w-full font-bold text-left px-4 py-3 rounded-lg transition-all ${
                       selectedProfil && selectedProfil.id === profil.id
-                        ? "bg-blue-50 border-blue-200 text-blue-700"
-                        : "bg-gray-50 hover:bg-gray-100"
+                        ? "bg-green-50 border-green-200 text-green-700"
+                        : "bg-gray-50 hover:bg-gray-100 border-gray-200"
                     } border`}
                   >
                     {profil.nom_profil}
@@ -262,12 +282,12 @@ const UserRights = () => {
               classNames="fade"
               unmountOnExit
             >
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="bg-white rounded-xl shadow-lg p-6 border border-green-100">
                 <div className="flex items-center gap-2 mb-4">
                   <span className="p-2 bg-green-100 rounded-lg">
                     <ListCheckIcon className="h-5 w-5 text-green-600" />
                   </span>
-                  <h2 className="text-lg font-semibold text-gray-800">
+                  <h2 className="text-lg font-semibold text-green-800">
                     Sections Disponibles
                   </h2>
                 </div>
@@ -279,7 +299,7 @@ const UserRights = () => {
                       className={`w-full font-bold text-left px-4 py-3 rounded-lg transition-all ${
                         selectedSection === section
                           ? "bg-green-50 border-green-200 text-green-700"
-                          : "bg-gray-50 hover:bg-gray-100"
+                          : "bg-gray-50 hover:bg-gray-100 border-gray-200"
                       } border`}
                     >
                       {section}
@@ -296,12 +316,12 @@ const UserRights = () => {
               classNames="fade"
               unmountOnExit
             >
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="bg-white rounded-xl shadow-lg p-6 border border-green-100">
                 <div className="flex items-center gap-2 mb-4">
-                  <span className="p-2 bg-purple-100 rounded-lg">
-                    <ListCheckIcon className="h-5 w-5 text-purple-600" />
+                  <span className="p-2 bg-green-100 rounded-lg">
+                    <ListCheckIcon className="h-5 w-5 text-green-600" />
                   </span>
-                  <h2 className="text-lg font-semibold text-gray-800">
+                  <h2 className="text-lg font-semibold text-green-800">
                     Actions - {selectedSection}
                   </h2>
                 </div>
@@ -310,12 +330,17 @@ const UserRights = () => {
                     groupedElements[selectedSection].map((action) => (
                       <label
                         key={action.id}
-                        className="flex items-center space-x-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer"
+                        className="flex items-center space-x-3 p-2 hover:bg-green-50 rounded-lg cursor-pointer"
                       >
                         <Checkbox
                           checked={action.selected || false}
                           onChange={() => handleToggleAction(action.id)}
-                          className="text-purple-600"
+                          sx={{
+                            color: "#10b981", // text-green-500
+                            "&.Mui-checked": {
+                              color: "#047857", // text-green-700
+                            },
+                          }}
                         />
                         <span className="text-gray-700">
                           {translateAction(action.action)}
@@ -330,7 +355,7 @@ const UserRights = () => {
           {/* Preview Button */}
           <button
             onClick={handleOpenModal}
-            className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition-all flex items-center gap-2"
+            className="mt-6 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 flex items-center gap-2"
           >
             <ListCheckIcon className="h-5 w-5" />
             Prévisualiser les modifications
@@ -338,23 +363,24 @@ const UserRights = () => {
         </div>
       </div>
 
-      {/* Modal with improved styling */}
+      {/* Modal avec le style cohérent */}
       <Modal
         open={openModal}
         onClose={handleCloseModal}
         className="flex items-center justify-center"
       >
-        <div className="bg-white rounded-xl shadow-2xl w-2/3 max-h-[80vh] overflow-y-auto p-6">
-          <div className="border-b pb-4 mb-4">
-            <h2 className="text-xl font-bold text-gray-800">
+        <div className="bg-white rounded-xl shadow-2xl w-2/3 max-h-[80vh] overflow-y-auto p-6 border border-green-100">
+          <div className="border-b border-green-100 pb-4 mb-4">
+            <h2 className="text-xl font-bold text-green-800 flex items-center gap-2">
+              <ListCheckIcon className="h-5 w-5 text-green-600" />
               Prévisualisation des Modifications
             </h2>
           </div>
 
           {selectedProfil ? (
             <div className="space-y-4">
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h3 className="font-semibold text-blue-800">
+              <div className="bg-green-50 p-4 rounded-lg">
+                <h3 className="font-semibold text-green-800">
                   Profil: {selectedProfil.nom_profil}
                 </h3>
               </div>
@@ -367,9 +393,9 @@ const UserRights = () => {
                     ).length > 0 && (
                       <div
                         key={section}
-                        className="bg-gray-50 p-4 rounded-lg space-y-2"
+                        className="bg-gray-50 p-4 rounded-lg space-y-2 border border-green-50"
                       >
-                        <h4 className="font-semibold text-gray-700">
+                        <h4 className="font-semibold text-green-700">
                           {section}
                         </h4>
                         <div className="ml-4 space-y-1">
@@ -380,7 +406,7 @@ const UserRights = () => {
                                 key={action.id}
                                 className="text-gray-600 flex items-center gap-2"
                               >
-                                <span className="w-2 h-2 bg-blue-400 rounded-full" />
+                                <span className="w-2 h-2 bg-green-400 rounded-full" />
                                 {translateAction(action.action)}
                               </div>
                             ))}
@@ -392,7 +418,7 @@ const UserRights = () => {
 
               <button
                 onClick={handleSendToBackend}
-                className="w-full mt-4 px-6 py-3 bg-green-600 text-white rounded-lg shadow-lg hover:bg-green-700 transition-all"
+                className="w-full mt-4 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
               >
                 Confirmer les modifications
               </button>

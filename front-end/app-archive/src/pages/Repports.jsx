@@ -371,44 +371,44 @@ const Repports = () => {
 
   const renderOverviewTab = () => (
     <div className="space-y-6 animate-fadeIn">
-      <div className="p-4 bg-[#323232] rounded-lg border-l-4 border-[#00B7FF] mb-6">
+      <div className="p-4 bg-gradient-to-r from-green-600 to-emerald-700 rounded-lg border-l-4 border-emerald-400 mb-6">
         <h2 className="text-xl font-bold text-white">
           Vue d&apos;ensemble du système
         </h2>
-        <p className="text-gray-300 mt-1">
+        <p className="text-green-100 mt-1">
           Ce tableau de bord présente les statistiques clés et les indicateurs
           de performance du système d&apos;archivage.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
+        <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-green-500 hover:translate-y-[-5px] transition-all duration-300">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-lg font-semibold text-[#00B7FF]">
-                Taille Base de Données Archive
+              <p className="text-lg font-semibold text-green-700">
+                Taille Base de Données
               </p>
-              <h3 className="text-3xl font-bold text-white mt-2">
+              <h3 className="text-3xl font-bold text-gray-800 mt-2">
                 {typeof systemStats.databaseSize === "object" &&
                 systemStats.databaseSize[0]
                   ? `${systemStats.databaseSize[0].size_mb} MB`
                   : systemStats.databaseSize}
               </h3>
-              <p className="text-sm text-gray-400 mt-2">Espace total utilisé</p>
+              <p className="text-sm text-gray-500 mt-2">Espace total utilisé</p>
             </div>
-            <div className="bg-[#3a3a3a] p-4 rounded-full">
-              <Database className="h-8 w-8 text-[#00B7FF]" />
+            <div className="bg-green-100 p-4 rounded-full">
+              <Database className="h-8 w-8 text-green-600" />
             </div>
           </div>
         </div>
 
-        <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
+        <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-blue-500 hover:translate-y-[-5px] transition-all duration-300">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-lg font-semibold text-[#00B7FF]">
+              <p className="text-lg font-semibold text-blue-700">
                 Documents (Mois)
               </p>
-              <h3 className="text-3xl font-bold text-white mt-2">
+              <h3 className="text-3xl font-bold text-gray-800 mt-2">
                 {systemStats.documentsLastMonth.current}
               </h3>
               <p className="text-sm mt-2">
@@ -426,8 +426,8 @@ const Repports = () => {
                   )}
                   %
                 </span>
-                <span className="text-gray-400"> vs mois précédent</span>
-                <span className="block text-xs text-green-500 w-full font-bold mt-1">
+                <span className="text-gray-500"> vs mois précédent</span>
+                <span className="block text-xs text-green-600 w-full font-bold mt-1">
                   {getPercentChangeExplanation(
                     systemStats.documentsLastMonth.current,
                     systemStats.documentsLastMonth.previous
@@ -435,19 +435,19 @@ const Repports = () => {
                 </span>
               </p>
             </div>
-            <div className="bg-[#3a3a3a] p-4 rounded-full">
-              <Calendar className="h-8 w-8 text-[#00B7FF]" />
+            <div className="bg-blue-100 p-4 rounded-full">
+              <Calendar className="h-8 w-8 text-blue-600" />
             </div>
           </div>
         </div>
 
-        <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
+        <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-yellow-500 hover:translate-y-[-5px] transition-all duration-300">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-lg font-semibold text-[#00B7FF]">
+              <p className="text-lg font-semibold text-yellow-700">
                 Documents (Semaine)
               </p>
-              <h3 className="text-3xl font-bold text-white mt-2">
+              <h3 className="text-3xl font-bold text-gray-800 mt-2">
                 {systemStats.documentsLastWeek.current}
               </h3>
               <p className="text-sm mt-2">
@@ -465,8 +465,8 @@ const Repports = () => {
                   )}
                   %
                 </span>
-                <span className="text-gray-400"> vs semaine précédente</span>
-                <span className="block text-xs text-green-500 w-full font-bold mt-1">
+                <span className="text-gray-500"> vs semaine précédente</span>
+                <span className="block text-xs text-green-600 w-full font-bold mt-1">
                   {getPercentChangeExplanation(
                     systemStats.documentsLastWeek.current,
                     systemStats.documentsLastWeek.previous
@@ -474,25 +474,25 @@ const Repports = () => {
                 </span>
               </p>
             </div>
-            <div className="bg-[#3a3a3a] p-4 rounded-full">
-              <FileText className="h-8 w-8 text-[#00B7FF]" />
+            <div className="bg-yellow-100 p-4 rounded-full">
+              <FileText className="h-8 w-8 text-yellow-600" />
             </div>
           </div>
         </div>
 
-        <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
+        <div className="bg-white rounded-xl p-6 shadow-lg border-l-4 border-red-500 hover:translate-y-[-5px] transition-all duration-300">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-lg font-semibold text-[#00B7FF]">
+              <p className="text-lg font-semibold text-red-700">
                 Consultations
               </p>
-              <h3 className="text-3xl font-bold text-white mt-2">
+              <h3 className="text-3xl font-bold text-gray-800 mt-2">
                 {systemStats.documentViews.current}
               </h3>
               <p className="text-sm mt-2">
                 {systemStats.documentViews.previous === 0 &&
                 systemStats.documentViews.current === 0 ? (
-                  <span className="text-gray-400">Aucune activité</span>
+                  <span className="text-gray-500">Aucune activité</span>
                 ) : (
                   <>
                     <span
@@ -509,10 +509,10 @@ const Repports = () => {
                       )}
                       %
                     </span>
-                    <span className="text-gray-400"> vs mois précédent</span>
+                    <span className="text-gray-500"> vs mois précédent</span>
                   </>
                 )}
-                <span className="block text-xs text-green-500 w-full font-bold mt-1">
+                <span className="block text-xs text-green-600 w-full font-bold mt-1">
                   {getPercentChangeExplanation(
                     systemStats.documentViews.current,
                     systemStats.documentViews.previous
@@ -520,25 +520,25 @@ const Repports = () => {
                 </span>
               </p>
             </div>
-            <div className="bg-[#3a3a3a] p-4 rounded-full">
-              <Activity className="h-8 w-8 text-[#00B7FF]" />
+            <div className="bg-red-100 p-4 rounded-full">
+              <Activity className="h-8 w-8 text-red-600" />
             </div>
           </div>
         </div>
       </div>
 
-      <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6">
-        <h3 className="text-xl font-semibold text-[#00B7FF] mb-4 flex items-center">
-          <AlertTriangle className="h-5 w-5 mr-2 text-yellow-400" />
+      <div className="bg-white rounded-xl p-6 shadow-lg border border-green-100">
+        <h3 className="text-xl font-semibold text-green-700 mb-4 flex items-center">
+          <AlertTriangle className="h-5 w-5 mr-2 text-amber-500" />
           Problèmes Potentiels
         </h3>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="bg-[#3a3a3a] p-2 rounded-full mr-3">
+              <div className="bg-yellow-100 p-2 rounded-full mr-3">
                 <AlertTriangle className="h-4 w-4 text-yellow-400" />
               </div>
-              <span className="text-white">
+              <span className="text-gray-800">
                 Services sans types de documents
               </span>
             </div>
@@ -549,10 +549,10 @@ const Repports = () => {
 
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className="bg-[#3a3a3a] p-2 rounded-full mr-3">
+              <div className="bg-yellow-100 p-2 rounded-full mr-3">
                 <AlertTriangle className="h-4 w-4 text-yellow-400" />
               </div>
-              <span className="text-white">Répertoires sans services</span>
+              <span className="text-gray-800">Répertoires sans services</span>
             </div>
             <span className="text-xl font-bold text-yellow-400">
               {generalStats.totalDirectoriesWithoutServices}
@@ -561,7 +561,7 @@ const Repports = () => {
 
           <button
             onClick={() => setShowIssues(!showIssues)}
-            className="mt-2 text-[#00B7FF] hover:underline flex items-center"
+            className="mt-2 text-green-700 hover:underline flex items-center"
           >
             {showIssues ? "Masquer" : "Afficher"} les problèmes de données
             <ArrowUpDown className="h-4 w-4 ml-1" />
@@ -569,15 +569,15 @@ const Repports = () => {
 
           {showIssues && (
             <div className="mt-4 space-y-4">
-              <div className="bg-[#3a3a3a] rounded-lg p-4">
-                <h4 className="text-white font-medium mb-2">
+              <div className="bg-yellow-100 rounded-lg p-4">
+                <h4 className="text-gray-800 font-medium mb-2">
                   Problèmes d&apos;espaces blancs (
                   {systemStats.whitespaceIssues.length})
                 </h4>
                 {systemStats.whitespaceIssues.length > 0 ? (
                   <div className="max-h-40 overflow-y-auto">
                     {systemStats.whitespaceIssues.map((issue, index) => (
-                      <div key={index} className="text-sm text-gray-300 mb-1">
+                      <div key={index} className="text-sm text-gray-500 mb-1">
                         {issue.table}: {issue.whitespace_count} entrées
                       </div>
                     ))}
@@ -589,14 +589,14 @@ const Repports = () => {
                 )}
               </div>
 
-              <div className="bg-[#3a3a3a] rounded-lg p-4">
-                <h4 className="text-white font-medium mb-2">
+              <div className="bg-yellow-100 rounded-lg p-4">
+                <h4 className="text-gray-800 font-medium mb-2">
                   Doublons détectés ({systemStats.duplicateIssues.length})
                 </h4>
                 {systemStats.duplicateIssues.length > 0 ? (
                   <div className="max-h-40 overflow-y-auto">
                     {systemStats.duplicateIssues.map((issue, index) => (
-                      <div key={index} className="text-sm text-gray-300 mb-1">
+                      <div key={index} className="text-sm text-gray-500 mb-1">
                         {issue.table}: {issue.duplicate_count} doublons
                       </div>
                     ))}
@@ -613,47 +613,49 @@ const Repports = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6">
-          <h3 className="text-xl font-semibold text-[#00B7FF] mb-4">
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-green-100">
+          <h3 className="text-xl font-semibold text-green-700 mb-4">
             Types de Documents les Plus Utilisés
           </h3>
           <div className="space-y-3 max-h-80 overflow-y-auto">
             {systemStats.topDocumentTypes.slice(0, 10).map((item, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between bg-[#3a3a3a] p-3 rounded-lg"
+                className="flex items-center justify-between bg-green-100 p-3 rounded-lg"
               >
                 <div>
-                  <p className="text-white font-medium">
+                  <p className="text-gray-800 font-medium">
                     {item.document_type_name}
                   </p>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-gray-500">
                     {item.service_name} - {item.directory_name}
                   </p>
                 </div>
-                <span className="text-[#00B7FF] font-bold">{item.count}</span>
+                <span className="text-green-700 font-bold">{item.count}</span>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6">
-          <h3 className="text-xl font-semibold text-[#00B7FF] mb-4">
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-green-100">
+          <h3 className="text-xl font-semibold text-green-700 mb-4">
             Agents par Service
           </h3>
           <div className="space-y-3 max-h-80 overflow-y-auto">
             {systemStats.agentsByService.slice(0, 10).map((item, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between bg-[#3a3a3a] p-3 rounded-lg"
+                className="flex items-center justify-between bg-green-100 p-3 rounded-lg"
               >
                 <div>
-                  <p className="text-white font-medium">{item.service_name}</p>
-                  <p className="text-sm text-gray-400">{item.directory_name}</p>
+                  <p className="text-gray-800 font-medium">
+                    {item.service_name}
+                  </p>
+                  <p className="text-sm text-gray-500">{item.directory_name}</p>
                 </div>
                 <div className="flex items-center">
-                  <Users className="h-4 w-4 text-[#00B7FF] mr-2" />
-                  <span className="text-white font-bold">
+                  <Users className="h-4 w-4 text-green-700 mr-2" />
+                  <span className="text-green-700 font-bold">
                     {item.agent_count}
                   </span>
                 </div>
@@ -667,97 +669,97 @@ const Repports = () => {
 
   const renderSystemTab = () => (
     <div className="space-y-6 animate-fadeIn">
-      <div className="p-4 bg-[#323232] rounded-lg border-l-4 border-[#00B7FF] mb-6">
+      <div className="p-4 bg-gradient-to-r from-green-600 to-emerald-700 rounded-lg border-l-4 border-emerald-400 mb-6">
         <h2 className="text-xl font-bold text-white">
           Informations techniques du système
         </h2>
-        <p className="text-gray-300 mt-1">
+        <p className="text-green-100 mt-1">
           Cette section présente les détails techniques et l&apos;état de santé
           de l&apos;infrastructure du système d&apos;archivage.
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6">
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-green-100">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-lg font-semibold text-[#00B7FF]">
+              <p className="text-lg font-semibold text-green-700">
                 Base de Données Archive
               </p>
-              <h3 className="text-3xl font-bold text-white mt-2">
+              <h3 className="text-3xl font-bold text-gray-800 mt-2">
                 {typeof systemStats.databaseSize === "object" &&
                 systemStats.databaseSize[0]
                   ? `${systemStats.databaseSize[0].size_mb} MB`
                   : systemStats.databaseSize}
               </h3>
-              <p className="text-sm text-gray-400 mt-2">Taille totale</p>
+              <p className="text-sm text-gray-500 mt-2">Taille totale</p>
             </div>
-            <div className="bg-[#3a3a3a] p-4 rounded-full">
-              <Database className="h-8 w-8 text-[#00B7FF]" />
+            <div className="bg-green-100 p-4 rounded-full">
+              <Database className="h-8 w-8 text-green-600" />
             </div>
           </div>
 
           <div className="mt-4">
-            <div className="flex justify-between text-xs text-gray-400 mb-1">
+            <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Utilisation</span>
               <span>42%</span>
             </div>
-            <div className="w-full bg-[#3a3a3a] h-2 rounded-full overflow-hidden">
+            <div className="w-full bg-green-100 h-2 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-green-500 to-[#00B7FF]"
+                className="h-full bg-gradient-to-r from-green-500 to-emerald-500"
                 style={{ width: "42%" }}
               ></div>
             </div>
           </div>
         </div>
 
-        <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6">
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-green-100">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-lg font-semibold text-[#00B7FF]">
+              <p className="text-lg font-semibold text-green-700">
                 Base Agence
               </p>
-              <h3 className="text-3xl font-bold text-white mt-2">
+              <h3 className="text-3xl font-bold text-gray-800 mt-2">
                 {console.log("test", systemStats.agenceDatabaseSize)}
                 {typeof systemStats.agenceDatabaseSize === "object" &&
                 systemStats.agenceDatabaseSize[0]
                   ? `${systemStats.agenceDatabaseSize[0].size_mb} MB`
                   : systemStats.agenceDatabaseSize}
               </h3>
-              <p className="text-sm text-gray-400 mt-2">Taille totale</p>
+              <p className="text-sm text-gray-500 mt-2">Taille totale</p>
             </div>
-            <div className="bg-[#3a3a3a] p-4 rounded-full">
-              <Server className="h-8 w-8 text-[#00B7FF]" />
+            <div className="bg-green-100 p-4 rounded-full">
+              <Server className="h-8 w-8 text-green-600" />
             </div>
           </div>
 
           <div className="mt-4">
-            <div className="flex justify-between text-xs text-gray-400 mb-1">
+            <div className="flex justify-between text-xs text-gray-500 mb-1">
               <span>Utilisation</span>
               <span>28%</span>
             </div>
-            <div className="w-full bg-[#3a3a3a] h-2 rounded-full overflow-hidden">
+            <div className="w-full bg-green-100 h-2 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-green-500 to-[#00B7FF]"
+                className="h-full bg-gradient-to-r from-green-500 to-emerald-500"
                 style={{ width: "28%" }}
               ></div>
             </div>
           </div>
         </div>
 
-        <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6">
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-green-100">
           <div className="flex justify-between items-center">
             <div>
-              <p className="text-lg font-semibold text-[#00B7FF]">Connexions</p>
-              <h3 className="text-3xl font-bold text-white mt-2">
+              <p className="text-lg font-semibold text-green-700">Connexions</p>
+              <h3 className="text-3xl font-bold text-gray-800 mt-2">
                 {typeof generalStats.totalConnexions === "object"
                   ? generalStats.totalConnexions.total_connections || 0
                   : generalStats.totalConnexions}
               </h3>
-              <p className="text-sm text-gray-400 mt-2">Total des connexions</p>
+              <p className="text-sm text-gray-500 mt-2">Total des connexions</p>
             </div>
-            <div className="bg-[#3a3a3a] p-4 rounded-full">
-              <Clock className="h-8 w-8 text-[#00B7FF]" />
+            <div className="bg-green-100 p-4 rounded-full">
+              <Clock className="h-8 w-8 text-green-600" />
             </div>
           </div>
 
@@ -784,39 +786,39 @@ const Repports = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6">
-          <h3 className="text-xl font-semibold text-[#00B7FF] mb-4">
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-green-100">
+          <h3 className="text-xl font-semibold text-green-700 mb-4">
             Répartition des Services
           </h3>
           <div className="flex items-center justify-center h-64">
             <div className="relative w-48 h-48">
-              <div className="absolute inset-0 rounded-full border-8 border-[#3a3a3a]"></div>
+              <div className="absolute inset-0 rounded-full border-8 border-green-100"></div>
 
               <div
                 className="absolute inset-0 rounded-full border-8 border-transparent border-t-[#00B7FF] border-r-[#00B7FF] border-b-[#00B7FF]"
                 style={{ transform: "rotate(45deg)" }}
               ></div>
 
-              <div className="absolute inset-4 rounded-full bg-[#2a2a2a] flex items-center justify-center">
+              <div className="absolute inset-4 rounded-full bg-white flex items-center justify-center">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-white">
+                  <p className="text-2xl font-bold text-green-800">
                     {generalStats.totalActiveServices}
                   </p>
-                  <p className="text-xs text-gray-400">services actifs</p>
+                  <p className="text-xs text-gray-500">services actifs</p>
                 </div>
               </div>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4 mt-4">
             <div className="flex items-center">
-              <div className="w-3 h-3 rounded-full bg-[#00B7FF] mr-2"></div>
-              <span className="text-sm text-gray-300">
+              <div className="w-3 h-3 rounded-full bg-green-600 mr-2"></div>
+              <span className="text-sm text-gray-500">
                 Services actifs ({generalStats.totalActiveServices})
               </span>
             </div>
             <div className="flex items-center">
-              <div className="w-3 h-3 rounded-full bg-[#3a3a3a] mr-2"></div>
-              <span className="text-sm text-gray-300">
+              <div className="w-3 h-3 rounded-full bg-green-100 mr-2"></div>
+              <span className="text-sm text-gray-500">
                 Services inactifs (
                 {generalStats.totalServices - generalStats.totalActiveServices})
               </span>
@@ -824,14 +826,14 @@ const Repports = () => {
           </div>
         </div>
 
-        <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6">
-          <h3 className="text-xl font-semibold text-[#00B7FF] mb-4">
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-green-100">
+          <h3 className="text-xl font-semibold text-green-700 mb-4">
             Santé du Système
           </h3>
           <div className="space-y-4">
             <div>
               <div className="flex justify-between items-center mb-1">
-                <span className="text-sm text-gray-300">
+                <span className="text-sm text-gray-500">
                   Services sans types de documents
                 </span>
                 <span className="text-sm text-yellow-400 font-medium">
@@ -839,7 +841,7 @@ const Repports = () => {
                   {generalStats.totalServices}
                 </span>
               </div>
-              <div className="w-full bg-[#3a3a3a] h-2 rounded-full overflow-hidden">
+              <div className="w-full bg-yellow-100 h-2 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-yellow-400"
                   style={{
@@ -855,7 +857,7 @@ const Repports = () => {
 
             <div>
               <div className="flex justify-between items-center mb-1">
-                <span className="text-sm text-gray-300">
+                <span className="text-sm text-gray-500">
                   Directions sans services
                 </span>
                 <span className="text-sm text-yellow-400 font-medium">
@@ -863,7 +865,7 @@ const Repports = () => {
                   {generalStats.totalDirectories}
                 </span>
               </div>
-              <div className="w-full bg-[#3a3a3a] h-2 rounded-full overflow-hidden">
+              <div className="w-full bg-yellow-100 h-2 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-yellow-400"
                   style={{
@@ -879,7 +881,7 @@ const Repports = () => {
 
             <div>
               <div className="flex justify-between items-center mb-1">
-                <span className="text-sm text-gray-300">
+                <span className="text-sm text-gray-500">
                   Problèmes d&apos;espaces blancs
                 </span>
                 <span className="text-sm text-yellow-400 font-medium">
@@ -890,7 +892,7 @@ const Repports = () => {
 
             <div>
               <div className="flex justify-between items-center mb-1">
-                <span className="text-sm text-gray-300">
+                <span className="text-sm text-gray-500">
                   Problèmes de doublons
                 </span>
                 <span className="text-sm text-yellow-400 font-medium">
@@ -902,17 +904,17 @@ const Repports = () => {
         </div>
       </div>
 
-      <div className="bg-[#2a2a2a] border border-[#4a4a4a] rounded-lg p-6">
-        <h3 className="text-xl font-semibold text-[#00B7FF] mb-4">
+      <div className="bg-white rounded-xl p-6 shadow-lg border border-green-100">
+        <h3 className="text-xl font-semibold text-green-700 mb-4">
           Structure du Système
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div className="bg-[#3a3a3a] p-4 rounded-lg">
-            <p className="text-white font-medium">Services</p>
-            <p className="text-2xl font-bold text-[#00B7FF] mt-1">
+          <div className="bg-green-100 p-4 rounded-lg">
+            <p className="text-green-700 font-medium">Services</p>
+            <p className="text-2xl font-bold text-green-800 mt-1">
               {generalStats.totalServices}
             </p>
-            <p className="text-sm text-gray-400 mt-1">
+            <p className="text-sm text-gray-500 mt-1">
               dont {generalStats.totalActiveServices} actifs (
               {Math.round(
                 (generalStats.totalActiveServices /
@@ -923,47 +925,47 @@ const Repports = () => {
             </p>
           </div>
 
-          <div className="bg-[#3a3a3a] p-4 rounded-lg">
-            <p className="text-white font-medium">Directions</p>
-            <p className="text-2xl font-bold text-[#00B7FF] mt-1">
+          <div className="bg-green-100 p-4 rounded-lg">
+            <p className="text-green-700 font-medium">Directions</p>
+            <p className="text-2xl font-bold text-green-800 mt-1">
               {generalStats.totalDirectories}
             </p>
-            <p className="text-sm text-gray-400 mt-1">
+            <p className="text-sm text-gray-500 mt-1">
               dont {generalStats.totalDirectoriesWithoutServices} sans services
             </p>
           </div>
 
-          <div className="bg-[#3a3a3a] p-4 rounded-lg">
-            <p className="text-white font-medium">Types de Documents</p>
-            <p className="text-2xl font-bold text-[#00B7FF] mt-1">
+          <div className="bg-green-100 p-4 rounded-lg">
+            <p className="text-green-700 font-medium">Types de Documents</p>
+            <p className="text-2xl font-bold text-green-800 mt-1">
               {generalStats.totalDocumentTypes}
             </p>
           </div>
 
-          <div className="bg-[#3a3a3a] p-4 rounded-lg">
-            <p className="text-white font-medium">Pièces</p>
-            <p className="text-2xl font-bold text-[#00B7FF] mt-1">
+          <div className="bg-green-100 p-4 rounded-lg">
+            <p className="text-green-700 font-medium">Pièces</p>
+            <p className="text-2xl font-bold text-green-800 mt-1">
               {generalStats.totalPieces}
             </p>
           </div>
 
-          <div className="bg-[#3a3a3a] p-4 rounded-lg">
-            <p className="text-white font-medium">Documents</p>
-            <p className="text-2xl font-bold text-[#00B7FF] mt-1">
+          <div className="bg-green-100 p-4 rounded-lg">
+            <p className="text-green-700 font-medium">Documents</p>
+            <p className="text-2xl font-bold text-green-800 mt-1">
               {generalStats.totalDocuments}
             </p>
           </div>
 
-          <div className="bg-[#3a3a3a] p-4 rounded-lg">
-            <p className="text-white font-medium">Ratio Documents/Pièces</p>
-            <p className="text-2xl font-bold text-[#00B7FF] mt-1">
+          <div className="bg-green-100 p-4 rounded-lg">
+            <p className="text-green-700 font-medium">Ratio Documents/Pièces</p>
+            <p className="text-2xl font-bold text-green-800 mt-1">
               {generalStats.totalPieces > 0
                 ? (
                     generalStats.totalDocuments / generalStats.totalPieces
                   ).toFixed(2)
                 : "0"}
             </p>
-            <p className="text-sm text-gray-400 mt-1">documents par pièce</p>
+            <p className="text-sm text-gray-500 mt-1">documents par pièce</p>
           </div>
         </div>
       </div>
@@ -971,22 +973,22 @@ const Repports = () => {
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-300">
+    <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-emerald-100">
       <SideBar isVisible={true} />
       <div className="flex-1 flex flex-col">
         <TopBar position="fixed" title="Rapports Système" />
         <div className="container w-full mx-auto px-4 py-8 mt-20">
-          <div className="bg-[#2a2a2a] w-full rounded-lg shadow-xl p-6 border border-[#3a3a3a]">
+          <div className="bg-white w-full rounded-xl shadow-xl p-6 border border-green-100">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
-              <h1 className="text-2xl font-bold text-white flex items-center">
-                <BarChart3 className="h-8 w-8 text-[#00B7FF] mr-2" />
+              <h1 className="text-2xl font-bold text-green-800 flex items-center">
+                <BarChart3 className="h-8 w-8 text-green-600 mr-2" />
                 Rapports Système d&apos;Archivage
               </h1>
 
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={refreshData}
-                  className="flex items-center justify-center px-4 py-2 bg-[#3a3a3a] hover:bg-[#4a4a4a] text-white rounded-lg transition-colors duration-200"
+                  className="flex items-center justify-center px-4 py-2 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition-colors duration-200"
                 >
                   <RefreshCw className="h-4 w-4 mr-2" />
                   Rafraîchir
@@ -995,7 +997,7 @@ const Repports = () => {
                 <div className="relative">
                   <button
                     onClick={() => setShowExportOptions(!showExportOptions)}
-                    className="flex items-center justify-center px-4 py-2 bg-[#00B7FF] hover:bg-[#0099cc] text-white rounded-lg transition-colors duration-200 w-full sm:w-auto"
+                    className="flex items-center justify-center px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 w-full sm:w-auto"
                   >
                     <FileDown className="h-4 w-4 mr-2" />
                     Exporter le rapport
@@ -1003,11 +1005,11 @@ const Repports = () => {
                   </button>
 
                   {showExportOptions && (
-                    <div className="absolute right-0 mt-2 w-48 bg-[#3a3a3a] rounded-lg shadow-lg z-10 border border-[#4a4a4a] overflow-hidden">
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg z-10 border border-green-100 overflow-hidden">
                       <button
                         onClick={exportToPDF}
                         disabled={exportLoading}
-                        className="flex items-center w-full px-4 py-2 text-white hover:bg-[#4a4a4a] transition-colors duration-200"
+                        className="flex items-center w-full px-4 py-2 text-green-700 hover:bg-green-50 transition-colors duration-200"
                       >
                         <Download className="h-4 w-4 mr-2" />
                         Exporter en PDF
@@ -1015,35 +1017,28 @@ const Repports = () => {
                       <button
                         onClick={exportToHTML}
                         disabled={exportLoading}
-                        className="flex items-center w-full px-4 py-2 text-white hover:bg-[#4a4a4a] transition-colors duration-200"
+                        className="flex items-center w-full px-4 py-2 text-green-700 hover:bg-green-50 transition-colors duration-200"
                       >
                         <FileText className="h-4 w-4 mr-2" />
                         Exporter en HTML
                       </button>
-                      {/* <button
-                        onClick={() => window.open("/preview-report", "_blank")}
-                        className="flex items-center w-full px-4 py-2 text-white hover:bg-[#4a4a4a] transition-colors duration-200"
-                      >
-                        <Eye className="h-4 w-4 mr-2" />
-                        Aperçu
-                      </button> */}
                     </div>
                   )}
                 </div>
               </div>
             </div>
 
-            <div className="text-xs text-gray-400 mb-4">
+            <div className="text-xs text-gray-500 mb-4">
               Dernière mise à jour: {lastRefresh.toLocaleString()}
             </div>
 
             <div className="mb-6">
-              <div className="flex space-x-2 border-b border-[#4a4a4a]">
+              <div className="flex space-x-2 border-b border-green-100">
                 <button
                   className={`px-4 py-2 font-medium ${
                     activeTab === "overview"
-                      ? "text-[#00B7FF] border-b-2 border-[#00B7FF]"
-                      : "text-gray-400 hover:text-white"
+                      ? "text-green-600 border-b-2 border-green-600"
+                      : "text-gray-500 hover:text-green-700"
                   }`}
                   onClick={() => setActiveTab("overview")}
                 >
@@ -1052,8 +1047,8 @@ const Repports = () => {
                 <button
                   className={`px-4 py-2 font-medium ${
                     activeTab === "system"
-                      ? "text-[#00B7FF] border-b-2 border-[#00B7FF]"
-                      : "text-gray-400 hover:text-white"
+                      ? "text-green-600 border-b-2 border-green-600"
+                      : "text-gray-500 hover:text-green-700"
                   }`}
                   onClick={() => setActiveTab("system")}
                 >
@@ -1064,8 +1059,8 @@ const Repports = () => {
 
             {loading ? (
               <div className="flex flex-col justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00B7FF]"></div>
-                <p className="text-gray-400 mt-4">Chargement des données...</p>
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600"></div>
+                <p className="text-gray-500 mt-4">Chargement des données...</p>
               </div>
             ) : (
               <div ref={reportRef}>
@@ -1078,11 +1073,11 @@ const Repports = () => {
           {/* Indicateur de chargement pendant l'exportation */}
           {exportLoading && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-              <div className="bg-[#2a2a2a] p-6 rounded-lg shadow-xl max-w-md w-full">
+              <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
                 <div className="flex justify-center mb-4">
-                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#00B7FF]"></div>
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-600"></div>
                 </div>
-                <p className="text-center text-white">
+                <p className="text-center text-gray-700">
                   Génération du rapport en cours...
                 </p>
               </div>
