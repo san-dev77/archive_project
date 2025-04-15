@@ -19,7 +19,7 @@ const lierAgentProfil = async (agentId, profilId) => {
 const afficherAgentProfil = async (id) => {
   try {
     const query = `
-      SELECT p.nom_profil, a.nom, a.prenom, s.nom_service, r.nom_role
+      SELECT p.nom_profil, a.id, a.nom, a.prenom, s.nom_service, r.nom_role
       FROM agents a
       LEFT JOIN agent_profil ap ON a.id = ap.agent_id
       LEFT JOIN profil p ON ap.profil_id = p.id
@@ -39,6 +39,7 @@ const afficherAgentProfil = async (id) => {
 
 // Méthode pour supprimer une relation entre un agent et un profil
 const supprimerLiaisonAgentProfil = async (agentId, profilId) => {
+  console.log("reçu");
   try {
     const query =
       "DELETE FROM agent_profil WHERE agent_id = ? AND profil_id = ?";

@@ -2,15 +2,17 @@ const agenceModel = require("../../models/agence_model/agence");
 
 const createAgence = async (req, res) => {
   const { code_agence, nom_agence } = req.body;
+
   try {
     const result = await agenceModel.createAgence({ code_agence, nom_agence });
+
+    // Vérification du résultat pour savoir si l'agence a été créée avec succès
+    if (!result.success) {
+      return res.status(409).json({ error: result.message });
+    }
+
     res.status(201).json(result);
   } catch (error) {
-    if (error.code === 'ER_DUP_ENTRY') {
-      console.log("test");
-
-      return res.status(409).json({ error: 'Le code d\'agence existe déjà.' });
-    }
     res.status(500).json({ error: error.message });
   }
 };

@@ -147,6 +147,20 @@ const deleteService = async (req, res) => {
   }
 };
 
+
+const getAllServiceByDirectoryId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const serviceInfo = await Service.getServiceByDirectoryId(id);
+    console.log(serviceInfo);
+
+    res.status(200).json(serviceInfo);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
 module.exports = {
   getAllServices,
   getServiceById,
@@ -159,4 +173,5 @@ module.exports = {
   createService,
   updateAService,
   deleteService,
+  getAllServiceByDirectoryId,
 };

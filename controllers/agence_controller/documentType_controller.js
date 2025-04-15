@@ -11,6 +11,7 @@ const updateDocumentType = async (req, res) => {
 };
 
 const deleteDocumentType = async (req, res) => {
+  console.log("test");
   const result = await documentTypeModel.deleteDocumentType(req.params.id);
   res.status(200).json(result);
 };

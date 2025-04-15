@@ -5,9 +5,9 @@ const createRole = async (req, res) => {
   let result;
   try {
     if (description) {
-       result = await Role.insertRole(nom_role, description);
+      result = await Role.insertRole(nom_role, description);
     } else {
-       result = await Role.insertRole(nom_role);
+      result = await Role.insertRole(nom_role);
     }
     res.status(201).json({
       id: `${result.insertId}`,

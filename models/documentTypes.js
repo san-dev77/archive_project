@@ -184,6 +184,20 @@ const createDocTypeDir = async (name_doc_type, direcotyId) => {
   return rows[0];
 };
 
+const getDocTypesByDirectoryId = async (directoryId) => {
+  const query = `
+    SELECT 
+      dtd.id,
+      dtd.name_doc_type,
+      dtd.directory_id
+    FROM doc_type_dir dtd
+    WHERE dtd.directory_id = ?
+  `;
+  const [rows] = await pool.execute(query, [directoryId]);
+  return rows;
+};
+
+
 
 const getAllDocTypeDirs = async () => {
   const query = `
@@ -225,6 +239,8 @@ const getAllDocTypeDirs = async () => {
 
 // Update a document type
 const updateDocTypeDir = async (id, name_doc_type) => {
+  console.log("type", name_doc_type);
+
   const query = "UPDATE doc_type_dir SET name_doc_type = ? WHERE id = ?";
   const values = [name_doc_type, id];
 
@@ -260,6 +276,7 @@ module.exports = {
   createDocumentType,
   createDocTypeDir,
   getAllDocTypeDirs,
+  getDocTypesByDirectoryId,
   getAllDocumentTypes,
   getDocumentTypeById,
   getMetadataByDocumentTypeId,

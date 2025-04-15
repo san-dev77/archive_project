@@ -17,7 +17,29 @@ const searchController = async (req, res) => {
   }
 };
 
+
+const { getUploadedFiles } = require('../models/search');
+
+const getUploadedFilesController = async (req, res) => {
+
+  const documentId = req.params.id;
+
+  if (!documentId) {
+    return res.status(400).json({ error: 'Document ID manquant' });
+  }
+
+  try {
+    const files = await getUploadedFiles(documentId);
+    res.json(files);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des fichiers:', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des fichiers' });
+  }
+};
+
+
 module.exports = {
   searchController,
+  getUploadedFilesController,
 };
 

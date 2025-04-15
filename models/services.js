@@ -2,6 +2,7 @@ const pool = require("../config/database");
 
 // Create a new service
 const createService = async (code, nom_service, directory_id) => {
+
   const query = "INSERT INTO service_directories (code, nom_service, directory_id) VALUES (?, ?, ?)";
   const values = [code, nom_service, directory_id];
 
@@ -15,7 +16,7 @@ const createService = async (code, nom_service, directory_id) => {
 
 //get service by directory id
 const getServiceByDirectoryId = async (directory_id) => {
-  const [rows] = await pool.execute("SELECT code, nom_service FROM service_directories WHERE directory_id = ?", [directory_id]);
+  const [rows] = await pool.execute("SELECT * from service_directories WHERE directory_id = ?", [directory_id]);
   return rows;
 };
 
@@ -113,6 +114,24 @@ const getServiceNameById = async (id) => {
   };
 };
 
+// Get all services linked to a directory by directory ID
+const getServicesByDirectoryId = async (directoryId) => {
+  try {
+    const [rows] = await pool.execute(
+      "SELECT id FROM service_directories WHERE directory_id = ?",
+      [directoryId]
+    );
+    console.log(rows);
+
+    return rows;
+  } catch (error) {
+    throw new Error("Erreur lors de la récupération des services: " + error.message);
+  }
+};
+
+
+
+
 
 module.exports = {
   createService,
@@ -126,4 +145,5 @@ module.exports = {
   deleteService,
   getAllServicesWithDirectory,
   getServiceNameById,
+  getServicesByDirectoryId,
 };

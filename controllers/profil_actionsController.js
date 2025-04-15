@@ -26,9 +26,9 @@ const getProfilActionsController = async (req, res) => {
     const actions = await getProfilActions(profilId);
     res.status(200).json(actions);
   } catch (error) {
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Erreur lors de la récupération des actions du profil",
-      error: error.message 
+      error: error.message
     });
   }
 };
@@ -65,9 +65,9 @@ const deleteProfilActionController = async (req, res) => {
     const result = await deleteProfilAction(profilId, permissionId);
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Erreur lors de la suppression de l'action du profil",
-      error: error.message 
+      error: error.message
     });
   }
 };

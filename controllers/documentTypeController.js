@@ -13,6 +13,7 @@ const {
   updateDocTypeDir,
   deleteDocTypeDir,
   getAllDocTypeDirs,
+  getDocTypesByDirectoryId,
 } = require("../models/documentTypes");
 
 const { DeleteChecker } = require("../services/deletionService");
@@ -127,6 +128,8 @@ const getMetadataByDocumentTypeIdController = async (req, res) => {
 
 
 const createDocTypeDirController = async (req, res) => {
+  console.log("reçue", req.body);
+
   const { name_docType_dir, directoryId } = req.body;
 
   try {
@@ -156,15 +159,26 @@ const deleteDocTypeDirController = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
-
 const updateDocTypedirController = async (req, res) => {
   const { id } = req.params;
+  const { name_docType_dir } = req.body;
 
   try {
-    const documentTypes = await updateDocTypeDir(id);
+    const documentTypes = await updateDocTypeDir(id, name_docType_dir);
     res.status(200).json(documentTypes);
   } catch (error) {
     res.status(404).json({ message: error.message });
+  }
+};
+
+const getDocTypeDirController = async (req, res) => {
+  const directoryId = req.params.id;
+
+  try {
+    const documentTypes = await getDocTypesByDirectoryId(directoryId);
+    res.status(200).json(documentTypes);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -173,6 +187,7 @@ const updateDocTypedirController = async (req, res) => {
 module.exports = {
   createDocumentTypeController,
   createDocTypeDirController,
+  getDocTypeDirController,
   updateDocTypedirController,
   deleteDocTypeDirController,
   getAllDocTypesDirController,

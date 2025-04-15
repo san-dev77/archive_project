@@ -1,8 +1,3 @@
-//selectionner les metadata a fin de rechercher par metadata
-//en vrai faudra toujours passer par les metadata pour faire des recherches
-
-//afficher les données dans un tableau afin de consulter
-
 const pool = require("../config/database"); // Assurez-vous que vous avez configuré votre connexion à la base de données
 
 const searchDocuments = async (metadata) => {
@@ -17,7 +12,7 @@ const searchDocuments = async (metadata) => {
 
     metadata.forEach((meta) => {
       conditions.push(`(dm.metadata_id = ? AND dm.value LIKE ?)`);
-      values.push(meta.id, `%${meta.value}%`);
+      values.push(meta.id, `%${meta.value.trim()}%`);
     });
 
     query += conditions.join(" OR ");
@@ -81,6 +76,53 @@ const searchDocuments = async (metadata) => {
   }
 };
 
+const getUploadedFiles = async (documentId) => {
+  try {
+    // Récupérer les pièces et lots associés au document
+    const piecesQuery = `
+      SELECT dp.file_path, p.nom_piece AS piece_name
+      FROM document_pieces dp
+      JOIN pieces p ON dp.piece_id = p.id
+      WHERE dp.document_id = ?
+    `;
+    const [piecesRows] = await pool.query(piecesQuery, [documentId]);
+
+    const lotsQuery = `
+      SELECT dl.files
+      FROM document_lot dl
+      WHERE dl.document_id = ?
+    `;
+    const [lotsRows] = await pool.query(lotsQuery, [documentId]);
+
+    // Regrouper les fichiers par noms de pièces sans créer de doublons
+    const groupedPieces = piecesRows.reduce((acc, row) => {
+      const { piece_name, file_path } = row;
+      if (!acc[piece_name]) {
+        acc[piece_name] = new Set(); // Utiliser un Set pour éviter les doublons
+      }
+      acc[piece_name].add(file_path);
+      return acc;
+    }, {});
+
+    // Convertir les Sets en tableaux
+    const finalGroupedPieces = Object.fromEntries(
+      Object.entries(groupedPieces).map(([key, value]) => [key, Array.from(value)])
+    );
+
+    return {
+      pieces: finalGroupedPieces,
+      lots: lotsRows.map((row) => row.files),
+    };
+  } catch (error) {
+    console.error("Erreur lors de la récupération des fichiers:", error);
+    throw error;
+  }
+
+
+
+}
+
 module.exports = {
   searchDocuments,
+  getUploadedFiles,
 };

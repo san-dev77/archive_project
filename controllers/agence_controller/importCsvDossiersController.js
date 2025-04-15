@@ -16,7 +16,7 @@ const importCsvDossiers = async (req, res) => {
       .json({ message: "Les données doivent être un tableau." });
   }
 
-  const db_url = "mysql://root@localhost/agence_migrations";
+  const db_url = "mysql://root@localhost/agence";
 
   try {
     for (const chunk of chunks) {
@@ -41,7 +41,7 @@ const importCsvGuichetController = async (req, res) => {
       .json({ message: "Les données doivent être un tableau." });
   }
 
-  const db_url = "mysql://root@localhost/agence_migrations";
+  const db_url = "mysql://root@localhost/agence";
 
   try {
     for (const chunk of chunks) {

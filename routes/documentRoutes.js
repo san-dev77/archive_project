@@ -14,6 +14,13 @@ const {
   getDocumentByTypeIdWithLot,
   updateDocumentInfo,
   deleteOrReplaceDocumentFiles,
+  createDocument_dir,
+  getDocumentByTypeIdWithPieces_dir,
+  updateDocumentInfo_dir,
+  deleteDocument_dir,
+  removeFileFromdocument,
+  removeLotFile,
+
 } = require("../controllers/documentController");
 const router = express.Router();
 
@@ -68,10 +75,12 @@ router.post(
 );
 
 router.post("/", createDocument); // Étape 1
+router.post("/dir/", createDocument_dir); // Étape 1
 // Étape 2
 router.get("/", getAllDocuments);
 router.get("/all", getAllDocuments2);
 router.put("/:id", updateDocumentInfo);
+router.put("/dir/:id", updateDocumentInfo_dir);
 router.get("/alls", getAllDocuments3);
 router.get("/:id", getDocumentById);
 router.get("/all/:id", getAllDocuments4);
@@ -79,6 +88,10 @@ router.put("/:id/delete-replace", deleteOrReplaceDocumentFiles);
 router.delete("/:id/delete-replace", deleteOrReplaceDocumentFiles);
 router.get("/type/lot/:id", getDocumentByTypeIdWithLot);
 router.get("/type/pieces/:id", getDocumentByTypeIdWithPieces);
+router.get("/dir/pieces/:id", getDocumentByTypeIdWithPieces_dir);
 router.delete("/:id", deleteDocument);
+router.delete("/file_piece/:fileId", removeFileFromdocument);
+router.delete("/lot/file/:fileId", removeLotFile);
+router.delete("/dir/:id", deleteDocument_dir);
 
 module.exports = router;

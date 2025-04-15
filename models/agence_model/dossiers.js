@@ -41,14 +41,32 @@ const getAttachedFiles = async () => {
     const [results] = await db.query(query);
 
     // Ajouter le chemin complet du fichier à chaque objet
-    const basePath = "http://localhost:3000/files/"; // Remplacez par le chemin de votre serveur
+    const basePath = "http://localhost:3000/agence_uploads/"; // Remplacez par le chemin de votre serveur
     const filesWithFullPath = results.map(file => ({
       ...file,
       file_path: basePath + file.file_path // Concaténer le chemin de base avec le chemin du fichier
     }));
-    console.log(filesWithFullPath);
 
-    return filesWithFullPath;
+    // Regrouper les fichiers par nom de pièce pour éviter la redondance
+    const groupedFiles = filesWithFullPath.reduce((acc, file) => {
+      const { nom_piece, file_path, nom_document_type } = file;
+      if (!acc[nom_piece]) {
+        acc[nom_piece] = { nom_piece, nom_document_type, file_paths: new Set() };
+      }
+      acc[nom_piece].file_paths.add(file_path);
+
+      return acc;
+    }, {});
+
+    // Convertir les ensembles de chemins de fichiers en tableaux
+    const finalFiles = Object.values(groupedFiles).map(group => ({
+      ...group,
+      file_paths: Array.from(group.file_paths)
+    }));
+
+    console.log(finalFiles);
+
+    return finalFiles;
   } catch (error) {
     throw new Error(
       "Erreur lors de la récupération des fichiers joints: " + error.message

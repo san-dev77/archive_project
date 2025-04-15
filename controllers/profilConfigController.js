@@ -39,6 +39,7 @@ const afficherAgentProfilController = async (req, res) => {
 
 // Contrôleur pour supprimer une relation entre un agent et un profil
 const supprimerLiaisonAgentProfilController = async (req, res) => {
+  console.log("test");
   const { agentId, profilId } = req.params;
   try {
     await supprimerLiaisonAgentProfil(agentId, profilId);

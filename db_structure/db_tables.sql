@@ -12,22 +12,31 @@ CREATE TABLE IF NOT EXISTS Service_Directories (
     FOREIGN KEY (directory_id) REFERENCES Directories(id) ON DELETE CASCADE
 );
 
------------------------------------------------
-CREATE TABLE IF NOT EXISTS Service_Directories (
+
+CREATE TABLE optimization_logs (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    code VARCHAR(255) NOT NULL,
-    nom_service TEXT,
-    directory_id INT,
-    FOREIGN KEY (directory_id) REFERENCES Directories(id) ON DELETE CASCADE
-) ENGINE=InnoDB;
+    operation_type VARCHAR(50), -- 'duplicate_removal' ou 'space_cleanup'
+    table_name VARCHAR(100),
+    affected_rows INT,
+    details TEXT,               -- Détails supplémentaires (JSON ou texte)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 
-ALTER TABLE Service_Directories ENGINE=InnoDB;
 
-ALTER TABLE Service_Directories
-ADD CONSTRAINT fk_service_directories_directory_id
-FOREIGN KEY (directory_id) REFERENCES Directories(id) ON DELETE CASCADE;
+UPDATE permissions
+SET section = 
+  CASE section
+    WHEN 'documents' THEN 'Dossiers'
+    WHEN 'metadata' THEN 'Meta-donnees'
+    WHEN 'pieces' THEN 'Pieces'
+    WHEN 'services' THEN 'Services'
+    WHEN 'types_documents' THEN 'Types de documents'
+    ELSE section
+  END;
 
+
+-----------------------------------------------
 
 CREATE TABLE IF NOT EXISTS DocumentTypes2 (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -36,40 +45,37 @@ CREATE TABLE IF NOT EXISTS DocumentTypes2 (
     FOREIGN KEY (service_id) REFERENCES service_directories(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+--requete pour obtenir la taille de la base de données agence
+SELECT table_schema AS database_name, 
+       ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS size_mb
+FROM information_schema.tables
+WHERE table_schema = 'agence'
+GROUP BY table_schema;
 
+--requete pour obtenir la taille de la base de données archive
+SELECT table_schema AS database_name, 
+       ROUND(SUM(data_length + index_length) / 1024 / 1024, 2) AS size_mb
+FROM information_schema.tables
+WHERE table_schema = 'archive'
+GROUP BY table_schema;
 
-insert into DocumentTypes2 (name, service_id) values ('DocumentType1', 1);
-insert into DocumentTypes2 (name, service_id) values ('DocumentType2', 2);
-insert into DocumentTypes2 (name, service_id) values ('DocumentType3', 3);
-insert into DocumentTypes2 (name, service_id) values ('DocumentType4', 2);
-insert into DocumentTypes2 (name, service_id) values ('DocumentType5', 1);
+--requete pour obtenir la taille de chaque table
+SELECT table_name, 
+       ROUND((data_length + index_length) / 1024 / 1024, 2) AS size_mb
+FROM information_schema.tables
+WHERE table_schema = 'archive'
+ORDER BY size_mb DESC;
 
+--requete pour obtenir le temps moyen des requetes 
+SELECT AVG(changed_at) AS temps_moyen_execution, 
+       MAX(changed_at) AS temps_max_execution, 
+       MIN(changed_at) AS temps_min_execution
+FROM audit_log;
 
-insert into directories (code, nom_directory) values ('1', 'directory1');
-insert into directories (code, nom_directory) values ('2', 'directory2');
-insert into directories (code, nom_directory) values ('3', 'directory3');
-
---pour inserer les services dans la table service_directories de facon aleatoire, car
---il y a 3 directories et 10 services et pour ne pas créer de conflit dans les codes
---car les services etaient deja existant
-INSERT INTO Service_Directories (code, nom_service, directory_id) VALUES
-('SB', 'SERVICE BUDGET', FLOOR(1 + RAND() * 3)),
-('SC', 'SERVICE COMPTABILITE', FLOOR(1 + RAND() * 3)),
-('SMC', 'SERVICE MARKETING ET COMMUNICATION', FLOOR(1 + RAND() * 3)),
-('PMG', 'PATRIMOINE ET MOYENS GENERAUX', FLOOR(1 + RAND() * 3)),
-('SRH', 'SERVICE RESSOURCES HUMAINES', FLOOR(1 + RAND() * 3)),
-('SFT', 'SERVICE FINANCE COMPABILITE', FLOOR(1 + RAND() * 3)),
-('SAA', 'SERVICE ARCHIVES', FLOOR(1 + RAND() * 3)),
-('SE', 'SERVICE D''EPARGNE', FLOOR(1 + RAND() * 3)),
-('SES', 'SERVICE D''ETUDE ET STATISTIQUES', FLOOR(1 + RAND() * 3)),
-('SCR', 'SERVICE CREDIT ET RESEAU', FLOOR(1 + RAND() * 3)),
-('SPQ', 'SERVICE SUIVI DES PERFORMANCES ET QUALITES', FLOOR(1 + RAND() * 3)),
-('SJ', 'SERVICE JURIDIQUE', FLOOR(1 + RAND() * 3)),
-('0O232', 'service technique', FLOOR(1 + RAND() * 3));
-
-
-
-
+SELECT SEC_TO_TIME(AVG(UNIX_TIMESTAMP(changed_at))) AS temps_moyen_execution,
+       MAX(changed_at) AS temps_max_execution,
+       MIN(changed_at) AS temps_min_execution
+FROM audit_log;
 
 
 
@@ -79,6 +85,16 @@ CREATE TABLE documents (
   created_at DATETIME
 ) ENGINE=InnoDB;
 
+ALTER TABLE documents ADD code_unique VARCHAR(255) UNIQUE;
+ALTER TABLE documents ADD COLUMN vues INT DEFAULT 0;
+
+CREATE TABLE document_dir (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  document_type_id INT NOT NULL,
+  created_at DATETIME
+) ENGINE=InnoDB;
+
+ALTER TABLE document_dir ADD code_unique VARCHAR(255) UNIQUE;
 
 
 CREATE TABLE document_metadata (
@@ -87,6 +103,14 @@ CREATE TABLE document_metadata (
   metadata_id INT NOT NULL,
   value TEXT,
   FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE document_metadata_dir (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  document_id INT NOT NULL,
+  metadata_id INT NOT NULL,
+  value TEXT,
+  FOREIGN KEY (document_id) REFERENCES document_dir(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 
@@ -99,6 +123,15 @@ CREATE TABLE document_pieces (
   FOREIGN KEY (piece_id) REFERENCES pieces(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+CREATE TABLE document_pieces_dir (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  document_id INT NOT NULL,
+  piece_id INT NOT NULL,
+  file_path VARCHAR(255) NOT NULL,
+  FOREIGN KEY (document_id) REFERENCES document_dir(id) ON DELETE CASCADE,
+  FOREIGN KEY (piece_id) REFERENCES pieces(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
 
 CREATE TABLE document_lot (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -106,6 +139,14 @@ CREATE TABLE document_lot (
   files VARCHAR(255) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE document_lot_dir (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  document_id INT,
+  files VARCHAR(255) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (document_id) REFERENCES document_dir(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 
@@ -116,6 +157,9 @@ CREATE TABLE document_lot (
   documentTypeId INT,
   FOREIGN KEY (documentTypeId) REFERENCES DocumentTypes2(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+ALTER TABLE metadata ADD COLUMN required BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE metadata_dir ADD COLUMN required BOOLEAN NOT NULL DEFAULT FALSE;
 
   CREATE TABLE IF NOT EXISTS pieces (
   id INT AUTO_INCREMENT PRIMARY KEY,
@@ -148,6 +192,56 @@ CREATE TABLE document_lot (
   FOREIGN KEY (service_id) REFERENCES service_directories (id) ON DELETE SET NULL,
   FOREIGN KEY (fonction_id) REFERENCES role (id) ON DELETE SET NULL
  ) ENGINE=InnoDB;
+
+CREATE TABLE connections (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES agents(id)
+);
+
+CREATE TABLE logout (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    logout_time DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES agents(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE page_views (
+    id INT AUTO_INCREMENT PRIMARY KEY,  -- Identifiant unique
+    page_id VARCHAR(255) UNIQUE,        -- URL de la page (ex: "/dashboard")
+    page_name VARCHAR(255),             -- Nom lisible (ex: "Tableau de Bord")
+    views INT DEFAULT 0,               -- Nombre de vues
+        moment DATETIME DEFAULT CURRENT_TIMESTAMP
+
+);
+
+
+--requetes pour recuperer le nombre de connexions mensuelles
+SELECT 
+    YEAR(timestamp) AS year, 
+    MONTH(timestamp) AS month, 
+    COUNT(*) AS total_connections
+FROM connections
+GROUP BY YEAR(timestamp), MONTH(timestamp)
+ORDER BY year DESC, month DESC;
+
+
+
+SELECT 
+    YEAR(timestamp) AS year, 
+    MONTH(timestamp) AS month, 
+    DAY(timestamp) AS day,
+    DATE_FORMAT(timestamp, '%W') AS day_name, -- Nom du jour
+    DATE(timestamp) AS connection_date, -- Date exacte
+    HOUR(timestamp) AS hour, -- Heure
+    MINUTE(timestamp) AS minute, -- Minute
+    COUNT(*) AS total_connections
+FROM connections
+GROUP BY YEAR(timestamp), MONTH(timestamp), DAY(timestamp), HOUR(timestamp), MINUTE(timestamp)
+ORDER BY year DESC, month DESC, day DESC, hour DESC, minute DESC;
+
 
 CREATE TABLE profil(
   id INT PRIMARY KEY AUTO_INCREMENT,
@@ -198,6 +292,9 @@ CREATE TABLE profil_permissions (
 ) ENGINE=InnoDB;
 
 
+ALTER TABLE document_metadata ADD FULLTEXT(value);
+
+
 INSERT INTO permissions (section, action) VALUES 
 ('services', 'view'),
 ('services', 'edit'),
@@ -218,6 +315,13 @@ INSERT INTO permissions (section, action) VALUES
 ('documents', 'view'),
 ('documents', 'edit'),
 ('documents', 'delete');
+
+('Recherche', 'search'),
+
+('Recherche', 'search');
+
+
+
 
 select * from permissions where section = "?????";
 
@@ -248,7 +352,13 @@ CREATE table doc_type_dir(
     FOREIGN KEY (directory_id) REFERENCES directories(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
-
+CREATE TABLE IF NOT EXISTS metadata_dir (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  cle VARCHAR(255) NOT NULL,
+  metaType VARCHAR(255) NOT NULL,
+  documentTypeId INT,
+  FOREIGN KEY (documentTypeId) REFERENCES doc_type_dir(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
 
 -- Requête pour supprimer une colonne d'une table
 ALTER TABLE search_params DROP COLUMN show_state;
@@ -260,18 +370,217 @@ INSERT INTO search_params (meta_id, show_state) VALUES
 (2, false),
 (3, true);
 
-    
---pour obtenir les Metadata pour un Document spécifique :
-SELECT dm.value, m.key
-FROM DocumentMetadata dm
-JOIN Metadata m ON dm.metadataId = m.id
-WHERE dm.documentId = 1;
+
+
+CREATE TABLE audit_log (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  table_name VARCHAR(255) NOT NULL,
+  operation_type VARCHAR(10) NOT NULL,
+  changed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  -- changed_by VARCHAR(255) DEFAULT 'system', -- Pour capturer l'utilisateur si besoin
+  -- old_data JSON,  -- Données avant modification (pour UPDATE et DELETE)
+  -- new_data JSON   -- Données après modification (pour INSERT et UPDATE)
+);
 
 
 
--->pour obtenir le nom du type de doc et de son service
- SELECT dt.id, dt.name, s.name AS serviceName    FROM documentTypes dt   
-  LEFT JOIN services s ON dt.serviceId = s.id;
+
+SET SESSION group_concat_max_len = 1000000;
+
+SELECT CONCAT(
+  'DELIMITER $$\n',
+  'CREATE TRIGGER audit_', table_name, '_changes\n',
+  'AFTER INSERT OR UPDATE OR DELETE ON ', table_name, '\n',
+  'FOR EACH ROW\n',
+  'BEGIN\n',
+  '  DECLARE action_type VARCHAR(10);\n',
+  '  IF (NEW.id IS NOT NULL AND OLD.id IS NULL) THEN\n',
+  '    SET action_type = ''INSERT'';\n',
+  '  ELSEIF (NEW.id IS NOT NULL AND OLD.id IS NOT NULL) THEN\n',
+  '    SET action_type = ''UPDATE'';\n',
+  '  ELSEIF (NEW.id IS NULL AND OLD.id IS NOT NULL) THEN\n',
+  '    SET action_type = ''DELETE'';\n',
+  '  END IF;\n',
+  '  INSERT INTO audit_log (table_name, operation_type, old_data, new_data)\n',
+  '  VALUES (''', table_name, ''', action_type, IFNULL(TO_JSON(OLD), NULL), IFNULL(TO_JSON(NEW), NULL));\n',
+  'END$$\n',
+  'DELIMITER ;\n'
+)
+FROM information_schema.tables
+WHERE table_schema = 'agence' -- Remplace par ton nom de base
+  AND table_name != 'audit_log';
+
+
+
+
+ DELIMITER $$
+
+ CREATE TRIGGER audit_agence_insert
+     AFTER INSERT ON agence
+     FOR EACH ROW
+     BEGIN
+       INSERT INTO audit_log (table_name, operation_type)
+       VALUES ('agence', 'INSERT');
+     END$$;
+
+
+  DELIMITER ;
+
+
+DELIMITER $$
+ CREATE TRIGGER audit_docType_insert
+     AFTER INSERT ON document_type
+     FOR EACH ROW
+     BEGIN
+       INSERT INTO audit_log (table_name, operation_type)
+       VALUES ('Type de document', 'INSERT');
+     END$$
+
+DELIMITER ;
+
+
+DELIMITER $$
+ CREATE TRIGGER audit_guichet_insert
+     AFTER INSERT ON guichet
+     FOR EACH ROW
+     BEGIN
+       INSERT INTO audit_log (table_name, operation_type)
+       VALUES ('Guichet', 'INSERT');
+     END$$
+     DELIMITER ;
+
+DELIMITER $$
+ CREATE TRIGGER audit_piece_insert
+     AFTER INSERT ON guichet
+     FOR EACH ROW
+     BEGIN
+       INSERT INTO audit_log (table_name, operation_type)
+       VALUES ('Pièce', 'INSERT');
+     END$$
+     DELIMITER ;
+
+DELIMITER $$
+ CREATE TRIGGER audit_metadata_insert
+     AFTER INSERT ON metadata
+     FOR EACH ROW
+     BEGIN
+       INSERT INTO audit_log (table_name, operation_type)
+       VALUES ('Metadonnées', 'INSERT');
+     END$$
+     DELIMITER ;
+
+--Archive triggers
+
+
+
+DELIMITER $$
+ CREATE TRIGGER audit_directories_insert
+     AFTER INSERT ON directories
+     FOR EACH ROW
+     BEGIN
+       INSERT INTO audit_log (table_name, operation_type)
+       VALUES ('Nouvelle direction', 'INSERT');
+     END$$
+     DELIMITER ;
+     
+DELIMITER $$
+ CREATE TRIGGER audit_service_directories_insert
+     AFTER INSERT ON service_directories
+     FOR EACH ROW
+     BEGIN
+       INSERT INTO audit_log (table_name, operation_type)
+       VALUES ('Nouveau Service', 'INSERT');
+     END$$
+     DELIMITER ;
+
+
+DELIMITER $$
+ CREATE TRIGGER audit_docType2_insert
+     AFTER INSERT ON documenttypes2
+     FOR EACH ROW
+     BEGIN
+       INSERT INTO audit_log (table_name, operation_type)
+       VALUES ('Nouveau Type de document', 'INSERT');
+     END$$
+     DELIMITER ;
+     
+DELIMITER $$
+ CREATE TRIGGER audit_documents_insert
+     AFTER INSERT ON documents
+     FOR EACH ROW
+     BEGIN
+       INSERT INTO audit_log (table_name, operation_type)
+       VALUES ('Nouveau document', 'INSERT');
+     END$$
+     DELIMITER ;
+
+
+--Pas encore fait...: pour voir le triggers : show triggers, drop trigger trigger_name
+ CREATE TRIGGER audit_metadata_insert
+     AFTER INSERT ON metadata
+     FOR EACH ROW
+     BEGIN
+       INSERT INTO audit_log (table_name, operation_type)
+       VALUES ('Metadonnées', 'INSERT');
+     END$$
+     DELIMITER ;
+
+
+--firebase 
+
+DELIMITER $$
+
+CREATE TRIGGER audit_audit_log_insert
+AFTER INSERT ON audit_log
+FOR EACH ROW
+BEGIN
+    -- Appeler ton serveur Node.js via HTTP (par exemple, avec cURL ou une fonction HTTP)
+    -- Dans cet exemple, on suppose que tu appelles une API HTTP avec les données
+    -- pour ajouter l'élément dans Firestore
+    DECLARE url VARCHAR(255);
+    SET url = 'http://localhost:3000/addToFirestore';  -- Remplace par ton URL d'API
+
+    -- Il te faudra peut-être une fonction pour appeler cette URL dans MySQL, ou bien
+    -- tu peux faire cela depuis ton application Node.js lorsque tu détectes un changement.
+    -- MySQL ne gère pas bien les requêtes HTTP directement, donc il est mieux d'envoyer
+    -- les données à Node.js où elles seront traitées.
+
+END$$
+
+DELIMITER ;
+
+
+
+DELIMITER $$
+
+CREATE TRIGGER audit_audit_log_insert
+AFTER INSERT ON audit_log
+FOR EACH ROW
+BEGIN
+    -- Ajouter une entrée dans la table 'sync_queue'
+    INSERT INTO  (table_name, operation_type, data, created_at)
+    VALUES ('audit_log', 'INSERT', NEW.*, NOW());
+END$$
+
+DELIMITER ;
+
+
+--A mettre dans une table separé les données viennent par import il y en aurait trop 
+--les separer est donc le mieux 
+ CREATE TRIGGER audit_transaction_caisse_insert
+     AFTER INSERT ON transaction_caisse
+     FOR EACH ROW
+     BEGIN
+       INSERT INTO audit_log_dossiers (table_name, operation_type)
+       VALUES ('transaction_caisse', 'INSERT');
+     END$$
+     DELIMITER ;
+
+
+
+
+
+
 
 
  

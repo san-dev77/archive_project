@@ -1,0 +1,347 @@
+[2025-02-06T11:30:52.553Z] 🚀 Début de l'inspection de la base de données...
+
+[2025-02-06T11:30:52.648Z] 🔍 Inspection de la table: agence
+[2025-02-06T11:30:52.663Z] ✅ Aucun doublon trouvé dans agence
+
+[2025-02-06T11:30:52.664Z] 🔍 Inspection de la table: agence_pieces
+[2025-02-06T11:30:52.672Z] ✅ Aucun doublon trouvé dans agence_pieces
+
+[2025-02-06T11:30:52.673Z] 🔍 Inspection de la table: caisse
+[2025-02-06T11:30:52.684Z] ✅ Aucun doublon trouvé dans caisse
+
+[2025-02-06T11:30:52.687Z] 🔍 Inspection de la table: config_piece_doctype
+[2025-02-06T11:30:52.729Z] ✅ Aucun doublon trouvé dans config_piece_doctype
+
+[2025-02-06T11:30:52.731Z] 🔍 Inspection de la table: document_agence
+[2025-02-06T11:30:52.766Z] ✅ Aucun doublon trouvé dans document_agence
+
+[2025-02-06T11:30:52.768Z] 🔍 Inspection de la table: document_agence_metadata
+[2025-02-06T11:30:52.798Z] ✅ Aucun doublon trouvé dans document_agence_metadata
+
+[2025-02-06T11:30:52.799Z] 🔍 Inspection de la table: document_caisse
+[2025-02-06T11:30:52.820Z] ✅ Aucun doublon trouvé dans document_caisse
+
+[2025-02-06T11:30:52.822Z] 🔍 Inspection de la table: document_caisse_metadata
+[2025-02-06T11:30:52.857Z] ✅ Aucun doublon trouvé dans document_caisse_metadata
+
+[2025-02-06T11:30:52.858Z] 🔍 Inspection de la table: document_guichet
+[2025-02-06T11:30:52.890Z] ✅ Aucun doublon trouvé dans document_guichet
+
+[2025-02-06T11:30:52.891Z] 🔍 Inspection de la table: document_guichet_metadata
+[2025-02-06T11:30:52.919Z] ✅ Aucun doublon trouvé dans document_guichet_metadata
+
+[2025-02-06T11:30:52.922Z] 🔍 Inspection de la table: document_type
+[2025-02-06T11:30:52.930Z] ✅ Aucun doublon trouvé dans document_type
+
+[2025-02-06T11:30:52.932Z] 🔍 Inspection de la table: document_type_agence
+[2025-02-06T11:30:52.961Z] ✅ Aucun doublon trouvé dans document_type_agence
+
+[2025-02-06T11:30:52.962Z] 🔍 Inspection de la table: document_type_caisse
+[2025-02-06T11:30:52.988Z] ✅ Aucun doublon trouvé dans document_type_caisse
+
+[2025-02-06T11:30:52.991Z] 🔍 Inspection de la table: document_type_guichet
+[2025-02-06T11:30:53.023Z] ✅ Aucun doublon trouvé dans document_type_guichet
+
+[2025-02-06T11:30:53.025Z] 🔍 Inspection de la table: guichet
+[2025-02-06T11:30:53.047Z] ✅ Aucun doublon trouvé dans guichet
+
+[2025-02-06T11:30:53.049Z] 🔍 Inspection de la table: metadata
+[2025-02-06T11:30:53.058Z] ⚠️ 12 doublon(s) trouvé(s) dans metadata
+[2025-02-06T11:30:53.060Z] ❌ Suppression de: {"id":36,"nom_meta":"AGENCE","document_type_id":30,"type_meta":"text"}
+[2025-02-06T11:30:53.061Z] ❌ Suppression de: {"id":37,"nom_meta":"CODE AGENCE","document_type_id":30,"type_meta":"text"}
+[2025-02-06T11:30:53.064Z] ❌ Suppression de: {"id":38,"nom_meta":"DATE","document_type_id":30,"type_meta":"text"}
+[2025-02-06T11:30:53.065Z] ❌ Suppression de: {"id":39,"nom_meta":"TYPE DE JOURNEE","document_type_id":30,"type_meta":"text"}
+[2025-02-06T11:30:53.066Z] ❌ Suppression de: {"id":40,"nom_meta":"CODE BOITE ","document_type_id":30,"type_meta":"text"}
+[2025-02-06T11:30:53.069Z] ❌ Suppression de: {"id":41,"nom_meta":"AGENCE","document_type_id":29,"type_meta":"text"}
+[2025-02-06T11:30:53.071Z] ❌ Suppression de: {"id":42,"nom_meta":"CODE AGENCE","document_type_id":29,"type_meta":"text"}
+[2025-02-06T11:30:53.073Z] ❌ Suppression de: {"id":43,"nom_meta":"DATE","document_type_id":29,"type_meta":"text"}
+[2025-02-06T11:30:53.075Z] ❌ Suppression de: {"id":44,"nom_meta":"TYPE DE JOURNEE","document_type_id":29,"type_meta":"text"}
+[2025-02-06T11:30:53.078Z] ❌ Suppression de: {"id":45,"nom_meta":"CODE CAISSE","document_type_id":29,"type_meta":"text"}
+[2025-02-06T11:30:53.080Z] ❌ Suppression de: {"id":46,"nom_meta":"NOM ET PRENOM DU CAISSIER","document_type_id":29,"type_meta":"text"}
+[2025-02-06T11:30:53.082Z] ❌ Suppression de: {"id":47,"nom_meta":"CODE DEFINITIF","document_type_id":29,"type_meta":"text"}
+[2025-02-06T11:30:53.097Z] ✅ Doublons supprimés dans metadata
+
+[2025-02-06T11:30:53.100Z] 🔍 Inspection de la table: piece_file
+[2025-02-06T11:30:53.125Z] ⚠️ 3 doublon(s) trouvé(s) dans piece_file
+[2025-02-06T11:30:53.128Z] ❌ Suppression de: {"id":24,"piece_id":3,"type":"caisse","file_path":"cheque2042009.pdf"}
+[2025-02-06T11:30:53.130Z] ❌ Suppression de: {"id":25,"piece_id":3,"type":"caisse","file_path":"cheque844991.pdf"}
+[2025-02-06T11:30:53.132Z] ❌ Suppression de: {"id":26,"piece_id":3,"type":"caisse","file_path":"cheque1567559.pdf"}
+[2025-02-06T11:30:53.145Z] ✅ Doublons supprimés dans piece_file
+
+[2025-02-06T11:30:53.147Z] 🔍 Inspection de la table: transaction_caisse
+[2025-02-06T11:30:53.181Z] ⚠️ 201 doublon(s) trouvé(s) dans transaction_caisse
+[2025-02-06T11:30:53.182Z] ❌ Suppression de: {"id":25998,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"02/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-1"}
+[2025-02-06T11:30:53.182Z] ❌ Suppression de: {"id":25999,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"02/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-4"}
+[2025-02-06T11:30:53.183Z] ❌ Suppression de: {"id":26000,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"02/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-10"}
+[2025-02-06T11:30:53.184Z] ❌ Suppression de: {"id":26001,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"02/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-15"}
+[2025-02-06T11:30:53.185Z] ❌ Suppression de: {"id":26002,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"03/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-1"}
+[2025-02-06T11:30:53.186Z] ❌ Suppression de: {"id":26003,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"03/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-4"}
+[2025-02-06T11:30:53.186Z] ❌ Suppression de: {"id":26004,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"03/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-10"}
+[2025-02-06T11:30:53.187Z] ❌ Suppression de: {"id":26005,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"03/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-15"}
+[2025-02-06T11:30:53.189Z] ❌ Suppression de: {"id":26006,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"04/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-1"}
+[2025-02-06T11:30:53.190Z] ❌ Suppression de: {"id":26007,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"04/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-4"}
+[2025-02-06T11:30:53.191Z] ❌ Suppression de: {"id":26008,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"04/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-10"}
+[2025-02-06T11:30:53.192Z] ❌ Suppression de: {"id":26009,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"04/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-15"}
+[2025-02-06T11:30:53.193Z] ❌ Suppression de: {"id":26010,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"07/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-2"}
+[2025-02-06T11:30:53.193Z] ❌ Suppression de: {"id":26011,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"07/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-5"}
+[2025-02-06T11:30:53.194Z] ❌ Suppression de: {"id":26012,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"07/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-11"}
+[2025-02-06T11:30:53.196Z] ❌ Suppression de: {"id":26013,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"07/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-16"}
+[2025-02-06T11:30:53.197Z] ❌ Suppression de: {"id":26014,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"08/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-2"}
+[2025-02-06T11:30:53.197Z] ❌ Suppression de: {"id":26015,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"08/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-5"}
+[2025-02-06T11:30:53.198Z] ❌ Suppression de: {"id":26016,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"08/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-11"}
+[2025-02-06T11:30:53.199Z] ❌ Suppression de: {"id":26017,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"08/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-16"}
+[2025-02-06T11:30:53.200Z] ❌ Suppression de: {"id":26018,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"14/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-6"}
+[2025-02-06T11:30:53.201Z] ❌ Suppression de: {"id":26019,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"14/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-11"}
+[2025-02-06T11:30:53.202Z] ❌ Suppression de: {"id":26020,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"14/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-16"}
+[2025-02-06T11:30:53.203Z] ❌ Suppression de: {"id":26021,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"15/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-2"}
+[2025-02-06T11:30:53.204Z] ❌ Suppression de: {"id":26022,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"15/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-6"}
+[2025-02-06T11:30:53.206Z] ❌ Suppression de: {"id":26023,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"15/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-12"}
+[2025-02-06T11:30:53.208Z] ❌ Suppression de: {"id":26024,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"15/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-16"}
+[2025-02-06T11:30:53.210Z] ❌ Suppression de: {"id":26025,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"16/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-3"}
+[2025-02-06T11:30:53.211Z] ❌ Suppression de: {"id":26026,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"16/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-7"}
+[2025-02-06T11:30:53.212Z] ❌ Suppression de: {"id":26027,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"16/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-17"}
+[2025-02-06T11:30:53.214Z] ❌ Suppression de: {"id":26028,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"17/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-3"}
+[2025-02-06T11:30:53.215Z] ❌ Suppression de: {"id":26029,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"17/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-7"}
+[2025-02-06T11:30:53.216Z] ❌ Suppression de: {"id":26030,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"17/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-12"}
+[2025-02-06T11:30:53.218Z] ❌ Suppression de: {"id":26031,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"17/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-17"}
+[2025-02-06T11:30:53.219Z] ❌ Suppression de: {"id":26032,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"18/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-3"}
+[2025-02-06T11:30:53.221Z] ❌ Suppression de: {"id":26033,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"18/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-7"}
+[2025-02-06T11:30:53.222Z] ❌ Suppression de: {"id":26034,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"18/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-17"}
+[2025-02-06T11:30:53.224Z] ❌ Suppression de: {"id":26035,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"21/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-3"}
+[2025-02-06T11:30:53.226Z] ❌ Suppression de: {"id":26036,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"21/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-8"}
+[2025-02-06T11:30:53.227Z] ❌ Suppression de: {"id":26037,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"21/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-12"}
+[2025-02-06T11:30:53.229Z] ❌ Suppression de: {"id":26038,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"21/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-18"}
+[2025-02-06T11:30:53.230Z] ❌ Suppression de: {"id":26039,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"22/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-3"}
+[2025-02-06T11:30:53.232Z] ❌ Suppression de: {"id":26040,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"22/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-8"}
+[2025-02-06T11:30:53.233Z] ❌ Suppression de: {"id":26041,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"22/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-12"}
+[2025-02-06T11:30:53.235Z] ❌ Suppression de: {"id":26042,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"22/01/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-18"}
+[2025-02-06T11:30:53.237Z] ❌ Suppression de: {"id":26043,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"23/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-3"}
+[2025-02-06T11:30:53.239Z] ❌ Suppression de: {"id":26044,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"23/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-8"}
+[2025-02-06T11:30:53.241Z] ❌ Suppression de: {"id":26045,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"23/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-13"}
+[2025-02-06T11:30:53.243Z] ❌ Suppression de: {"id":26046,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"23/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-19"}
+[2025-02-06T11:30:53.245Z] ❌ Suppression de: {"id":26047,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"24/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-3"}
+[2025-02-06T11:30:53.247Z] ❌ Suppression de: {"id":26155,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"02/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-1"}
+[2025-02-06T11:30:53.248Z] ❌ Suppression de: {"id":26156,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"02/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-4"}
+[2025-02-06T11:30:53.250Z] ❌ Suppression de: {"id":26157,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"02/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-10"}
+[2025-02-06T11:30:53.251Z] ❌ Suppression de: {"id":26158,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"02/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-15"}
+[2025-02-06T11:30:53.252Z] ❌ Suppression de: {"id":26159,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"03/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-1"}
+[2025-02-06T11:30:53.254Z] ❌ Suppression de: {"id":26160,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"03/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-4"}
+[2025-02-06T11:30:53.255Z] ❌ Suppression de: {"id":26161,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"03/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-10"}
+[2025-02-06T11:30:53.257Z] ❌ Suppression de: {"id":26162,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"03/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-15"}
+[2025-02-06T11:30:53.258Z] ❌ Suppression de: {"id":26163,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"04/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-1"}
+[2025-02-06T11:30:53.260Z] ❌ Suppression de: {"id":26164,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"04/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-4"}
+[2025-02-06T11:30:53.261Z] ❌ Suppression de: {"id":26165,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"04/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-10"}
+[2025-02-06T11:30:53.263Z] ❌ Suppression de: {"id":26166,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"04/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-15"}
+[2025-02-06T11:30:53.264Z] ❌ Suppression de: {"id":26167,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"07/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-2"}
+[2025-02-06T11:30:53.265Z] ❌ Suppression de: {"id":26168,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"07/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-5"}
+[2025-02-06T11:30:53.266Z] ❌ Suppression de: {"id":26169,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"07/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-11"}
+[2025-02-06T11:30:53.267Z] ❌ Suppression de: {"id":26170,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"07/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-16"}
+[2025-02-06T11:30:53.268Z] ❌ Suppression de: {"id":26171,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"08/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-2"}
+[2025-02-06T11:30:53.270Z] ❌ Suppression de: {"id":26172,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"08/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-5"}
+[2025-02-06T11:30:53.271Z] ❌ Suppression de: {"id":26173,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"08/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-11"}
+[2025-02-06T11:30:53.273Z] ❌ Suppression de: {"id":26174,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"08/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-16"}
+[2025-02-06T11:30:53.274Z] ❌ Suppression de: {"id":26175,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"14/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-6"}
+[2025-02-06T11:30:53.275Z] ❌ Suppression de: {"id":26176,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"14/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-11"}
+[2025-02-06T11:30:53.277Z] ❌ Suppression de: {"id":26177,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"14/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-16"}
+[2025-02-06T11:30:53.278Z] ❌ Suppression de: {"id":26178,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"15/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-2"}
+[2025-02-06T11:30:53.279Z] ❌ Suppression de: {"id":26179,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"15/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-6"}
+[2025-02-06T11:30:53.280Z] ❌ Suppression de: {"id":26180,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"15/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-12"}
+[2025-02-06T11:30:53.281Z] ❌ Suppression de: {"id":26181,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"15/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-16"}
+[2025-02-06T11:30:53.282Z] ❌ Suppression de: {"id":26182,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"16/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-3"}
+[2025-02-06T11:30:53.283Z] ❌ Suppression de: {"id":26183,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"16/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-7"}
+[2025-02-06T11:30:53.285Z] ❌ Suppression de: {"id":26184,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"16/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-17"}
+[2025-02-06T11:30:53.287Z] ❌ Suppression de: {"id":26185,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"17/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-3"}
+[2025-02-06T11:30:53.289Z] ❌ Suppression de: {"id":26186,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"17/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-7"}
+[2025-02-06T11:30:53.290Z] ❌ Suppression de: {"id":26187,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"17/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-12"}
+[2025-02-06T11:30:53.292Z] ❌ Suppression de: {"id":26188,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"17/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-17"}
+[2025-02-06T11:30:53.293Z] ❌ Suppression de: {"id":26189,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"18/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-3"}
+[2025-02-06T11:30:53.295Z] ❌ Suppression de: {"id":26190,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"18/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-7"}
+[2025-02-06T11:30:53.297Z] ❌ Suppression de: {"id":26191,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"18/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-17"}
+[2025-02-06T11:30:53.298Z] ❌ Suppression de: {"id":26192,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"21/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-3"}
+[2025-02-06T11:30:53.300Z] ❌ Suppression de: {"id":26193,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"21/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-8"}
+[2025-02-06T11:30:53.301Z] ❌ Suppression de: {"id":26194,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"21/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-12"}
+[2025-02-06T11:30:53.301Z] ❌ Suppression de: {"id":26195,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"21/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-18"}
+[2025-02-06T11:30:53.302Z] ❌ Suppression de: {"id":26196,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"22/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-3"}
+[2025-02-06T11:30:53.304Z] ❌ Suppression de: {"id":26197,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"22/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-8"}
+[2025-02-06T11:30:53.305Z] ❌ Suppression de: {"id":26198,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"22/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-12"}
+[2025-02-06T11:30:53.306Z] ❌ Suppression de: {"id":26199,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"22/01/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-18"}
+[2025-02-06T11:30:53.307Z] ❌ Suppression de: {"id":26200,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"23/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-3"}
+[2025-02-06T11:30:53.309Z] ❌ Suppression de: {"id":26201,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"23/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-8"}
+[2025-02-06T11:30:53.310Z] ❌ Suppression de: {"id":26202,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"23/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-13"}
+[2025-02-06T11:30:53.311Z] ❌ Suppression de: {"id":26203,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"23/01/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-19"}
+[2025-02-06T11:30:53.313Z] ❌ Suppression de: {"id":26204,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"24/01/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-3"}
+[2025-02-06T11:30:53.314Z] ❌ Suppression de: {"id":26205,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"24/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-8"}
+[2025-02-06T11:30:53.315Z] ❌ Suppression de: {"id":26206,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"24/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-13"}
+[2025-02-06T11:30:53.316Z] ❌ Suppression de: {"id":26207,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"24/01/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-19"}
+[2025-02-06T11:30:53.317Z] ❌ Suppression de: {"id":26208,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"25/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-3"}
+[2025-02-06T11:30:53.318Z] ❌ Suppression de: {"id":26209,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"25/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-13"}
+[2025-02-06T11:30:53.319Z] ❌ Suppression de: {"id":26210,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"25/01/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-19"}
+[2025-02-06T11:30:53.321Z] ❌ Suppression de: {"id":26211,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"28/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-9"}
+[2025-02-06T11:30:53.322Z] ❌ Suppression de: {"id":26212,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"28/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-14"}
+[2025-02-06T11:30:53.323Z] ❌ Suppression de: {"id":26213,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"28/01/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-20"}
+[2025-02-06T11:30:53.325Z] ❌ Suppression de: {"id":26214,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"29/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-9"}
+[2025-02-06T11:30:53.326Z] ❌ Suppression de: {"id":26215,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"29/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-14"}
+[2025-02-06T11:30:53.327Z] ❌ Suppression de: {"id":26216,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"29/01/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-20"}
+[2025-02-06T11:30:53.328Z] ❌ Suppression de: {"id":26217,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"30/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-9"}
+[2025-02-06T11:30:53.329Z] ❌ Suppression de: {"id":26218,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"30/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-14"}
+[2025-02-06T11:30:53.330Z] ❌ Suppression de: {"id":26219,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"30/01/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-20"}
+[2025-02-06T11:30:53.331Z] ❌ Suppression de: {"id":26220,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"31/01/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-9"}
+[2025-02-06T11:30:53.332Z] ❌ Suppression de: {"id":26221,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"31/01/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-14"}
+[2025-02-06T11:30:53.333Z] ❌ Suppression de: {"id":26222,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"31/01/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-20"}
+[2025-02-06T11:30:53.334Z] ❌ Suppression de: {"id":26223,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"02/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-21"}
+[2025-02-06T11:30:53.335Z] ❌ Suppression de: {"id":26224,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"02/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-28"}
+[2025-02-06T11:30:53.336Z] ❌ Suppression de: {"id":26225,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"02/02/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-34"}
+[2025-02-06T11:30:53.338Z] ❌ Suppression de: {"id":26226,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"04/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-21"}
+[2025-02-06T11:30:53.339Z] ❌ Suppression de: {"id":26227,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"04/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-28"}
+[2025-02-06T11:30:53.340Z] ❌ Suppression de: {"id":26228,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"04/02/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-34"}
+[2025-02-06T11:30:53.341Z] ❌ Suppression de: {"id":26229,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"05/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-21"}
+[2025-02-06T11:30:53.343Z] ❌ Suppression de: {"id":26230,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"05/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-28"}
+[2025-02-06T11:30:53.344Z] ❌ Suppression de: {"id":26231,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"05/02/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-34"}
+[2025-02-06T11:30:53.345Z] ❌ Suppression de: {"id":26232,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"06/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-21"}
+[2025-02-06T11:30:53.346Z] ❌ Suppression de: {"id":26233,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"06/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-28"}
+[2025-02-06T11:30:53.347Z] ❌ Suppression de: {"id":26234,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"06/02/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-34"}
+[2025-02-06T11:30:53.349Z] ❌ Suppression de: {"id":26235,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"07/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-22"}
+[2025-02-06T11:30:53.350Z] ❌ Suppression de: {"id":26236,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"07/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-29"}
+[2025-02-06T11:30:53.351Z] ❌ Suppression de: {"id":26237,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"07/02/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-35"}
+[2025-02-06T11:30:53.352Z] ❌ Suppression de: {"id":26238,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"08/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-22"}
+[2025-02-06T11:30:53.354Z] ❌ Suppression de: {"id":26239,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"08/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-29"}
+[2025-02-06T11:30:53.355Z] ❌ Suppression de: {"id":26240,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"08/02/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-35"}
+[2025-02-06T11:30:53.357Z] ❌ Suppression de: {"id":26241,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"11/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-22"}
+[2025-02-06T11:30:53.358Z] ❌ Suppression de: {"id":26242,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"11/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-29"}
+[2025-02-06T11:30:53.359Z] ❌ Suppression de: {"id":26243,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"12/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-23"}
+[2025-02-06T11:30:53.360Z] ❌ Suppression de: {"id":26244,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"12/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-24"}
+[2025-02-06T11:30:53.362Z] ❌ Suppression de: {"id":26245,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"12/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-30"}
+[2025-02-06T11:30:53.363Z] ❌ Suppression de: {"id":26246,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"12/02/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-36"}
+[2025-02-06T11:30:53.364Z] ❌ Suppression de: {"id":26247,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"13/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-23"}
+[2025-02-06T11:30:53.366Z] ❌ Suppression de: {"id":26248,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"13/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-24"}
+[2025-02-06T11:30:53.366Z] ❌ Suppression de: {"id":26249,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"13/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-30"}
+[2025-02-06T11:30:53.367Z] ❌ Suppression de: {"id":26250,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"13/02/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-36"}
+[2025-02-06T11:30:53.368Z] ❌ Suppression de: {"id":26251,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"14/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-23"}
+[2025-02-06T11:30:53.370Z] ❌ Suppression de: {"id":26252,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"14/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-24"}
+[2025-02-06T11:30:53.372Z] ❌ Suppression de: {"id":26253,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"14/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-30"}
+[2025-02-06T11:30:53.373Z] ❌ Suppression de: {"id":26254,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"14/02/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-36"}
+[2025-02-06T11:30:53.374Z] ❌ Suppression de: {"id":26255,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"15/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-23"}
+[2025-02-06T11:30:53.376Z] ❌ Suppression de: {"id":26256,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"15/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-24"}
+[2025-02-06T11:30:53.377Z] ❌ Suppression de: {"id":26257,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"15/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-30"}
+[2025-02-06T11:30:53.378Z] ❌ Suppression de: {"id":26258,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"15/02/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-36"}
+[2025-02-06T11:30:53.379Z] ❌ Suppression de: {"id":26259,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"18/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-23"}
+[2025-02-06T11:30:53.381Z] ❌ Suppression de: {"id":26260,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"18/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-25"}
+[2025-02-06T11:30:53.382Z] ❌ Suppression de: {"id":26261,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"18/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-31"}
+[2025-02-06T11:30:53.383Z] ❌ Suppression de: {"id":26262,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"18/02/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-37"}
+[2025-02-06T11:30:53.384Z] ❌ Suppression de: {"id":26263,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"19/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-23"}
+[2025-02-06T11:30:53.386Z] ❌ Suppression de: {"id":26264,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"19/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-25"}
+[2025-02-06T11:30:53.387Z] ❌ Suppression de: {"id":26265,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"19/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-31"}
+[2025-02-06T11:30:53.389Z] ❌ Suppression de: {"id":26266,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"19/02/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-37"}
+[2025-02-06T11:30:53.390Z] ❌ Suppression de: {"id":26267,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"20/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-23"}
+[2025-02-06T11:30:53.391Z] ❌ Suppression de: {"id":26268,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"20/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-25"}
+[2025-02-06T11:30:53.392Z] ❌ Suppression de: {"id":26269,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"20/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-31"}
+[2025-02-06T11:30:53.394Z] ❌ Suppression de: {"id":26270,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"20/02/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-37"}
+[2025-02-06T11:30:53.395Z] ❌ Suppression de: {"id":26271,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"21/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-23"}
+[2025-02-06T11:30:53.397Z] ❌ Suppression de: {"id":26272,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"21/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-26"}
+[2025-02-06T11:30:53.398Z] ❌ Suppression de: {"id":26273,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"21/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-32"}
+[2025-02-06T11:30:53.399Z] ❌ Suppression de: {"id":26274,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"21/02/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-38"}
+[2025-02-06T11:30:53.400Z] ❌ Suppression de: {"id":26275,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"22/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-23"}
+[2025-02-06T11:30:53.402Z] ❌ Suppression de: {"id":26276,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"22/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-26"}
+[2025-02-06T11:30:53.403Z] ❌ Suppression de: {"id":26277,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"22/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-32"}
+[2025-02-06T11:30:53.404Z] ❌ Suppression de: {"id":26278,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"22/02/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-38"}
+[2025-02-06T11:30:53.405Z] ❌ Suppression de: {"id":26279,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"25/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-23"}
+[2025-02-06T11:30:53.406Z] ❌ Suppression de: {"id":26280,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"25/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-26"}
+[2025-02-06T11:30:53.407Z] ❌ Suppression de: {"id":26281,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"25/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-32"}
+[2025-02-06T11:30:53.409Z] ❌ Suppression de: {"id":26282,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"25/02/2019","nom_prenom_caissier":"Assetou Sanogo","code_definitif":"020A-39"}
+[2025-02-06T11:30:53.410Z] ❌ Suppression de: {"id":26283,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"26/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-23"}
+[2025-02-06T11:30:53.411Z] ❌ Suppression de: {"id":26284,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"26/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-27"}
+[2025-02-06T11:30:53.412Z] ❌ Suppression de: {"id":26285,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"26/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-33"}
+[2025-02-06T11:30:53.414Z] ❌ Suppression de: {"id":26286,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"26/02/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-39"}
+[2025-02-06T11:30:53.415Z] ❌ Suppression de: {"id":26287,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"27/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-23"}
+[2025-02-06T11:30:53.417Z] ❌ Suppression de: {"id":26288,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"27/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-27"}
+[2025-02-06T11:30:53.417Z] ❌ Suppression de: {"id":26289,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"27/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-33"}
+[2025-02-06T11:30:53.418Z] ❌ Suppression de: {"id":26290,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"27/02/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-39"}
+[2025-02-06T11:30:53.419Z] ❌ Suppression de: {"id":26291,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"28/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-23"}
+[2025-02-06T11:30:53.420Z] ❌ Suppression de: {"id":26292,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"28/02/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-27"}
+[2025-02-06T11:30:53.422Z] ❌ Suppression de: {"id":26293,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"28/02/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-33"}
+[2025-02-06T11:30:53.424Z] ❌ Suppression de: {"id":26294,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"28/02/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-39"}
+[2025-02-06T11:30:53.425Z] ❌ Suppression de: {"id":26295,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"01/03/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-40"}
+[2025-02-06T11:30:53.426Z] ❌ Suppression de: {"id":26296,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"01/03/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-42"}
+[2025-02-06T11:30:53.427Z] ❌ Suppression de: {"id":26297,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"01/03/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-49"}
+[2025-02-06T11:30:53.429Z] ❌ Suppression de: {"id":26298,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"01/03/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-55"}
+[2025-02-06T11:30:53.430Z] ❌ Suppression de: {"id":26299,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"04/03/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-40"}
+[2025-02-06T11:30:53.432Z] ❌ Suppression de: {"id":26300,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"04/03/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-42"}
+[2025-02-06T11:30:53.433Z] ❌ Suppression de: {"id":26301,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"04/03/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-49"}
+[2025-02-06T11:30:53.434Z] ❌ Suppression de: {"id":26302,"agence_id":5342,"document_type_id":29,"code_caisse":416,"dates":"04/03/2019","nom_prenom_caissier":"Mme Togo Yassana Marie Josephine Kene","code_definitif":"020A-55"}
+[2025-02-06T11:30:53.435Z] ❌ Suppression de: {"id":26303,"agence_id":5342,"document_type_id":29,"code_caisse":413,"dates":"05/03/2019","nom_prenom_caissier":"Kadidiatou Diallo","code_definitif":"020A-40"}
+[2025-02-06T11:30:53.436Z] ❌ Suppression de: {"id":26304,"agence_id":5342,"document_type_id":29,"code_caisse":414,"dates":"05/03/2019","nom_prenom_caissier":"Drissa Sogodogo","code_definitif":"020A-42"}
+[2025-02-06T11:30:53.437Z] ❌ Suppression de: {"id":26305,"agence_id":5342,"document_type_id":29,"code_caisse":415,"dates":"05/03/2019","nom_prenom_caissier":"Bata N'Diaye","code_definitif":"020A-49"}
+[2025-02-06T11:30:53.453Z] ✅ Doublons supprimés dans transaction_caisse
+
+[2025-02-06T11:30:53.454Z] 🔍 Inspection de la table: transaction_dossiers
+[2025-02-06T11:30:53.471Z] ✅ Aucun doublon trouvé dans transaction_dossiers
+
+[2025-02-06T11:30:53.473Z] 🔍 Inspection de la table: transaction_guichet
+[2025-02-06T11:30:53.490Z] ✅ Aucun doublon trouvé dans transaction_guichet
+
+[2025-02-06T11:30:53.491Z] 🎉 Fin de l'inspection.
+
+[2025-02-06T11:31:16.856Z] 🚀 Début de l'inspection de la base de données...
+
+[2025-02-06T11:31:16.915Z] 🔍 Inspection de la table: agence
+[2025-02-06T11:31:16.925Z] ✅ Aucun doublon trouvé dans agence
+
+[2025-02-06T11:31:16.926Z] 🔍 Inspection de la table: agence_pieces
+[2025-02-06T11:31:16.933Z] ✅ Aucun doublon trouvé dans agence_pieces
+
+[2025-02-06T11:31:16.935Z] 🔍 Inspection de la table: caisse
+[2025-02-06T11:31:16.946Z] ✅ Aucun doublon trouvé dans caisse
+
+[2025-02-06T11:31:16.947Z] 🔍 Inspection de la table: config_piece_doctype
+[2025-02-06T11:31:16.958Z] ✅ Aucun doublon trouvé dans config_piece_doctype
+
+[2025-02-06T11:31:16.960Z] 🔍 Inspection de la table: document_agence
+[2025-02-06T11:31:16.972Z] ✅ Aucun doublon trouvé dans document_agence
+
+[2025-02-06T11:31:16.974Z] 🔍 Inspection de la table: document_agence_metadata
+[2025-02-06T11:31:16.986Z] ✅ Aucun doublon trouvé dans document_agence_metadata
+
+[2025-02-06T11:31:16.989Z] 🔍 Inspection de la table: document_caisse
+[2025-02-06T11:31:17.000Z] ✅ Aucun doublon trouvé dans document_caisse
+
+[2025-02-06T11:31:17.003Z] 🔍 Inspection de la table: document_caisse_metadata
+[2025-02-06T11:31:17.015Z] ✅ Aucun doublon trouvé dans document_caisse_metadata
+
+[2025-02-06T11:31:17.019Z] 🔍 Inspection de la table: document_guichet
+[2025-02-06T11:31:17.029Z] ✅ Aucun doublon trouvé dans document_guichet
+
+[2025-02-06T11:31:17.031Z] 🔍 Inspection de la table: document_guichet_metadata
+[2025-02-06T11:31:17.049Z] ✅ Aucun doublon trouvé dans document_guichet_metadata
+
+[2025-02-06T11:31:17.052Z] 🔍 Inspection de la table: document_type
+[2025-02-06T11:31:17.061Z] ✅ Aucun doublon trouvé dans document_type
+
+[2025-02-06T11:31:17.063Z] 🔍 Inspection de la table: document_type_agence
+[2025-02-06T11:31:17.076Z] ✅ Aucun doublon trouvé dans document_type_agence
+
+[2025-02-06T11:31:17.077Z] 🔍 Inspection de la table: document_type_caisse
+[2025-02-06T11:31:17.087Z] ✅ Aucun doublon trouvé dans document_type_caisse
+
+[2025-02-06T11:31:17.089Z] 🔍 Inspection de la table: document_type_guichet
+[2025-02-06T11:31:17.099Z] ✅ Aucun doublon trouvé dans document_type_guichet
+
+[2025-02-06T11:31:17.102Z] 🔍 Inspection de la table: guichet
+[2025-02-06T11:31:17.112Z] ✅ Aucun doublon trouvé dans guichet
+
+[2025-02-06T11:31:17.114Z] 🔍 Inspection de la table: metadata
+[2025-02-06T11:31:17.125Z] ✅ Aucun doublon trouvé dans metadata
+
+[2025-02-06T11:31:17.126Z] 🔍 Inspection de la table: piece_file
+[2025-02-06T11:31:17.137Z] ✅ Aucun doublon trouvé dans piece_file
+
+[2025-02-06T11:31:17.139Z] 🔍 Inspection de la table: transaction_caisse
+[2025-02-06T11:31:17.154Z] ✅ Aucun doublon trouvé dans transaction_caisse
+
+[2025-02-06T11:31:17.156Z] 🔍 Inspection de la table: transaction_dossiers
+[2025-02-06T11:31:17.166Z] ✅ Aucun doublon trouvé dans transaction_dossiers
+
+[2025-02-06T11:31:17.168Z] 🔍 Inspection de la table: transaction_guichet
+[2025-02-06T11:31:17.180Z] ✅ Aucun doublon trouvé dans transaction_guichet
+
+[2025-02-06T11:31:17.182Z] 🎉 Fin de l'inspection.
+

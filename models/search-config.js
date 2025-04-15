@@ -64,23 +64,28 @@ const checkConfigExists = async (documentTypeId) => {
     console.log(documentTypeId);
 
     const query = `
-      SELECT COUNT(*) AS config_count
-      FROM search_params
-      WHERE document_type_id = ?
+      SELECT COUNT(*) AS config_count, m.cle AS metadata_name
+      FROM search_params sp
+      JOIN metadata m ON sp.meta_id = m.id 
+      WHERE sp.document_type_id = ?
+      GROUP BY m.cle
     `;
 
     const [rows] = await db.query(query, [documentTypeId]);
 
     console.log("Résultats de la requête:", rows);
-    const configExists = rows[0] && rows[0].config_count > 0;
+    const configExists = rows.length > 0;
+    const metadataNames = rows.map(row => row.metadata_name);
     console.log(
       "Nombre de configurations existantes:",
-      rows[0] ? rows[0].config_count : 0
+      rows.length
     );
+    console.log("Noms des métadonnées configurées:", metadataNames);
 
     return {
       success: true,
       exists: configExists,
+      metadataNames: metadataNames,
     };
   } catch (error) {
     console.error(

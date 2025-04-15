@@ -3,8 +3,15 @@ const knexInstance = require("knex")(knex);
 
 const createAgence = async (data) => {
   const { code_agence, nom_agence } = data;
+
+  // Vérifier si le code_agence existe déjà
+  const existingAgence = await knexInstance('agence').where({ code_agence }).first();
+  if (existingAgence) {
+    return { success: false, message: "Le code d'agence existe déjà." };
+  }
+
   const result = await knexInstance('agence').insert({ code_agence, nom_agence });
-  return result;
+  return { success: true, result };
 };
 
 const updateAgence = async (data) => {

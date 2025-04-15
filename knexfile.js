@@ -8,10 +8,22 @@ module.exports = {
   development: {
     client: 'mysql2',
     connection: {
-      host: '127.0.0.1', // Adresse du serveur
-      user: 'root', // Nom d'utilisateur
-      password: '', // Mot de passe
-      database: 'agence_migrations'
+      host: process.env.DB_HOST_PRIMARY,
+      user: process.env.DB_USER_PRIMARY,
+      password: process.env.DB_PASSWORD_PRIMARY,
+      database: process.env.DB_NAME_PRIMARY,
+      port: process.env.DB_PORT_PRIMARY
+    }
+  },
+
+  secondary: {
+    client: 'mysql2',
+    connection: {
+      host: process.env.DB_HOST_SECONDARY,
+      user: process.env.DB_USER_SECONDARY,
+      password: process.env.DB_PASSWORD_SECONDARY,
+      database: process.env.DB_NAME_SECONDARY,
+      port: process.env.DB_PORT_SECONDARY
     }
   },
 
@@ -22,12 +34,17 @@ module.exports = {
       user: 'root',
       password: ''
     },
+    connection_secondary: {
+      database: 'archive',
+      user: 'root',
+      password: ''
+    },
     pool: {
       min: 2,
-      max: 10
+      max: 20
     },
     migrations: {
-      tableName: './migrations'
+      tableName: './migrations_agence'
     }
   },
 
@@ -38,17 +55,22 @@ module.exports = {
       user: 'root',
       password: ''
     },
+    connection_secondary: {
+      database: 'archive',
+      user: 'root',
+      password: ''
+    },
     pool: {
       min: 2,
-      max: 10
+      max: 20
     },
     migrations: {
-      tableName: './migrations'
+      tableName: './migrations_agence'
     }
   },
+
   seeds: {
     directory: '/serveur/', // Spécifie le répertoire des seeds
   },
 
 };
-

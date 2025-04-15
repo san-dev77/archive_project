@@ -4,13 +4,20 @@ const knexInstance = require("knex")(knex); // Instantiate knex
 const createCaisse = async (data) => {
   try {
     const existingCaisse = await knexInstance('caisse')
+      .where({ code_caisse: data.code_caisse })
+      .first();
+
+    if (existingCaisse) {
+      return { success: false, message: "Le code de caisse existe déjà." };
+    }
+
+    const caisseWithSameName = await knexInstance('caisse')
       .where({
-        code_caisse: data.code_caisse,
         nom_caisse: data.nom_caisse,
         agence_id: data.agence_id
       });
 
-    if (existingCaisse.length > 0) {
+    if (caisseWithSameName.length > 0) {
       return { success: false, message: "Cette caisse existe déjà pour l'agence spécifiée." };
     }
 
@@ -19,11 +26,8 @@ const createCaisse = async (data) => {
       nom_caisse: data.nom_caisse,
       agence_id: data.agence_id
     });
-    return { success: true, message: "La caisse a été correctement créé avec succès." };
+    return { success: true, message: "La caisse a été correctement créée avec succès." };
   } catch (error) {
-    if (error.code === 'ER_DUP_ENTRY') {
-      return { success: false, message: "Le code de caisse existe déjà." };
-    }
     return { success: false, message: "Une erreur est survenue lors de la création de la caisse." };
   }
 }

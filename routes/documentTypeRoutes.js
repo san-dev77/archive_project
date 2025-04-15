@@ -12,6 +12,7 @@ const {
   getAllDocTypesDirController,
   updateDocTypedirController,
   deleteDocTypeDirController,
+  getDocTypeDirController,
 } = require("../controllers/documentTypeController");
 
 const router = express.Router();
@@ -21,6 +22,7 @@ router.post("/docType_dir", createDocTypeDirController);
 router.get("/docType_dir", getAllDocTypesDirController);
 router.get("/", getAllDocumentTypesController);
 router.get("/:id", getDocumentTypeByIdController);
+router.get("/doctype/:id", getDocTypeDirController);
 router.get(
   "/services/:serviceId/document-types",
   getDocumentTypesByServiceIdController

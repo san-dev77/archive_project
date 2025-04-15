@@ -69,15 +69,15 @@ const translateActionInString = (actionString) => {
 const linkProfilToActions = async (profilId, newActions) => {
   console.log("Début de la mise à jour des actions pour le profil:", profilId);
   console.log("Nouvelles actions reçues:", newActions);
-  
+
   try {
     // Récupérer les actions existantes pour le profil
     const [existingActions] = await pool.execute(
-      "SELECT permission_id FROM profil_permissions WHERE profil_id = 2;",
+      "SELECT permission_id FROM profil_permissions WHERE profil_id = ?",
       [profilId]
     );
-    const existingActionIds = existingActions.length > 0 
-      ? existingActions.map((action) => action.permission_id) 
+    const existingActionIds = existingActions.length > 0
+      ? existingActions.map((action) => action.permission_id)
       : [];
     console.log("Actions existantes pour le profil:", existingActionIds);
 
@@ -148,7 +148,7 @@ const linkProfilToActions = async (profilId, newActions) => {
     console.error("Erreur lors de la mise à jour des actions pour le profil:", error.message);
     throw new Error(
       "Erreur lors de la mise à jour des actions pour le profil: " +
-        error.message
+      error.message
     );
   }
 };
@@ -165,7 +165,7 @@ const getAllProfilActions = async () => {
   } catch (error) {
     throw new Error(
       "Erreur lors de la récupération des relations profil-actions: " +
-        error.message
+      error.message
     );
   }
 };
@@ -240,5 +240,5 @@ module.exports = {
   getAllProfilActions,
   getPermissions,
   getProfilActions,
-  deleteProfilAction  
+  deleteProfilAction
 };
